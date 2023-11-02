@@ -1,8 +1,5 @@
-
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-//import com.acmerobotics.dashboard.FtcDashboard;
-//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -14,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.robot.utilities.Drivetrain;
+import org.firstinspires.ftc.teamcode.robot.utilities.PIDConstants;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -25,17 +24,29 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "OpenCV Testing")
+@TeleOp(name = "Cone Tracker")
 
-public class opencv extends LinearOpMode {
+public class CameraFusedPID extends LinearOpMode {
+    double integralSum = 0;
+    double Kp = PIDConstants.Kp;
+    double Ki = PIDConstants.Ki;
+    double Kd = PIDConstants.Kd;
 
+    Drivetrain drivetrain = new Drivetrain();
+
+    ElapsedTime timer = new ElapsedTime();
+    private double lastError = 0;
+
+    private BNO055IMU imu;
     double cX = 0;
     double cY = 0;
     double width = 0;
 
     private OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
+    /** MAKE SURE TO CHANGE THE FOV AND THE RESOLUTIONS ACCORDINGLY **/
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
+    private static final double FOV = 40;
 
     // Calculate the distance using the formula
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
@@ -44,6 +55,13 @@ public class opencv extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        drivetrain.init(hardwareMap);
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
 
         initOpenCV();
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -54,6 +72,10 @@ public class opencv extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            telemetry.addData("Target IMU Angle", getAngleTarget(cX));
+            telemetry.addData("Current IMU Angle", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            double power = PIDControl(Math.toRadians(0 + getAngleTarget(cX)), imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
+            drivetrain.power(power);
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
             telemetry.addData("Distance in Inch", (getDistance(width)));
             telemetry.update();
@@ -159,9 +181,32 @@ public class opencv extends LinearOpMode {
         }
 
     }
+    private static double getAngleTarget(double objMidpoint){
+        double midpoint = -((objMidpoint - (CAMERA_WIDTH/2))*FOV)/CAMERA_WIDTH;
+        return midpoint;
+    }
     private static double getDistance(double width){
         double distance = (objectWidthInRealWorldUnits * focalLength) / width;
         return distance;
+    }
+    public double PIDControl(double refrence, double state) {
+        double error = angleWrap(refrence - state);
+        telemetry.addData("Error: ", error);
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / (timer.seconds());
+        lastError = error;
+        timer.reset();
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        return output;
+    }
+    public double angleWrap(double radians){
+        while(radians > Math.PI){
+            radians -= 2 * Math.PI;
+        }
+        while(radians < -Math.PI){
+            radians += 2 * Math.PI;
+        }
+        return radians;
     }
 
 

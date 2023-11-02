@@ -8,12 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 import org.openftc.apriltag.AprilTagDetection;
 
-//@TeleOp
 @Autonomous(name="Simple Autonomous", group="Autonomous")
 public class parkBlue extends LinearOpMode
 {
     DriveUtil2023 drive = new DriveUtil2023(this);
-    static final double FEET_PER_METER = 3.28084;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -21,7 +19,6 @@ public class parkBlue extends LinearOpMode
     {
         /* initialize the robot hardware */
         drive.init(hardwareMap);
-
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -31,13 +28,10 @@ public class parkBlue extends LinearOpMode
         /* ****************************************************
         P3- Your autonomous drive code would start right here
         ******************************************************/
-        /* Actually do something useful */
         while (opModeIsActive() ) {
             parkonbluebackstage();
         }
     }//program end
-
-
 
     public void parkonbluebackstage(){
             drive.driveRobotDistanceForward(15,.5);

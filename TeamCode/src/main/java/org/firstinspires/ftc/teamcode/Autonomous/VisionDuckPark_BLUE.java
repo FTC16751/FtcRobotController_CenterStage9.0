@@ -28,9 +28,6 @@ public class VisionDuckPark_BLUE extends LinearOpMode {
     //open the camera opencv image pipeline (analysis)
     private OpenCVUtil.SkystoneDeterminationPipeline pipeline;
 
-    //default the arm position
-    int useArmPosition = 0;
-
     @SuppressLint("SuspiciousIndentation")
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,7 +45,7 @@ public class VisionDuckPark_BLUE extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-            // Don't burn CPU cycles busy-looping in this sample
+        // Don't burn CPU cycles busy-looping in this sample
             sleep(50);
 
             //Display what position camera saw the duck/tse on the barcode
