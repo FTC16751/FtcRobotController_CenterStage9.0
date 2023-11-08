@@ -30,12 +30,11 @@ public class SetLauncherServo_George extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     launcher_coachgeorge launcher = new launcher_coachgeorge(this);
 
-
     @Override
 
     //Initialize and run program
     public void runOpMode() throws InterruptedException {
-       // claw.init();
+        launcher.init();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -49,22 +48,20 @@ public class SetLauncherServo_George extends LinearOpMode {
         } //end OpModeIsActive
     }  //end runOpMode
 
-
     public void doLauncher() {
-
         // Use gamepad left & right Bumpers to open and close the claw
         // Use the SERVO constants defined in RobotHardware class.
         // Each time around the loop, the servos will move by a small amount.
         // Limit the total offset to half of the full travel range
         if (gamepad2.left_bumper){
-
+            launcher.setLauncherUp();
         }
         else {
             // continue looping//
         }
 
         if (gamepad2.right_bumper){
-
+            launcher.setLauncherDown();
         }
         else {
             // continue looping
