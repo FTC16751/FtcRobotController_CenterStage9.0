@@ -8,22 +8,18 @@
 
  */
 
-package org.firstinspires.ftc.team16751.experiments;
+package org.firstinspires.ftc.team24030.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
-import org.firstinspires.ftc.team16751.robot.utilities.GenericMotorUtil;
+import org.firstinspires.ftc.team24030.robot.utilities.ArmUtil;
 
 @TeleOp(name="Lift Motor Test", group="Testing")
 public class ArmMotorTest extends LinearOpMode {
 
     //MotorLiftTest lift = new MotorLiftTest(this);
     ArmUtil arm = new ArmUtil(this);
-    GenericMotorUtil motor = new GenericMotorUtil(this);
 
     @Override
 
@@ -33,7 +29,6 @@ public class ArmMotorTest extends LinearOpMode {
         telemetry.addData("Status", "Initializing...");
 
         arm.init(hardwareMap);
-        motor.init(hardwareMap);
 
         telemetry.addData("Arm Position reset: ",  "Starting at %7d", arm.getMotorPosition());
         telemetry.addData("Status", "Initialized.  Press Play.");
@@ -59,7 +54,7 @@ public class ArmMotorTest extends LinearOpMode {
         //--------------------------------------------------------------------------
         if(gamepad1.left_trigger>0.2) arm.setMotorPower(-.5);
         else if(gamepad1.right_trigger>0.2) arm.setMotorPower(.5);
-        else arm.setMotorPower(0);
+        else arm.lockCurrentPosition();
 
         if (gamepad1.y) arm.changePosition(0);
         if (gamepad1.a) arm.changePosition(300);
@@ -84,9 +79,4 @@ public class ArmMotorTest extends LinearOpMode {
         //-end of arm motor code----------------------------------------------------
     }
 
-    public void genericMotor() {
-        if (gamepad1.x) {
-            motor.setMotorPowers(.4);
-        }
-    }
 } //end program
