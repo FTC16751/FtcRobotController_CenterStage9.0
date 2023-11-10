@@ -44,8 +44,8 @@ public class ClawUtil {
     private Servo   wrist = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double WRIST_MID_SERVO       =  0.0 ;
+    public static final double MID_SERVO       =  0.0 ;
+    public static final double WRIST_MID_SERVO       =  0.1 ;
     public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
     public static       double offset = 0.0;
     // Define a constructor that allows the OpMode to pass a reference to itself.
@@ -104,7 +104,7 @@ public class ClawUtil {
     }
     public void setWristDown() {
         //for bot #1
-        offset = 0.30;
+        offset = 0.20;
         wrist.setPosition(WRIST_MID_SERVO + offset);
 
     }

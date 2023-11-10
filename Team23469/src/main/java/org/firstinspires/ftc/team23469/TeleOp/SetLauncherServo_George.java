@@ -24,7 +24,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.launcher_coachgeorge;
 
 
 @Disabled
-@TeleOp(name="Driver Control Demo", group="Teleop")
+@TeleOp(name="Driver Control Demo coach", group="Teleop")
 
 public class SetLauncherServo_George extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);

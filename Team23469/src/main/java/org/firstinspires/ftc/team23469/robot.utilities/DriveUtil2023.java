@@ -22,6 +22,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 public class DriveUtil2023 {
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;
@@ -38,7 +41,7 @@ public class DriveUtil2023 {
     private DcMotor right_front_motor;
     private DcMotor left_rear_motor;
     private DcMotor right_rear_motor;
-    static double   DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.;
+    //static double   DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.;
 
     //using GoBilda 5202 motor
     static final double COUNTS_PER_MOTOR_REV = 537;  //*2 adjust for mecanum
@@ -51,8 +54,35 @@ public class DriveUtil2023 {
     static final double COUNTS_PER_DEGREE = COUNTS_PER_GEAR_REV/360;
 
     public IMU imu;
+    private double          headingError  = 0;
 
+    private double  targetHeading = 0;
+    private double  driveSpeed    = 0;
+    private double  turnSpeed     = 0;
+    private double  leftSpeed     = 0;
+    private double  rightSpeed    = 0;
+    private int     leftTarget    = 0;
+    private int     rightTarget   = 0;
     private ElapsedTime period  = new ElapsedTime();
+    // These constants define the desired driving/control characteristics
+    // They can/should be tweaked to suit the specific robot drive train.
+    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
+    static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
+    // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+    // Define the Proportional control coefficient (or GAIN) for "heading control".
+    // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
+    // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
+    // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
+    static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
+
+    public enum motor {
+        left_front_motor,
+        right_front_motor,
+        left_rear_motor,
+        right_rear_motor
+    }
 
     /* local OpMode members. */
     HardwareMap hardwareMap          =  null;
@@ -87,7 +117,7 @@ public class DriveUtil2023 {
         right_rear_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Set Drive Speed
-        DRIVE_SPEED = 1;    //1=Full Speed
+        // DRIVE_SPEED = 1;    //1=Full Speed
 
         // Retrieve and initialize the IMU.
         // This sample expects the IMU to be in a REV Hub and named "imu".
@@ -99,41 +129,17 @@ public class DriveUtil2023 {
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-            /*
-        imu = hardwareMap.get(BHI260IMU.class, "imu");
-         
-        imu.initialize(
-                new IMU.Parameters(
-                        new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                                RevHubOrientationOnRobot.UsbFacingDirection.UP
-                        )
-                )
-        );
-        */
-         
-        /*
-        BHI260IMU.Parameters parameters = new IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-*/
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-
-        //imu.initialize();
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
     }
+
+/************************
+ * START OF HELPER FUNCTIONS
+ *
+ */
 
 
     /***
@@ -407,8 +413,8 @@ public class DriveUtil2023 {
         right_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //revere motors
-      //  reverseMotor(right_front_motor);
-      //  reverseMotor(right_rear_motor);
+        //  reverseMotor(right_front_motor);
+        //  reverseMotor(right_rear_motor);
 
         //set target stop and mode for running to a position
         left_front_motor.setTargetPosition(targetCount);
@@ -434,8 +440,8 @@ public class DriveUtil2023 {
         stopRobot();
 
         //return to normal motors
-       // reverseMotor(right_front_motor);
-       // reverseMotor(right_rear_motor);
+        // reverseMotor(right_front_motor);
+        // reverseMotor(right_rear_motor);
 
         left_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -544,7 +550,7 @@ public class DriveUtil2023 {
         stopRobot();
 
         //return to normal motors
-       // reverseMotor(left_front_motor);
+        // reverseMotor(left_front_motor);
         //reverseMotor(left_rear_motor);
 
         left_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -913,5 +919,77 @@ public class DriveUtil2023 {
         double backRightPower = (y + x - rx) / denominator;
 
         setMotorPowers(frontLeftPower,backLeftPower,backRightPower,frontRightPower);
+    }
+
+    public void turnToHeading(double maxTurnSpeed, double heading) {
+
+        // Run getSteeringCorrection() once to pre-calculate the current error
+        getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+        // keep looping while we are still active, and not on heading.
+        while ((Math.abs(headingError) > HEADING_THRESHOLD)) {
+
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0,0, turnSpeed);
+
+        }
+
+        // Stop all motion;
+        moveRobot(0, 0,0);
+    }
+
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send powers to the wheels.
+        left_front_motor.setPower(leftFrontPower);
+        right_front_motor.setPower(rightFrontPower);
+        left_rear_motor.setPower(leftBackPower);
+        right_rear_motor.setPower(rightBackPower);
+
+    }
+
+    /**
+     * read the Robot heading directly from the IMU (in degrees)
+     */
+    public double getHeading() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
+    }
+
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
+        targetHeading = desiredHeading;  // Save for telemetry
+
+        // Determine the heading current error
+        headingError = targetHeading - getHeading();
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180)  headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain, -1, 1);
     }
 }   //end program

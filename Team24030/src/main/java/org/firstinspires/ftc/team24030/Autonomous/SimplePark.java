@@ -37,7 +37,7 @@ import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 
 @Autonomous(name="Simple Park", group="Robot")
 
-public class RedRightSimplePark extends LinearOpMode {
+public class SimplePark extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     private ElapsedTime     runtime = new ElapsedTime();
 
