@@ -16,11 +16,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 import org.firstinspires.ftc.team23469.robot.utilities.DriveUtil2023;
+import org.firstinspires.ftc.team23469.robot.utilities.launcherUtil;
 
 
 @TeleOp(name="Driver Control Center Stage", group="Teleop")
 public class DriverControl_CenterStage extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
+    launcherUtil launcher = new launcherUtil(this);
 
     int temp = 1;
     double DRIVE_SPEED = 1;
@@ -36,6 +38,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
         //init external hardware classes
         drive.init(hardwareMap);
+        launcher.init();
 
         //default drive move to 1 (arcade)
         int driveMode = 1;
@@ -96,7 +99,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
             }
 
             /***end of set drive mode code */
-
+            doLauncher();
 
         } //end OpModeIsActive
     }  //end runOpMode
@@ -107,6 +110,22 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
     public void arcadeDrive() {
         drive.arcadeDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y, DRIVE_SPEED);
+    }
+    public void doLauncher() {
+        // Use gamepad left & right Bumpers to open and close the claw
+        // Use the SERVO constants defined in RobotHardware class.
+        // Each time around the loop, the servos will move by a small amount.
+        // Limit the total offset to half of the full travel range
+        if (gamepad2.left_bumper) {
+            launcher.setLauncherUp();
+
+        } else {// continue looping//
+        }
+
+        if (gamepad2.right_bumper) {
+            launcher.setLauncherDown();
+        } else {// continue looping
+        }
     }
 
 } //end program

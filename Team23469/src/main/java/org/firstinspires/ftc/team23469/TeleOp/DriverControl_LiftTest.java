@@ -140,12 +140,12 @@ public class DriverControl_LiftTest extends LinearOpMode {
         double armPower;
 
         //Lowers lift all the way down
-        if (gamepad2.dpad_down) lift.raiseToPosition(1,1.0);
+        if (gamepad2.dpad_down) lift.raiseToPosition(1,0.25);
         //low junction
-        if(gamepad2.dpad_left) lift.raiseToPosition(2,1.0);
+        if(gamepad2.dpad_left) lift.raiseToPosition(2,0.25);
         //mid junction
-        if(gamepad2.dpad_up) lift.raiseToPosition(3,1.0);
+        if(gamepad2.dpad_up) lift.raiseToPosition(3,0.25);
         //high junction
-        if(gamepad2.dpad_right) lift.raiseToPosition(0,1.0);
+        if(gamepad2.dpad_right) lift.raiseToPosition(0,0.25);
     }
 } //end program

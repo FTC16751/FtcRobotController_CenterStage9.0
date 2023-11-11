@@ -52,6 +52,8 @@ public class LauncherDemo_Abby extends LinearOpMode {
         // Limit the total offset to half of the full travel range
         if (gamepad2.left_bumper){
             launcher.setLauncherUp();
+telemetry.addData("launch up", "call up launcher");
+telemetry.update();
 
         }
         else {// continue looping//

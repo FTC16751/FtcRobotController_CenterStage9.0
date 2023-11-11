@@ -70,12 +70,16 @@ public class launcherUtil {
     }
 
     public void setLauncherUp() {
+        myOpMode.telemetry.addData("set launcher up", "Hello im here");
+        myOpMode.telemetry.update();
         //-0.30 for open
         //for bot #1
         offset = -0.3;
         launcher.setPosition(MID_SERVO + offset);
     }
     public void setLauncherDown(){
+        myOpMode.telemetry.addData("set launcher down", "goodbye");
+        myOpMode.telemetry.update();
         //.30 for closed
         //for bot #1
         offset = 0.60;
