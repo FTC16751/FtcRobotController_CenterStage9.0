@@ -12,6 +12,7 @@ package org.firstinspires.ftc.team23469.robot.utilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
@@ -37,9 +38,9 @@ public class LiftUtil {
     int maxPosition = 1000;;
 
     int liftLevelZero = 0;
-    int LiftLowPosition = 1785;
-    int LiftMidPosition = 3130;
-    int LiftHighPosition = 4262;
+    int LiftLowPosition = 560;
+    int LiftMidPosition = 1134;
+    int LiftHighPosition = 1660;
 
     HardwareMap hardwareMap =  null;
 
@@ -53,42 +54,38 @@ public class LiftUtil {
         // Save reference to Hardware map
         hardwareMap = ahwMap;
         leftLift = hardwareMap.get(DcMotor.class, "leftlift");
-        leftLift.setDirection(DcMotor.Direction.REVERSE);
+        leftLift.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        rightLift = hardwareMap.get(DcMotor.class, "rightlift");
-        rightLift.setDirection(DcMotor.Direction.REVERSE);
-        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void raiseToPosition(int positionLevel, Double targetSpeed) {
         if (positionLevel == 0)
         {
             //zero
-            rightLift.setTargetPosition(liftLevelZero);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setPower(1.0);
+            leftLift.setTargetPosition(liftLevelZero);
+            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftLift.setPower(1.0);
         }
         else if (positionLevel == 1)
         {
             //also low position
-            rightLift.setTargetPosition(LiftLowPosition);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setPower(1.0);
+            leftLift.setTargetPosition(LiftLowPosition);
+            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftLift.setPower(1.0);
         }
         else if (positionLevel == 2)
         {
-            rightLift.setTargetPosition(LiftMidPosition);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setPower(1.0);
+            leftLift.setTargetPosition(LiftMidPosition);
+            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftLift.setPower(1.0);
         }
         else if (positionLevel == 3)
         {
-            rightLift.setTargetPosition(LiftHighPosition);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setPower(1.0);
+            leftLift.setTargetPosition(LiftHighPosition);
+            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftLift.setPower(1.0);
         }
 
         else {
@@ -98,40 +95,42 @@ public class LiftUtil {
     }
 
     public void lockCurrentPosition() {
-        int currentPosition;
-        currentPosition = rightLift.getCurrentPosition();
-        rightLift.setTargetPosition(currentPosition);
-        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLift.setPower(1.0);
+        int leftCurrentPosition;
+        leftCurrentPosition = leftLift.getCurrentPosition();
+        leftLift.setTargetPosition(leftCurrentPosition);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setPower(1.0);
     }
 
     public void increasePosition(int increaseAmount) {
-        int currentPosition;
-        int newPosition;
-        currentPosition = rightLift.getCurrentPosition();
-        newPosition = currentPosition + increaseAmount;
-        changePosition(newPosition);
+
+        int LeftcurrentPosition;
+        int LeftnewPosition;
+        LeftcurrentPosition = leftLift.getCurrentPosition();
+        LeftnewPosition = LeftcurrentPosition + increaseAmount;
+        changePosition(LeftnewPosition);
     }
 
     public void decreasePosition(int decreaseAmount) {
-        int currentPosition;
-        int newPosition;
-        currentPosition = rightLift.getCurrentPosition();
-        newPosition = currentPosition - decreaseAmount;
-        changePosition(newPosition);
+
+        int LeftCurrentPosition;
+        int LeftnewPosition;
+        LeftCurrentPosition = leftLift.getCurrentPosition();
+        LeftnewPosition = LeftCurrentPosition - decreaseAmount;
+        changePosition(LeftnewPosition);
     }
 
     public void changePosition(int newPosition) {
-        rightLift.setTargetPosition(newPosition);
-        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLift.setPower(1.0);
+        leftLift.setTargetPosition(newPosition);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setPower(1.0);
     }
 
     public void setMotorPower(double v) {
-        if (rightLift.getCurrentPosition() <= maxPosition){
-            rightLift.setPower(v);
+        if (leftLift.getCurrentPosition() <= maxPosition){
+            leftLift.setPower(v);
         } else {
-            rightLift.setPower(0);
+            leftLift.setPower(0);
         }
     }
 
@@ -140,19 +139,19 @@ public class LiftUtil {
     }//StopArm
 
     public double getMotorPower() {
-        return rightLift.getPower();
+        return leftLift.getPower();
     }
 
     public int getMotorPosition() {
-        return rightLift.getCurrentPosition();
+        return leftLift.getCurrentPosition();
     }
 
     public void setMotorMode(int mode) {
-        if (mode == 1) rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if (mode == 2) rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (mode == 1) leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if (mode == 2) leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void resetEncoder(){
-        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }   //end program

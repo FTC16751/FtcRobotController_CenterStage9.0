@@ -119,10 +119,6 @@ public class DriveUtil2023 {
         //Set Drive Speed
         // DRIVE_SPEED = 1;    //1=Full Speed
 
-        // Retrieve and initialize the IMU.
-        // This sample expects the IMU to be in a REV Hub and named "imu".
-        imu = hardwareMap.get(IMU.class, "imu");
-
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
          *
@@ -132,6 +128,13 @@ public class DriveUtil2023 {
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
+
+        // Retrieve and initialize the IMU.
+        // This sample expects the IMU to be in a REV Hub and named "imu".
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        sleep(1000);
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
     }
@@ -397,7 +400,7 @@ public class DriveUtil2023 {
     public void rotateRight90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 45.5;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -507,7 +510,7 @@ public class DriveUtil2023 {
     public void rotateLeft90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56.8;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 45.5;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
