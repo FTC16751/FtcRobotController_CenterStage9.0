@@ -35,9 +35,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team23469.robot.utilities.DriveUtil2023;
 
-@Autonomous(name="Red Left Park", group="Robot")
+@Autonomous(name="Simple Park Red", group="Robot")
 
-public class RedLeftPark extends LinearOpMode {
+public class SimpleParkRed extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -51,9 +51,9 @@ public class RedLeftPark extends LinearOpMode {
         waitForStart();
 
         // Step through each leg of the path,
-        drive.driveRobotDistanceForward(100,.5);
+        drive.driveRobotDistanceForward(50,.5);
         drive.rotateRight90Degrees();
-        drive.driveRobotDistanceForward(160, .5);
+        drive.driveRobotDistanceForward(45, .5);
 
 
 

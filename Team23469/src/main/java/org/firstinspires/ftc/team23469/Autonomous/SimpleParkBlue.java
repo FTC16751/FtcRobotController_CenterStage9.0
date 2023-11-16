@@ -35,9 +35,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team23469.robot.utilities.DriveUtil2023;
 
-@Autonomous(name="Simple Park", group="Robot")
+@Autonomous(name="Simple Park Blue", group="Robot")
 
-public class SimplePark extends LinearOpMode {
+public class SimpleParkBlue extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -51,7 +51,10 @@ public class SimplePark extends LinearOpMode {
         waitForStart();
 
         // Step through each leg of the path,
-        drive.driveRobotDistanceForward(100,.75);
+        drive.driveRobotDistanceForward(50,.5);
+        // before only had code above w/ values 100 cm and .75 speed, added the next 2 lines
+        drive.rotateLeft90Degrees();
+        drive.driveRobotDistanceForward(45, .5);
 
 
 

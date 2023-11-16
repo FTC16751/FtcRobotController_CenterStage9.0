@@ -510,7 +510,7 @@ public class DriveUtil2023 {
     public void rotateLeft90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 45.5;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 48;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4

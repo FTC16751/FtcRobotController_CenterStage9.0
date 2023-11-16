@@ -51,9 +51,9 @@ public class BlueRightPark extends LinearOpMode {
         waitForStart();
 
         // Step through each leg of the path,
-        drive.driveRobotDistanceForward(87,.5);
+        drive.driveRobotDistanceForward(100,.5);
         drive.rotateLeft90Degrees();
-        drive.driveRobotDistanceForward(170, .5);
+        drive.driveRobotDistanceForward(160, .5);
 
 
 
