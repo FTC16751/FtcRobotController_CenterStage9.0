@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team16751.experiments;
+package org.firstinspires.ftc.team24030.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -35,7 +35,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -81,7 +80,7 @@ import java.util.List;
  * Once you put all your sensor reads at the beginning of the control cycle, it's very easy to use
  * the bulk-read AUTO mode to streamline your cycle timing.
  */
-@TeleOp (name = "Motor Bulk Reads", group = "Tests")
+@TeleOp (name = "Motor Bulk Reads2", group = "Tests")
 @Disabled
 public class ConceptMotorBulkRead extends LinearOpMode {
     enum State {
@@ -113,8 +112,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         // Important Step 1:  Make sure you use DcMotorEx when you instantiate your motors.
         m1 = hardwareMap.get(DcMotorEx.class, "Shoulder");  // Configure the robot to use these 4 motor names,
         m2 = hardwareMap.get(DcMotorEx.class, "Elbow");  // or change these strings to match your existing Robot Configuration.
-        m3 = hardwareMap.get(DcMotorEx.class, "m3");
-        m4 = hardwareMap.get(DcMotorEx.class, "m4");
+
 
         // Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -139,51 +137,10 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
         waitForStart();
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //encoderDrive(DRIVE_SPEED,  4,  0, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        // encoderDrive(DRIVE_SPEED, 4, 109, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
-
-        // --------------------------------------------------------------------------------------
-        // Run control loop using legacy encoder reads
-        // In this mode, a single read is done for each encoder position, and a bulk read is done for each velocity read.
-        // This is the worst case scenario.
-        // This is the same as using LynxModule.BulkCachingMode.OFF
-        // --------------------------------------------------------------------------------------
-
-        //displayCycleTimes("Test 1 of 3 (Wait for completion)");
-
         timer.reset();
         cycles = 0;
         while (opModeIsActive()) {
-/*
-            switch (state) {
-                case START:
-                    telemetry.addData("start state", "Finished");
-                    state = State.RAISE_ELBOW;
-                    break;
-                case RAISE_ELBOW:
-                    telemetry.addData("Elbow state", "Finished");
-                    encoderDrive(DRIVE_SPEED,  20,  0, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-                    //state= State.RAISE_SHOULDER;
-                    break;
-                case RAISE_SHOULDER:
-                    telemetry.addData("shoulder state", "Finished");
-                    if(m2.getCurrentPosition()==4) {
-                        encoderDrive(DRIVE_SPEED, 4, 109, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-                }
-                    break;
-                default:
-                    //m1.setPower(0);
-                    //m2.setPower(0);
-                    telemetry.addData("default state", "Finished");
-            }
 
- */
             e1 = m1.getCurrentPosition();
             e2 = m2.getCurrentPosition();
             v1 = m1.getVelocity();
@@ -196,80 +153,8 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
         }
 
-
-        // wait until op-mode is stopped by user, before clearing display.
-        while (opModeIsActive()) ;
     }
 
 
-    /*
-     *  Method to perform a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the OpMode running.
-     */
-
-   public void encoderDrive(double speed,
-                             int M1Target, int M2Target,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
-
-        // Ensure that the OpMode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = M1Target - m1.getCurrentPosition();
-            newRightTarget = M2Target - m2.getCurrentPosition();
-            m1.setTargetPosition(newLeftTarget);
-            m2.setTargetPosition(newRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            m1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            m2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            m1.setPower(Math.abs(speed));
-            m2.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (m1.isBusy() && m2.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d",
-                        m1.getCurrentPosition(), m2.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            m1.setPower(0);
-            m2.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            m1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            m2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            sleep(250);   // optional pause after each move.
-        }
-    }
-    // Display three comparison times.
-    void displayCycleTimes(String status) {
-        telemetry.addData("Testing", status);
-        telemetry.addData("Cache = OFF",    "%5.1f mS/cycle", t1);
-        telemetry.addData("Cache = AUTO",   "%5.1f mS/cycle", t2);
-        telemetry.addData("Cache = MANUAL", "%5.1f mS/cycle", t3);
-        telemetry.update();
-    }
 }
 

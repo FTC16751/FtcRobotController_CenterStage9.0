@@ -10,9 +10,12 @@
 
 package org.firstinspires.ftc.team16751.TeleOp;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
@@ -21,6 +24,11 @@ import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 public class DriverControl_CenterStage extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
 
+    /** The colorSensor field will contain a reference to our color sensor hardware object */
+    // NormalizedColorSensor colorSensor;
+    ColorSensor color;
+    DistanceSensor distanceSensor;
+    RevBlinkinLedDriver lights;
     int temp = 1;
     double DRIVE_SPEED = 1;
     double handOffset   = 0;

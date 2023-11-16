@@ -30,15 +30,18 @@
 package org.firstinspires.ftc.team24030.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team24030.robot.utilities.ClawUtil;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 
 @Autonomous(name="Coachbot new auto test", group="Robot")
-
+@Disabled
 public class RedLeftPark extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
+    ClawUtil claw = new ClawUtil(this);
     private ElapsedTime     runtime = new ElapsedTime();
 
     @Override
@@ -46,7 +49,8 @@ public class RedLeftPark extends LinearOpMode {
 
         /* initialize the robot hardware */
         drive.init(hardwareMap);
-
+        claw.init();
+        claw.setClawClosed();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 

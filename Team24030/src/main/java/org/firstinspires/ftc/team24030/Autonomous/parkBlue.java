@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
-import org.openftc.apriltag.AprilTagDetection;
 
 //@TeleOp
 @Autonomous(name="Simple Autonomous", group="Autonomous")
+@Disabled
 public class parkBlue extends LinearOpMode
 {
     DriveUtil2023 drive = new DriveUtil2023(this);

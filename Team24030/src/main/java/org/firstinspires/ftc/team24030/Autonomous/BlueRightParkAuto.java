@@ -51,11 +51,10 @@ public class BlueRightParkAuto extends LinearOpMode {
         waitForStart();
 
         // Step through each leg of the path,
-        drive.driveRobotDistanceForward(132,.75);
-
-        drive.turnToHeading(.4,90);
-
-        drive.driveRobotDistanceForward(250,.75);
+        drive.driveRobotDistanceForward(132,.5);
+        //drive.turnToHeading(.4,90);
+        drive.rotateLeft90Degrees();
+        drive.driveRobotDistanceForward(225,.5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
