@@ -38,7 +38,7 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
 
         //init external hardware classes
         drive.init(hardwareMap);
-        launcher.init();
+        //launcher.init();
         hanger.init(hardwareMap);
 
         //default drive move to 1 (arcade)
@@ -100,7 +100,7 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
             }
 
             /***end of set drive mode code */
-            doLauncher();
+            //doLauncher();
             doHanger();
 
         } //end OpModeIsActive

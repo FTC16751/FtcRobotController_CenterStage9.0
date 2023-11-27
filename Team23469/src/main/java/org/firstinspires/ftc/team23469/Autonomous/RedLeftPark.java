@@ -55,10 +55,6 @@ public class RedLeftPark extends LinearOpMode {
         drive.rotateRight90Degrees();
         drive.driveRobotDistanceForward(160, .5);
 
-
-
-
-
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
