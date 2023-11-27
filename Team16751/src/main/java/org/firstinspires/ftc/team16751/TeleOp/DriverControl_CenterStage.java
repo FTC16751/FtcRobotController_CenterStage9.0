@@ -17,13 +17,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
 
 @TeleOp(name="Driver Control Center Stage", group="Teleop")
 public class DriverControl_CenterStage extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
-
+    ArmUtil armUtil = new ArmUtil(this);
     /** The colorSensor field will contain a reference to our color sensor hardware object */
     // NormalizedColorSensor colorSensor;
     ColorSensor color;
@@ -43,7 +44,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
         //init external hardware classes
         drive.init(hardwareMap);
-
+        armUtil.init(hardwareMap);
         //default drive move to 1 (arcade)
         int driveMode = 1;
 
@@ -74,7 +75,23 @@ public class DriverControl_CenterStage extends LinearOpMode {
             if (gamepad1.b) {
                 drive.driveRobotStrafeRight(1.0);
             }
-
+            //Controls for Pre-set arm locations
+            if(gamepad2.dpad_up){
+                armUtil.raiseToPosition(3, 0.5);
+            }
+            //LowScore
+            if(gamepad2.dpad_down){
+                armUtil.raiseToPosition(1,0.5);
+            }
+            //Resting
+            if(gamepad2.dpad_right){
+                armUtil.raiseToPosition(2,0.5);
+            }
+            //Acquire
+            if(gamepad2.dpad_left){
+                armUtil.raiseToPosition(4,0.5);
+            }
+            //Transport (essentially the same as resting)
 
             /***************************************************************
              * Set Drive Mode

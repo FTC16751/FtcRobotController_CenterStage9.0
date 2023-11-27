@@ -113,13 +113,13 @@ public class ArmUtil {
             elbow.setTargetPosition(elbowLowScore);
             elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elbow.setPower(0.5);
-/*
+
             shoulder.setTargetPosition(shoulderLowScore);
             shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             shoulder.setPower(0.5);
 
 
- */
+
         }
       else if (positionLevel == 4)
         {
