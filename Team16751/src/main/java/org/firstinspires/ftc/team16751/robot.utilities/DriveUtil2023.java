@@ -128,8 +128,8 @@ public class DriveUtil2023 {
          *
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
@@ -397,7 +397,7 @@ public class DriveUtil2023 {
     public void rotateRight90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 62;//45.5;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -507,7 +507,7 @@ public class DriveUtil2023 {
     public void rotateLeft90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56.8;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 62;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -617,7 +617,7 @@ public class DriveUtil2023 {
     public void rotateRight45Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 62;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8
@@ -726,7 +726,7 @@ public class DriveUtil2023 {
     public void rotateLeft45Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56.8;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 62;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8

@@ -35,7 +35,7 @@ public class LiftUtil {
     DcMotor leftLift;
     int liftPosition;
     int minPosition = 0;
-    int maxPosition = 1000;;
+    int maxPosition = 2000;;
 
     int liftLevelZero = 0;
     int LiftLowPosition = 560;
@@ -58,6 +58,10 @@ public class LiftUtil {
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        rightLift = hardwareMap.get(DcMotor.class, "rightlift");
+        rightLift.setDirection(DcMotor.Direction.REVERSE);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void raiseToPosition(int positionLevel, Double targetSpeed) {
@@ -67,6 +71,9 @@ public class LiftUtil {
             leftLift.setTargetPosition(liftLevelZero);
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftLift.setPower(1.0);
+            rightLift.setTargetPosition(liftLevelZero);
+            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightLift.setPower(1.0);
         }
         else if (positionLevel == 1)
         {
@@ -74,18 +81,27 @@ public class LiftUtil {
             leftLift.setTargetPosition(LiftLowPosition);
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftLift.setPower(1.0);
+            rightLift.setTargetPosition(LiftLowPosition);
+            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightLift.setPower(1.0);
         }
         else if (positionLevel == 2)
         {
             leftLift.setTargetPosition(LiftMidPosition);
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftLift.setPower(1.0);
+            rightLift.setTargetPosition(LiftMidPosition);
+            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightLift.setPower(1.0);
         }
         else if (positionLevel == 3)
         {
             leftLift.setTargetPosition(LiftHighPosition);
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftLift.setPower(1.0);
+            rightLift.setTargetPosition(LiftHighPosition);
+            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightLift.setPower(1.0);
         }
 
         else {
@@ -100,15 +116,25 @@ public class LiftUtil {
         leftLift.setTargetPosition(leftCurrentPosition);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLift.setPower(1.0);
+        int rightCurrentPosition;
+        rightCurrentPosition = rightLift.getCurrentPosition();
+        rightLift.setTargetPosition(leftCurrentPosition);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setPower(1.0);
     }
 
     public void increasePosition(int increaseAmount) {
-
         int LeftcurrentPosition;
         int LeftnewPosition;
         LeftcurrentPosition = leftLift.getCurrentPosition();
         LeftnewPosition = LeftcurrentPosition + increaseAmount;
         changePosition(LeftnewPosition);
+
+        int RightcurrentPosition;
+        int RightnewPosition;
+        RightcurrentPosition = rightLift.getCurrentPosition();
+        RightnewPosition = RightcurrentPosition + increaseAmount;
+        changePosition(RightnewPosition);
     }
 
     public void decreasePosition(int decreaseAmount) {
@@ -118,12 +144,22 @@ public class LiftUtil {
         LeftCurrentPosition = leftLift.getCurrentPosition();
         LeftnewPosition = LeftCurrentPosition - decreaseAmount;
         changePosition(LeftnewPosition);
+
+        int RightcurrentPosition;
+        int RightnewPosition;
+        RightcurrentPosition = rightLift.getCurrentPosition();
+        RightnewPosition = RightcurrentPosition - decreaseAmount;
+        changePosition(RightnewPosition);
     }
 
     public void changePosition(int newPosition) {
         leftLift.setTargetPosition(newPosition);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLift.setPower(1.0);
+
+        rightLift.setTargetPosition(newPosition);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setPower(1.0);
     }
 
     public void setMotorPower(double v) {
@@ -131,6 +167,12 @@ public class LiftUtil {
             leftLift.setPower(v);
         } else {
             leftLift.setPower(0);
+        }
+
+        if (rightLift.getCurrentPosition() <= maxPosition){
+            rightLift.setPower(v);
+        } else {
+            rightLift.setPower(0);
         }
     }
 
@@ -153,5 +195,6 @@ public class LiftUtil {
 
     public void resetEncoder(){
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }   //end program

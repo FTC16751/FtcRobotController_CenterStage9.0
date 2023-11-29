@@ -9,6 +9,7 @@ import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name="Simple Autonomous", group="Autonomous")
+@Disabled
 public class parkBlue extends LinearOpMode
 {
     DriveUtil2023 drive = new DriveUtil2023(this);

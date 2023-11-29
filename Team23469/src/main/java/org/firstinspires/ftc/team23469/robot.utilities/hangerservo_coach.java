@@ -27,53 +27,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team24030.robot.utilities;
+package org.firstinspires.ftc.team23469.robot.utilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-public class ClawUtil {
+
+public class hangerservo_coach {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    private Servo claw = null;
+    private Servo launcher = null;
+
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.0;
+    public static final double MID_SERVO       =  0.5 ;
     public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
     public static       double offset = 0.0;
     // Define a constructor that allows the OpMode to pass a reference to itself.
-    public ClawUtil(LinearOpMode opmode) {
+    public hangerservo_coach(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
+    /**
+     * Initialize all the robot's hardware.
+     * This method must be called ONCE when the OpMode is initialized.
+     *
+     * All of the hardware devices are accessed via the hardware map, and initialized.
+     */
     public void init()    {
 
         // Define and initialize ALL installed servos.
-        claw = myOpMode.hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(MID_SERVO);
+        launcher = myOpMode.hardwareMap.get(Servo.class, "launcher");
+        launcher.setPosition(MID_SERVO);
+
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
     }
 
-    public void setHandPositions(double offset) {
-        offset = Range.clip(offset, -0.3, 0.02);
-        claw.setPosition(MID_SERVO + offset);
-    }
-    public void setClawOpen() {
+    public void setLauncherUp() {
+        myOpMode.telemetry.addData("set launcher up", "Hello im here");
+        myOpMode.telemetry.update();
         //-0.30 for open
         //for bot #1
-        offset = 0.020;
-        claw.setPosition(.45);
+        offset = -0.3;
+        launcher.setPosition(MID_SERVO + offset);
     }
-
-    public void setClawClosed(){
+    public void setLauncherDown(){
+        myOpMode.telemetry.addData("set launcher down", "goodbye");
+        myOpMode.telemetry.update();
         //.30 for closed
         //for bot #1
-        offset = -0.30;
-        claw.setPosition(.1);
+        offset = 0.60;
+        launcher.setPosition(MID_SERVO + offset);
     }
+    public void setLauncherPositions(double offset) {
+        offset = Range.clip(offset, -0.3, 0.02);
+        launcher.setPosition(MID_SERVO + offset);
+    }
+
+
 }

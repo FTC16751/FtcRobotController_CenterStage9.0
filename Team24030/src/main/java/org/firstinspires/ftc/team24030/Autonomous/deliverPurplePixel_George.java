@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.team24030.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 
 @Autonomous(name="Deliver Purple Pixel George", group="Autonomous")
+@Disabled
 public class deliverPurplePixel_George extends LinearOpMode
 {
     DriveUtil2023 drive = new DriveUtil2023(this);

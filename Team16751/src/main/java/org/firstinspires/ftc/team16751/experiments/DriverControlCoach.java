@@ -8,21 +8,23 @@
 
  */
 
-package org.firstinspires.ftc.team24030.TeleOp;
+package org.firstinspires.ftc.team16751.experiments;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-import org.firstinspires.ftc.team24030.robot.utilities.ClawUtil;
-import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
+import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
 
-@TeleOp(name="Driver Control Center Stage", group="Teleop")
-public class DriverControl_CenterStage extends LinearOpMode {
+@TeleOp(name="Testing Testing", group="Teleop")
+@Disabled
+public class DriverControlCoach extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
-    ClawUtil claw = new ClawUtil(this);
+
 
     int temp = 1;
     double DRIVE_SPEED = 1;
@@ -47,8 +49,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
         PICK,
         TRANSPORT,
         SCORE,
-        STOP,
-        MANUAL
+        STOP
     }
 
     ArmState state = ArmState.START;
@@ -63,29 +64,29 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
         //init external hardware classes
         drive.init(hardwareMap);
-        claw.init();
+
 
         ElbowArm = hardwareMap.get(DcMotor.class, "Elbow");
-        ElbowArm.setDirection(DcMotor.Direction.FORWARD);
+        ElbowArm.setDirection(DcMotor.Direction.REVERSE);
         int minPosition = 0;
         int maxPosition = (int)(12000);
         elbowStowPosition = (int)(0);
-        elbowPosition1 = (int)(500);
+        elbowPosition1 = (int)(100);
         elbowPosition2 = (int)(0);
-        elbowPosition3 = (int)(11311);
+        elbowPosition3 = (int)(100);
 
         ShoulderArm = hardwareMap.get(DcMotor.class, "Shoulder");
         ShoulderArm.setDirection(DcMotor.Direction.FORWARD);
         int ShoulderminPosition = 0;
         int ShouldermaxPosition = (int)(500);
         shoulderStowPosition = (int)(0);
-        shoulderPosition1 = (int)(100);
-        shoulderPosition2 = (int)(300);
-        shoulderPosition3 = (int)(350);
+        shoulderPosition1 = (int)(20);
+        shoulderPosition2 = (int)(20);
+        shoulderPosition3 = (int)(20);
 
         //default drive move to 1 (arcade)
         int driveMode = 1;
-        claw.setClawOpen();
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -143,20 +144,76 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
             /***end of set drive mode code */
             if (gamepad2.left_bumper){
-                claw.setClawOpen();
+
             } else {// continue looping//
             }
 
             if (gamepad2.right_bumper){
-                claw.setClawClosed();
+
             }else {// continue looping
+            }
+/*
+            //ELBOW ARM CODE
+            if(gamepad2.dpad_left && ElbowArm.getCurrentPosition() < maxPosition){
+                elbowPosition = elbowPosition1;
+                ElbowArm.setTargetPosition(elbowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1);
+            }
+            if(gamepad2.dpad_up && ElbowArm.getCurrentPosition() < maxPosition){
+                elbowPosition = elbowPosition2;
+                ElbowArm.setTargetPosition(elbowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1);
+
+            }
+            if(gamepad2.dpad_right && ElbowArm.getCurrentPosition() < maxPosition){
+                elbowPosition = elbowPosition3;
+                ElbowArm.setTargetPosition(elbowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1);
+
+            }
+            if (gamepad2.dpad_down && ElbowArm.getCurrentPosition() > minPosition){
+                elbowPosition = elbowStowPosition;
+                ElbowArm.setTargetPosition(elbowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1);
             }
 
 
+            //Shoulder ARM CODE
+            if(gamepad2.x && ShoulderArm.getCurrentPosition() < ShouldermaxPosition){
+                shoulderPosition = shoulderPosition1;
+                ShoulderArm.setTargetPosition(shoulderPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1);
+            }
+            if(gamepad2.y && ShoulderArm.getCurrentPosition() < ShouldermaxPosition){
+                shoulderPosition = shoulderPosition2;
+                ShoulderArm.setTargetPosition(shoulderPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1);
+
+            }
+            if(gamepad2.b && ShoulderArm.getCurrentPosition() < ShouldermaxPosition){
+                shoulderPosition = shoulderPosition3;
+                ShoulderArm.setTargetPosition(shoulderPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1);
+
+            }
+            if (gamepad2.a && ShoulderArm.getCurrentPosition() > minPosition){
+                shoulderPosition = shoulderStowPosition;
+                ShoulderArm.setTargetPosition(shoulderPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1);
+            }
+
+ */
             switch (state) {
                 case START:
-                    telemetry.addData("State", "Start");
-                    //claw.setClawOpen();
+
                     shoulderPosition = shoulderStowPosition;
                     ShoulderArm.setTargetPosition(shoulderPosition);
                     ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -178,22 +235,18 @@ public class DriverControl_CenterStage extends LinearOpMode {
                     else if (gamepad2.dpad_down) {
                         state = ArmState.STOP;
                     }
-                    else if (gamepad2.back) {
-                        state = ArmState.MANUAL;
-                    }
                     else {}
                     break;
                 case ACQUIRE:
-                    telemetry.addData("State", "Aquire");
                     shoulderPosition = shoulderPosition1;
                     ShoulderArm.setTargetPosition(shoulderPosition);
                     ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     ShoulderArm.setPower(1);
 
                     elbowPosition = elbowPosition1;
-                    ElbowArm.setTargetPosition(elbowPosition);
-                    ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    ElbowArm.setPower(1);
+                   // ElbowArm.setTargetPosition(elbowPosition);
+                   // ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                   // ElbowArm.setPower(1);
 
                     if ((ShoulderArm.getCurrentPosition() >= shoulderPosition-1
                         && ShoulderArm.getCurrentPosition() <= shoulderPosition+1)
@@ -219,7 +272,6 @@ public class DriverControl_CenterStage extends LinearOpMode {
                     else {}
                     break;
                 case TRANSPORT:
-                    telemetry.addData("State", "Transport");
                     shoulderPosition = shoulderPosition2;
                     ShoulderArm.setTargetPosition(shoulderPosition);
                     ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -246,7 +298,6 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
                     break;
                 case SCORE:
-                    telemetry.addData("State", "Score");
                     shoulderPosition = shoulderPosition3;
                     ShoulderArm.setTargetPosition(shoulderPosition);
                     ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -268,14 +319,11 @@ public class DriverControl_CenterStage extends LinearOpMode {
                     }
                     else if (gamepad2.dpad_down) {
                         state = ArmState.STOP;
-                    } else if (gamepad2.back) {
-                        state = ArmState.MANUAL;
                     }
                     else {}
 
                     break;
                 case STOP:
-                    telemetry.addData("State", "Stop");
                     elbowPosition = elbowStowPosition;
                     ElbowArm.setTargetPosition(elbowPosition);
                     ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -306,36 +354,8 @@ public class DriverControl_CenterStage extends LinearOpMode {
                     else {}
 
                     break;
-                case MANUAL:
-                    telemetry.addData("State", "Manual");
-                    //ElbowArm.setPower(-gamepad2.left_stick_y);
-                    if (gamepad2.x) {
-                        int currentPosition;
-                        int newPosition;
-                        currentPosition = ElbowArm.getCurrentPosition();
-                        newPosition = currentPosition - 100;
-                        ElbowArm.setTargetPosition(newPosition);
-                        ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        ElbowArm.setPower(0.7);
-                    } else if (gamepad2.b) {
-                        int currentPosition;
-                        int newPosition;
-                        currentPosition = ElbowArm.getCurrentPosition();
-                        newPosition = currentPosition + 100;
-                        ElbowArm.setTargetPosition(newPosition);
-                        ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        ElbowArm.setPower(0.7);
-                    } else {
-                        ElbowArm.setPower(0);
-                    }
-                    if (gamepad2.start) {
-                        state = ArmState.START;
-                    }
-                    break;
                 default:
-                    telemetry.addData("State", "Default");
-                    break;
-
+                    telemetry.addData("State", "Finished");
             }
             telemetry.addData("Arm Test current position", ElbowArm.getCurrentPosition());
             telemetry.addData("elbow minposition ", minPosition);

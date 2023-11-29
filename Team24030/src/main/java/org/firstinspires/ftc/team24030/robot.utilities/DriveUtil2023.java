@@ -12,7 +12,6 @@ package org.firstinspires.ftc.team24030.robot.utilities;
 
 import static android.os.SystemClock.sleep;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -397,7 +396,7 @@ public class DriveUtil2023 {
     public void rotateRight90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -507,7 +506,7 @@ public class DriveUtil2023 {
     public void rotateLeft90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56.8;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -617,7 +616,7 @@ public class DriveUtil2023 {
     public void rotateRight45Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8
@@ -726,7 +725,7 @@ public class DriveUtil2023 {
     public void rotateLeft45Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 56.8;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8

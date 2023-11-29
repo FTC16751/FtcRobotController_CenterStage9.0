@@ -53,10 +53,6 @@ public class SimplePark extends LinearOpMode {
         // Step through each leg of the path,
         drive.driveRobotDistanceForward(100,.75);
 
-
-
-
-
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
