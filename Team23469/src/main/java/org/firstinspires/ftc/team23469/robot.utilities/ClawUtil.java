@@ -86,7 +86,7 @@ public class ClawUtil {
         //for bot #1
         offset = 0.020;
         leftHand.setPosition(MID_SERVO + offset);
-        rightHand.setPosition(MID_SERVO - offset);
+        // rightHand.setPosition(MID_SERVO - offset);
     }
 
     public void setClawClosed(){
@@ -94,7 +94,7 @@ public class ClawUtil {
         //for bot #1
         offset = -0.30;
         leftHand.setPosition(MID_SERVO + offset);
-        rightHand.setPosition(MID_SERVO - offset);
+      //  rightHand.setPosition(MID_SERVO - offset);
     }
     public void setWristUp() {
         //for bot #1
