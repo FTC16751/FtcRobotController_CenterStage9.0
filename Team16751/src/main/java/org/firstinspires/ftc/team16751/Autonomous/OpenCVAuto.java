@@ -3,7 +3,9 @@ package org.firstinspires.ftc.team16751.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.TeamElementSubsystem;
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
@@ -27,13 +29,17 @@ public class OpenCVAuto extends LinearOpMode {
         driveUtil2023.init(hardwareMap);
         telemetry.addData("Object Creation", "Done");
         telemetry.update();
+
     }
 
 
     public void runOpMode() {
 
         HardwareStart();
-
+        ArmUtil armUtil = new ArmUtil(this);
+        armUtil.init(hardwareMap);
+        telemetry.addData("Object Creation", "Done");
+        telemetry.update();
         String curAlliance = "red";
 
         while (!opModeIsActive() && !isStopRequested()) {
@@ -62,6 +68,7 @@ public class OpenCVAuto extends LinearOpMode {
             telemetry.addData("Object", "Passed waitForStart");
 
             telemetry.update();
+            armUtil.raiseToPosition(2,0.5);
 
         }
       //  while(opModeIsActive()&& !isStopRequested()){
@@ -75,6 +82,9 @@ public class OpenCVAuto extends LinearOpMode {
                 driveUtil2023.driveRobotDistanceForward(40,0.5);
                 driveUtil2023.rotateLeft90Degrees();
                 driveUtil2023.driveRobotDistanceForward(75,0.5);
+                armUtil.raiseToPosition(3,0.5);
+                armUtil.raiseToPosition(0,0.5);
+
 
             }
             else if(element_zone==2){
@@ -82,6 +92,8 @@ public class OpenCVAuto extends LinearOpMode {
                 driveUtil2023.driveRobotDistanceBackward(15,0.5);
                 driveUtil2023.rotateLeft90Degrees();
                 driveUtil2023.driveRobotDistanceForward(194.38,0.5);
+                armUtil.raiseToPosition(3,0.5);
+                armUtil.raiseToPosition(0,0.5);
                 driveUtil2023.driveRobotDistanceStrafeRight(75,0.5);
                 driveUtil2023.driveRobotDistanceForward(20,0.5);
             }
@@ -90,6 +102,10 @@ public class OpenCVAuto extends LinearOpMode {
                 driveUtil2023.rotateRight90Degrees();
                 driveUtil2023.driveRobotDistanceForward(6,0.5);
                 driveUtil2023.driveRobotDistanceBackward(100,0.5);
+                driveUtil2023.rotateLeft90Degrees();
+                driveUtil2023.rotateLeft90Degrees();
+                armUtil.raiseToPosition(3,0.5);
+                armUtil.raiseToPosition(0,0.5);
             }
             else {
         }

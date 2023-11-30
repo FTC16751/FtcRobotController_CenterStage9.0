@@ -13,20 +13,34 @@ package org.firstinspires.ftc.team23469.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.team23469.robot.utilities.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.DriveUtil2023;
 import org.firstinspires.ftc.team23469.robot.utilities.HangerUtil;
+import org.firstinspires.ftc.team23469.robot.utilities.LiftUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.launcherUtil;
 
 
 @TeleOp(name="Driver Control Center Stage Test", group="Teleop")
-public class DriverControl_CenterStageTEST extends LinearOpMode {
+public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     launcherUtil launcher = new launcherUtil(this);
     HangerUtil hanger = new HangerUtil(this);
+    ClawUtil claw = new ClawUtil(this);
+    LiftUtil lift = new LiftUtil(this);
 
     int temp = 1;
     double DRIVE_SPEED = 1;
     double handOffset   = 0;
+
+    enum ClawState {
+        OPEN,
+        CLOSE
+    }
+
+
+    ClawState clawstate = ClawState.OPEN;
+    ClawUtil.WristState wriststate = ClawUtil.WristState.DOWN;
+
     //subclass is replacing inherited behavior.
     @Override
 
@@ -39,6 +53,9 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
         //init external hardware classes
         drive.init(hardwareMap);
         launcher.init();
+        claw.init();
+        hanger.init(hardwareMap);
+        lift.init(hardwareMap);
 
         //default drive move to 1 (arcade)
         int driveMode = 1;
@@ -99,7 +116,45 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
             }
 
             /***end of set drive mode code */
-            doLauncher();
+            //doLauncher();
+            doClaw();
+            doLift();
+            //doHanger();
+            //toggleWrist();
+            switch (wriststate) {
+                case DOWN:
+                    claw.toggleWrist(ClawUtil.WristState.DOWN);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.GRAB;
+                    }
+                    else {}
+                    break;
+                case GRAB:
+                    claw.toggleWrist(ClawUtil.WristState.GRAB);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.CARRY;
+                    }
+                    else {}
+                    break;
+                case CARRY:
+                    claw.toggleWrist(ClawUtil.WristState.CARRY);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.SCORE;
+                    }
+                    else {}
+                    break;
+                case SCORE:
+                    claw.toggleWrist(ClawUtil.WristState.SCORE);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.DOWN;
+                    }
+                    else {}
+                    break;
+                default:
+                    telemetry.addData("State", "Default");
+                    break;
+
+            }
 
         } //end OpModeIsActive
     }  //end runOpMode
@@ -112,10 +167,6 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
         drive.arcadeDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y, DRIVE_SPEED);
     }
     public void doLauncher() {
-        // Use gamepad left & right Bumpers to open and close the claw
-        // Use the SERVO constants defined in RobotHardware class.
-        // Each time around the loop, the servos will move by a small amount.
-        // Limit the total offset to half of the full travel range
         if (gamepad2.left_bumper) {
             launcher.setLauncherUp();
 
@@ -129,8 +180,103 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
     }
 
     public void doHanger() {
-        if (gamepad2.dpad_up)hanger.raiseToPosition(2, 0.25);
-        if (gamepad2.dpad_down)hanger.raiseToPosition(1, 0.25);
-        if (gamepad2.dpad_left)hanger.raiseToPosition(0, 0.25);
+        if (gamepad2.x)hanger.raiseToPosition(2, 0.25);
+        if (gamepad2.y)hanger.raiseToPosition(1, 0.25);
+        if (gamepad2.b)hanger.raiseToPosition(0, 0.25);
+    }
+
+    public void doClaw() {
+        if (gamepad2.left_bumper){
+            if (clawstate == ClawState.OPEN) {
+                claw.setClawClosed();
+                clawstate = ClawState.CLOSE;
+            }
+            else if (clawstate == ClawState.CLOSE) {
+                claw.setClawOpen();
+                clawstate = ClawState.OPEN;
+            }
+            else {}
+        }
+        /*
+        switch (clawstate) {
+            case OPEN:
+                claw.setClawOpen();
+                if (gamepad2.left_bumper) clawstate = ClawState.CLOSE;
+                else clawstate = ClawState.OPEN;
+               // sleep(1000);
+                break;
+            case CLOSE:
+                claw.setClawClosed();
+                //sleep(1000);
+                if (gamepad2.left_bumper) clawstate = ClawState.OPEN;
+                else clawstate = ClawState.CLOSE;
+                //sleep(1000);
+
+                break;
+            default:
+                break;
+        }
+
+         */
+    }
+    public void doLift() {
+        //--------------------------------------------------------------------------
+        // code for the arm motor
+        // Sets arm to set levels depending on button push (requires encoders)
+        //--------------------------------------------------------------------------
+        double armPower;
+
+        //Lowers lift all the way down
+        if (gamepad2.dpad_down) {
+            lift.raiseToPosition(0,1.0);
+            claw.setWristGrab();
+        }
+
+        //low score
+        if(gamepad2.dpad_left) {
+            lift.raiseToPosition(1,1.0);
+            claw.setWristScore();
+        }
+        //mid score
+        if(gamepad2.dpad_up) lift.raiseToPosition(2,0.25);
+        //high core
+        if(gamepad2.dpad_right) lift.raiseToPosition(3,0.25);
+    }
+
+    public void toggleWrist() {
+        switch (wriststate) {
+            case DOWN:
+                claw.toggleWrist(ClawUtil.WristState.DOWN);
+                if (gamepad2.right_bumper) {
+                    wriststate = ClawUtil.WristState.GRAB;
+                }
+                else {}
+                break;
+            case GRAB:
+                claw.toggleWrist(ClawUtil.WristState.GRAB);
+                if (gamepad2.right_bumper) {
+                    wriststate = ClawUtil.WristState.CARRY;
+                }
+                else {}
+                break;
+            case CARRY:
+                claw.toggleWrist(ClawUtil.WristState.CARRY);
+                if (gamepad2.right_bumper) {
+                    wriststate = ClawUtil.WristState.SCORE;
+                }
+                else {}
+                break;
+            case SCORE:
+                claw.toggleWrist(ClawUtil.WristState.SCORE);
+                if (gamepad2.right_bumper) {
+                    wriststate = ClawUtil.WristState.DOWN;
+                }
+                else {}
+                break;
+            default:
+                telemetry.addData("State", "Default");
+                break;
+
+        }
     }
 } //end program

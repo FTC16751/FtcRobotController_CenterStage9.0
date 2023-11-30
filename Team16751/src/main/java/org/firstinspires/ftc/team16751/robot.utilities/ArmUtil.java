@@ -40,11 +40,11 @@ public class ArmUtil {
 
 
     //The following below reads the positions for the elbow joint (joint #2)
-    int elbowRest = (int)(-2); //POSITION 1
+    int elbowRest = (int)(2); //POSITION 1
     int shoulderRest = (int)(0);
-    int elbowAcquire = 19; //POSITION 2
+    int elbowAcquire = -19; //POSITION 2
     int shoulderAcquire = 104;
-    int elbowLowScore = 100;//125;//POSITION 3
+    int elbowLowScore = -100;//125;//POSITION 3
     int shoulderLowScore = 82;
     int elbowTransport = 0;//POSITION 4
 

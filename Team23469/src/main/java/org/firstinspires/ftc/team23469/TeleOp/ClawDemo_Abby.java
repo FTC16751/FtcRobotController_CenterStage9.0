@@ -13,10 +13,7 @@ package org.firstinspires.ftc.team23469.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.team23469.robot.utilities.ClawUtil;
-import org.firstinspires.ftc.team23469.robot.utilities.DriveUtil2023;
-import org.firstinspires.ftc.team23469.robot.utilities.launcherUtil;
 
 
 @TeleOp(name="Claw Demo", group="Teleop")
@@ -55,7 +52,7 @@ public class ClawDemo_Abby extends LinearOpMode {
         else {// continue looping
         }
         if (gamepad2.y){
-            claw.setWristUp();
+            claw.setWristGrab();
         }
         else {// continue looping//
         }if (gamepad2.a){
