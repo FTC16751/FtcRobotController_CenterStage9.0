@@ -18,7 +18,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.HangerUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.launcherUtil;
 
 
-@TeleOp(name="Driver Control Hanger Test", group="Teleop")
+@TeleOp(name="Driver Control Center Stage Test", group="Teleop")
 public class DriverControl_CenterStageTEST extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     launcherUtil launcher = new launcherUtil(this);
@@ -38,8 +38,7 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
 
         //init external hardware classes
         drive.init(hardwareMap);
-        //launcher.init();
-        hanger.init(hardwareMap);
+        launcher.init();
 
         //default drive move to 1 (arcade)
         int driveMode = 1;
@@ -100,8 +99,7 @@ public class DriverControl_CenterStageTEST extends LinearOpMode {
             }
 
             /***end of set drive mode code */
-            //doLauncher();
-            doHanger();
+            doLauncher();
 
         } //end OpModeIsActive
     }  //end runOpMode
