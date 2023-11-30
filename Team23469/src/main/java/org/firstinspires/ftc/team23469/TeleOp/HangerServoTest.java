@@ -56,9 +56,9 @@ public class HangerServoTest extends LinearOpMode {
         } else if (gamepad2.y) {
             hangerservo.setServoPosition(-.3);
         } else if (gamepad2.b) {
-            hangerservo.setServoPosition(.6);
+            hangerservo.setServoPosition(1);
         } else if (gamepad2.a) {
-            hangerservo.setServoPosition(-.6);
+            hangerservo.setServoPosition(-1);
         } else { }
     }
 

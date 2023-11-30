@@ -44,11 +44,10 @@ public class hangerServoUtil {
 
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
+    public static final double MID_SERVO       =  0.0;
     public static       double offset = 0.0;
-    public static double upPosition = -0.2;
-    public static double downPosition = 0.7;
+    public static double upPosition = 0.65;
+    public static double downPosition = 0.0;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public hangerServoUtil(LinearOpMode opmode) {
@@ -82,8 +81,9 @@ public class hangerServoUtil {
         launcher.setPosition(downPosition);
     }
     public void setServoPosition(double offset) {
-        offset = Range.clip(offset, -0.3, 0.02);
-        launcher.setPosition(MID_SERVO + offset);
+        launcher.setDirection(Servo.Direction.REVERSE);
+        //offset = Range.clip(offset, -0.3, 0.02);
+        launcher.setPosition(offset);
     }
 
 
