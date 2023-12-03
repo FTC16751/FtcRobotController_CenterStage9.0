@@ -12,6 +12,7 @@ package org.firstinspires.ftc.team23469.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.team23469.robot.utilities.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.DriveUtil2023;
@@ -21,22 +22,25 @@ import org.firstinspires.ftc.team23469.robot.utilities.launcherUtil;
 
 
 @TeleOp(name="Driver Control Center Stage Test", group="Teleop")
-public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
+    public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     launcherUtil launcher = new launcherUtil(this);
     HangerUtil hanger = new HangerUtil(this);
     ClawUtil claw = new ClawUtil(this);
     LiftUtil lift = new LiftUtil(this);
-
+    boolean intakeToggle = false;
+    boolean wristToggle = false;
     int temp = 1;
     double DRIVE_SPEED = 1;
     double handOffset   = 0;
-
+    Gamepad currentGamepad1 = new Gamepad();
+    Gamepad currentGamepad2 = new Gamepad();
+    Gamepad previousGamepad1 = new Gamepad();
+    Gamepad previousGamepad2 = new Gamepad();
     enum ClawState {
         OPEN,
         CLOSE
     }
-
 
     ClawState clawstate = ClawState.OPEN;
     ClawUtil.WristState wriststate = ClawUtil.WristState.DOWN;
@@ -69,6 +73,20 @@ public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
          * Runs continous until "STOP" pressed on Driver Station
          ***************************************************************/
         while (opModeIsActive()) {
+            // Store the gamepad values from the previous loop iteration in
+            // previousGamepad1/2 to be used in this loop iteration.
+            // This is equivalent to doing this at the end of the previous
+            // loop iteration, as it will run in the same order except for
+            // the first/last iteration of the loop.
+            previousGamepad1.copy(currentGamepad1);
+            previousGamepad2.copy(currentGamepad2);
+
+            // Store the gamepad values from this loop iteration in
+            // currentGamepad1/2 to be used for the entirety of this loop iteration.
+            // This prevents the gamepad values from changing between being
+            // used and stored in previousGamepad1/2.
+            currentGamepad1.copy(gamepad1);
+            currentGamepad2.copy(gamepad2);
 
             //Set driver speed as a percentage of full (normally set to full)
             if (gamepad1.right_bumper & gamepad1.left_bumper) {
@@ -121,40 +139,7 @@ public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
             doLift();
             //doHanger();
             //toggleWrist();
-            switch (wriststate) {
-                case DOWN:
-                    claw.toggleWrist(ClawUtil.WristState.DOWN);
-                    if (gamepad2.right_bumper) {
-                        wriststate = ClawUtil.WristState.GRAB;
-                    }
-                    else {}
-                    break;
-                case GRAB:
-                    claw.toggleWrist(ClawUtil.WristState.GRAB);
-                    if (gamepad2.right_bumper) {
-                        wriststate = ClawUtil.WristState.CARRY;
-                    }
-                    else {}
-                    break;
-                case CARRY:
-                    claw.toggleWrist(ClawUtil.WristState.CARRY);
-                    if (gamepad2.right_bumper) {
-                        wriststate = ClawUtil.WristState.SCORE;
-                    }
-                    else {}
-                    break;
-                case SCORE:
-                    claw.toggleWrist(ClawUtil.WristState.SCORE);
-                    if (gamepad2.right_bumper) {
-                        wriststate = ClawUtil.WristState.DOWN;
-                    }
-                    else {}
-                    break;
-                default:
-                    telemetry.addData("State", "Default");
-                    break;
 
-            }
 
         } //end OpModeIsActive
     }  //end runOpMode
@@ -186,6 +171,18 @@ public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
     }
 
     public void doClaw() {
+        // Rising edge detector
+        if (currentGamepad1.a && !previousGamepad1.a) {
+            intakeToggle = !intakeToggle;
+        }
+        if (intakeToggle) {
+            claw.setClawClosed();
+        }
+        else {
+            claw.setClawOpen();
+        }
+
+/*
         if (gamepad2.left_bumper){
             if (clawstate == ClawState.OPEN) {
                 claw.setClawClosed();
@@ -197,27 +194,7 @@ public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
             }
             else {}
         }
-        /*
-        switch (clawstate) {
-            case OPEN:
-                claw.setClawOpen();
-                if (gamepad2.left_bumper) clawstate = ClawState.CLOSE;
-                else clawstate = ClawState.OPEN;
-               // sleep(1000);
-                break;
-            case CLOSE:
-                claw.setClawClosed();
-                //sleep(1000);
-                if (gamepad2.left_bumper) clawstate = ClawState.OPEN;
-                else clawstate = ClawState.CLOSE;
-                //sleep(1000);
-
-                break;
-            default:
-                break;
-        }
-
-         */
+*/
     }
     public void doLift() {
         //--------------------------------------------------------------------------
@@ -244,39 +221,47 @@ public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
     }
 
     public void toggleWrist() {
-        switch (wriststate) {
-            case DOWN:
-                claw.toggleWrist(ClawUtil.WristState.DOWN);
-                if (gamepad2.right_bumper) {
-                    wriststate = ClawUtil.WristState.GRAB;
-                }
-                else {}
-                break;
-            case GRAB:
-                claw.toggleWrist(ClawUtil.WristState.GRAB);
-                if (gamepad2.right_bumper) {
-                    wriststate = ClawUtil.WristState.CARRY;
-                }
-                else {}
-                break;
-            case CARRY:
-                claw.toggleWrist(ClawUtil.WristState.CARRY);
-                if (gamepad2.right_bumper) {
-                    wriststate = ClawUtil.WristState.SCORE;
-                }
-                else {}
-                break;
-            case SCORE:
-                claw.toggleWrist(ClawUtil.WristState.SCORE);
-                if (gamepad2.right_bumper) {
-                    wriststate = ClawUtil.WristState.DOWN;
-                }
-                else {}
-                break;
-            default:
-                telemetry.addData("State", "Default");
-                break;
-
+        // Rising edge detector
+        if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
+            wristToggle = !wristToggle;
+        }
+        if (wristToggle) {
+            switch (wriststate) {
+                case DOWN:
+                    claw.toggleWrist(ClawUtil.WristState.DOWN);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.GRAB;
+                    } else {
+                    }
+                    break;
+                case GRAB:
+                    claw.toggleWrist(ClawUtil.WristState.GRAB);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.CARRY;
+                    } else {
+                    }
+                    break;
+                case CARRY:
+                    claw.toggleWrist(ClawUtil.WristState.CARRY);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.SCORE;
+                    } else {
+                    }
+                    break;
+                case SCORE:
+                    claw.toggleWrist(ClawUtil.WristState.SCORE);
+                    if (gamepad2.right_bumper) {
+                        wriststate = ClawUtil.WristState.DOWN;
+                    } else {
+                    }
+                    break;
+                default:
+                    telemetry.addData("State", "Default");
+                    break;
+            }
+        }
+        else {
+            telemetry.addData("State", "Default");
         }
     }
-} //end program
+}
