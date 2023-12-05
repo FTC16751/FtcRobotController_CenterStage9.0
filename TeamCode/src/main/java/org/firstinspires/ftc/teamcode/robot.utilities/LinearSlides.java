@@ -85,8 +85,8 @@ public class LinearSlides {
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftSlide.setPower(0.5);
-        rightSlide.setPower(0.5);
+        leftSlide.setPower(1.0);
+        rightSlide.setPower(1.0);
 
        while ((leftSlide.isBusy() || rightSlide.isBusy())) {
             // Waiting for both slides to reach the target position
