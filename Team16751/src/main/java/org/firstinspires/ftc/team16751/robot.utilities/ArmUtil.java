@@ -43,8 +43,8 @@ public class ArmUtil {
     int elbowRest = (int)(2); //POSITION 1
     int shoulderRest = (int)(0);
     int elbowAcquire = -19; //POSITION 2
-    int shoulderAcquire = 104;
-    int elbowLowScore = -100;//125;//POSITION 3
+    int shoulderAcquire = 110;
+    int elbowLowScore = -98;//125;//POSITION 3
     int shoulderLowScore = 82;
     int elbowTransport = 0;//POSITION 4
 

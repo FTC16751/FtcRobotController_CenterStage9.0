@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.team16751.robot.utilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -76,7 +77,7 @@ public class ClawUtil {
      *
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
-    public void init()    {
+    public void init(HardwareMap hardwareMap)    {
 
         // Define and initialize ALL installed servos.
         leftHand = myOpMode.hardwareMap.get(Servo.class, "intake");
