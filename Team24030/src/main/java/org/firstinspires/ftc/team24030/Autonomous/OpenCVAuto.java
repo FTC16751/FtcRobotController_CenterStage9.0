@@ -18,7 +18,7 @@ public class OpenCVAuto extends LinearOpMode {
 
     boolean togglePreview = true;
     private DriveUtil2023 driveUtil2023 = null;
-    ArmUtil armUtil = new ArmUtil(this);
+  //  ArmUtil armUtil = new ArmUtil(this);
 //Initializing Hardware
     public void HardwareStart() {
         telemetry.addData("Object Creation", "Start");
@@ -29,7 +29,7 @@ public class OpenCVAuto extends LinearOpMode {
         driveUtil2023.init(hardwareMap);
         telemetry.addData("Object Creation", "Done");
         telemetry.update();
-        armUtil.init(hardwareMap);
+ //       armUtil.init(hardwareMap);
     }
 
 //Output on driver control hub with element zone, camera stream, and alliance color
@@ -66,7 +66,7 @@ public class OpenCVAuto extends LinearOpMode {
             telemetry.addData("Object", "Passed waitForStart");
 
             telemetry.update();
-            armUtil.raiseToPosition(2,0.5);
+         //   armUtil.raiseToPosition(2,0.5);
 
         }
       //  while(opModeIsActive()&& !isStopRequested()){
