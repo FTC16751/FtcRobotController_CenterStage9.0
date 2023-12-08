@@ -19,7 +19,7 @@ public class OpenCVAuto extends LinearOpMode {
 
     boolean togglePreview = true;
     private DriveUtil2023 driveUtil2023 = null;
-    ArmUtil armUtil = new ArmUtil(this);
+    //ArmUtil armUtil = new ArmUtil(this);
     private Servo wristServo;
     private Servo leftClaw;
     private Servo rightClaw;
@@ -38,7 +38,7 @@ public class OpenCVAuto extends LinearOpMode {
         driveUtil2023.init(hardwareMap);
         telemetry.addData("Object Creation", "Done");
         telemetry.update();
-        armUtil.init(hardwareMap);
+        //armUtil.init(hardwareMap);
 
         wristServo = hardwareMap.get(Servo.class, "wristservo");
         leftClaw = hardwareMap.get(Servo.class, "leftclaw");
@@ -80,7 +80,7 @@ public class OpenCVAuto extends LinearOpMode {
             telemetry.addData("Current Alliance Selected : ", curAlliance.toUpperCase());
             telemetry.addData("Object", "Passed waitForStart");
             telemetry.update();
-            armUtil.raiseToPosition(2,0.5);
+            //armUtil.raiseToPosition(2,0.5);
 
         }
       //  while(opModeIsActive()&& !isStopRequested()){
