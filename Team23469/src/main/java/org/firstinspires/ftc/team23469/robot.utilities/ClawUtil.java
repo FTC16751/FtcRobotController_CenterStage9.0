@@ -33,13 +33,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.team23469.TeleOp.DriverControl_CenterStageTEST;
+
 public class ClawUtil {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    private Servo   leftHand = null;
+    private Servo claw = null;
     private Servo   rightHand = null;
     private Servo   wrist = null;
 
@@ -48,6 +50,20 @@ public class ClawUtil {
     public static final double WRIST_MID_SERVO       =  0.1 ;
     public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
     public static       double offset = 0.0;
+    enum ClawState {
+        OPEN,
+        CLOSE
+    }
+
+    public enum WristState {
+        GRAB,
+        DOWN,
+        CARRY,
+        SCORE
+    }
+    ClawState clawstate = ClawState.OPEN;
+    WristState wriststate = WristState.DOWN;
+
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public ClawUtil(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -62,12 +78,13 @@ public class ClawUtil {
     public void init()    {
 
         // Define and initialize ALL installed servos.
-        leftHand = myOpMode.hardwareMap.get(Servo.class, "leftclaw");
-        rightHand = myOpMode.hardwareMap.get(Servo.class, "rightclaw");
+        claw = myOpMode.hardwareMap.get(Servo.class, "claw");
         wrist = myOpMode.hardwareMap.get(Servo.class, "wrist");
-        leftHand.setPosition(MID_SERVO);
-        rightHand.setPosition(MID_SERVO);
-        wrist.setPosition(MID_SERVO);
+        claw.setDirection(Servo.Direction.REVERSE);
+        wrist.setDirection(Servo.Direction.REVERSE);
+        //leftHand.setPosition(MID_SERVO);
+        //rightHand.setPosition(MID_SERVO);
+        //wrist.setPosition(MID_SERVO);
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
     }
@@ -78,34 +95,50 @@ public class ClawUtil {
      */
     public void setHandPositions(double offset) {
         offset = Range.clip(offset, -0.3, 0.02);
-        leftHand.setPosition(MID_SERVO + offset);
-        rightHand.setPosition(MID_SERVO - offset);
+        claw.setPosition(MID_SERVO + offset);
     }
     public void setClawOpen() {
-        //-0.30 for open
-        //for bot #1
-        offset = 0.020;
-        leftHand.setPosition(MID_SERVO + offset);
-        // rightHand.setPosition(MID_SERVO - offset);
+        claw.setPosition(0.45);
     }
 
     public void setClawClosed(){
-        //.30 for closed
-        //for bot #1
-        offset = -0.30;
-        leftHand.setPosition(MID_SERVO + offset);
-      //  rightHand.setPosition(MID_SERVO - offset);
+        claw.setPosition(0.25);
     }
-    public void setWristUp() {
-        //for bot #1
-        offset = -0.30;
-        wrist.setPosition(WRIST_MID_SERVO + offset);
-
+    public void setWristGrab() {
+        wrist.setPosition(0.1);
     }
     public void setWristDown() {
-        //for bot #1
-        offset = 0.20;
-        wrist.setPosition(WRIST_MID_SERVO + offset);
+        wrist.setPosition(0.0);
+    }
+    public void setWristCarry() {
+        wrist.setPosition(0.3);
+    }
+    public void setWristScore() {
+        wrist.setPosition(0.2);
+    }
+    public boolean clawisDoneMoving(double position) {
+        if (claw.getPosition() == position) {
+            return true;
+        } else return false;
 
+    }
+
+    public void toggleWrist(WristState wriststate) {
+        switch (wriststate) {
+            case DOWN:
+                setWristDown();
+                break;
+            case GRAB:
+                setWristGrab();
+                break;
+            case CARRY:
+                setWristCarry();
+                break;
+            case SCORE:
+                setWristScore();
+                break;
+            default:
+                break;
+        }
     }
 }
