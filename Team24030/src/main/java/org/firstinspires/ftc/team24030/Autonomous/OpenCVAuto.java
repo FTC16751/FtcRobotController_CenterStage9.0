@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team24030.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team24030.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
@@ -19,7 +20,15 @@ public class OpenCVAuto extends LinearOpMode {
     boolean togglePreview = true;
     private DriveUtil2023 driveUtil2023 = null;
     ArmUtil armUtil = new ArmUtil(this);
-//Initializing Hardware
+    private Servo wristServo;
+    private Servo leftClaw;
+    private Servo rightClaw;
+    // Define servo positions for wrist and claws
+    private double wristPosition = 0.477; // Initial position
+    private double leftClawPosition = 1.0; // Initial position - close
+    private double rightClawPosition = 0.0; // Initial position - close
+
+    //Initializing Hardware
     public void HardwareStart() {
         telemetry.addData("Object Creation", "Start");
         telemetry.update();
@@ -30,6 +39,17 @@ public class OpenCVAuto extends LinearOpMode {
         telemetry.addData("Object Creation", "Done");
         telemetry.update();
         armUtil.init(hardwareMap);
+
+        wristServo = hardwareMap.get(Servo.class, "wristservo");
+        leftClaw = hardwareMap.get(Servo.class, "leftclaw");
+        rightClaw = hardwareMap.get(Servo.class, "rightclaw");
+
+        leftClaw.setDirection(Servo.Direction.REVERSE);
+        rightClaw.setDirection(Servo.Direction.REVERSE);
+        // Set servo initial positions
+        wristServo.setPosition(wristPosition);
+        leftClaw.setPosition(leftClawPosition);
+        rightClaw.setPosition(rightClawPosition);
     }
 
 //Output on driver control hub with element zone, camera stream, and alliance color
@@ -58,19 +78,24 @@ public class OpenCVAuto extends LinearOpMode {
             teamElementDetection.setAlliance(curAlliance);
             telemetry.addData("Select Alliance (Gamepad1 X = Blue, Gamepad1 B = Red)", "");
             telemetry.addData("Current Alliance Selected : ", curAlliance.toUpperCase());
-
-
-            telemetry.update();
-
-
             telemetry.addData("Object", "Passed waitForStart");
-
             telemetry.update();
             armUtil.raiseToPosition(2,0.5);
 
         }
       //  while(opModeIsActive()&& !isStopRequested()){
         waitForStart();
+        //wristServo.setPosition(wristPosition);
+        // Control claws using bumpers (toggle open/close with Falling Edge Detector)
+            //1 is open .x is close
+            /*leftClawPosition = (leftClawPosition == 0.6) ? 1.0 : 0.6;
+            leftClaw.setPosition(leftClawPosition);
+
+            //0.0 is open .4 is close
+            rightClawPosition = (rightClawPosition == 0.0) ? 0.4 : 0.0;
+            rightClaw.setPosition(rightClawPosition);
+*/
+
             if(element_zone==1){
                 driveUtil2023.driveRobotDistanceForward(73,0.5);
                 driveUtil2023.rotateLeft90Degrees();
