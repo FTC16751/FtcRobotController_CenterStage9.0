@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class HangerUtil {
+public class HangerUtilv2 {
     private DcMotor hangerMotor;
     private Servo hangerServo;
 
@@ -14,12 +14,9 @@ public class HangerUtil {
         HANG,
         MANUAL_MOVE
     }
-
     private HangerState currentState;
-    private static final double MANUAL_MOVE_MAX_POSITION = 0.65;
-    private static final double MANUAL_MOVE_INCREMENT = 0.05;
-
-    public HangerUtil(HardwareMap hardwareMap) {
+    static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
+    public HangerUtilv2(HardwareMap hardwareMap) {
         hangerMotor = hardwareMap.dcMotor.get("hanger");
         hangerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -54,11 +51,11 @@ public class HangerUtil {
         hangerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangerMotor.setPower(1.0);
 
-        while (hangerMotor.isBusy()) {
-            // Wait for the motor to reach the target position
+        while (hangerMotor.isBusy() ){
+
         }
         // Automatically move hangerServo to ServoUp position
-        hangerServo.setPosition(MANUAL_MOVE_MAX_POSITION);
+        hangerServo.setPosition(0.65);
 
         currentState = HangerState.UP;
     }
@@ -69,6 +66,8 @@ public class HangerUtil {
         hangerMotor.setPower(1.0);
 
         currentState = HangerState.HANG;
+
+
     }
 
     private void lowerHanger() {
@@ -93,8 +92,6 @@ public class HangerUtil {
     }
 
     public void moveHangerServoManually(double position) {
-        // Limit manual servo movement to a maximum position of 0.65
-        position = Math.min(position, MANUAL_MOVE_MAX_POSITION);
         hangerServo.setPosition(position);
     }
 
@@ -110,11 +107,11 @@ public class HangerUtil {
         return hangerServo.getPosition();
     }
 
-    public void stopMotor() {
+    public void stopMotor(){
         hangerMotor.setPower(0);
-    }
 
-    public void resetEncoder() {
+    }
+    public void resetEncoder(){
         hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }

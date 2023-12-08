@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode.robot.utilities;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class LinearSlides {
-    private DcMotorEx leftSlide;
-    private DcMotorEx rightSlide;
+public class LinearSlidesV2 {
+    private DcMotor leftSlide;
+    private DcMotor rightSlide;
 
     private final int liftLevelZero = 0;
     private final int liftLowPosition = 1792;
@@ -25,9 +24,9 @@ public class LinearSlides {
 
     private SlideState currentState;
 
-    public LinearSlides(HardwareMap hardwareMap) {
-        leftSlide = hardwareMap.get(DcMotorEx.class, "leftlift");
-        rightSlide = hardwareMap.get(DcMotorEx.class, "rightlift");
+    public LinearSlidesV2(HardwareMap hardwareMap) {
+        leftSlide = hardwareMap.get(DcMotor.class, "leftlift");
+        rightSlide = hardwareMap.get(DcMotor.class, "rightlift");
 
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
         rightSlide.setDirection(DcMotor.Direction.REVERSE);
@@ -80,21 +79,21 @@ public class LinearSlides {
     }
 
     private void moveToPosition(int targetPosition) {
-        leftSlide.setTargetPositionTolerance(25);
-        rightSlide.setTargetPositionTolerance(25);
         leftSlide.setTargetPosition(targetPosition);
         rightSlide.setTargetPosition(targetPosition);
 
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftSlide.setPower(.50);
-        rightSlide.setPower(.50);
-
-       while ((leftSlide.isBusy() && rightSlide.isBusy())) {
+        leftSlide.setPower(1.0);
+        rightSlide.setPower(1.0);
+/*
+       while ((leftSlide.isBusy() || rightSlide.isBusy())) {
             // Waiting for both slides to reach the target position
         }
-        stopSlides();
+*/
+
+       // stopSlides();
     }
 
     private void stopSlides() {

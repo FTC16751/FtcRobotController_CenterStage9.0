@@ -8,28 +8,20 @@
 
  */
 
-package org.firstinspires.ftc.team23469.TeleOp;
+package org.firstinspires.ftc.team23469.TeleOp.Production;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.team23469.robot.utilities.ClawUtil;
-import org.firstinspires.ftc.team23469.robot.utilities.DriveUtil2023;
-import org.firstinspires.ftc.team23469.robot.utilities.LiftUtil;
 
 
-@TeleOp(name="Driver Control LiftTest", group="Teleop")
+import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
+import org.firstinspires.ftc.team23469.robot.utilities.Learning.launcherUtil;
 
-public class DriverControl_LiftTest extends LinearOpMode {
-    DriveUtil2023 drive = new DriveUtil2023(this);
-    ClawUtil claw = new ClawUtil(this);
-    LiftUtil lift = new LiftUtil(this);
+
+@TeleOp(name="Driver Control Center Stage", group="Teleop")
+public class DriverControl_CenterStage extends LinearOpMode {
+    DriveUtil drive = new DriveUtil(this);
+    launcherUtil launcher = new launcherUtil(this);
 
     int temp = 1;
     double DRIVE_SPEED = 1;
@@ -45,8 +37,7 @@ public class DriverControl_LiftTest extends LinearOpMode {
 
         //init external hardware classes
         drive.init(hardwareMap);
-        claw.init();
-        lift.init(hardwareMap);
+        launcher.init();
 
         //default drive move to 1 (arcade)
         int driveMode = 1;
@@ -55,22 +46,30 @@ public class DriverControl_LiftTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        /***************************************************************
+         * Game Execution Area
+         * Runs continous until "STOP" pressed on Driver Station
+         ***************************************************************/
         while (opModeIsActive()) {
 
             //Set driver speed as a percentage of full (normally set to full)
             if (gamepad1.right_bumper & gamepad1.left_bumper) {
                 DRIVE_SPEED = .25;
             } else if (gamepad1.left_bumper) {
-                DRIVE_SPEED = .30;
+                DRIVE_SPEED = .50;
             } else if (gamepad1.right_bumper) {
                 DRIVE_SPEED = 1.00;
             } else {
-                DRIVE_SPEED = .50;
+                DRIVE_SPEED = .80;
             }
 
-            if (gamepad2.start) {
-                lift.resetEncoder();
+            if (gamepad1.x) {
+                drive.driveRobotStrafeLeft(1.0);
             }
+            if (gamepad1.b) {
+                drive.driveRobotStrafeRight(1.0);
+            }
+
 
             /***************************************************************
              * Set Drive Mode
@@ -99,11 +98,8 @@ public class DriverControl_LiftTest extends LinearOpMode {
             }
 
             /***end of set drive mode code */
+            doLauncher();
 
-           // doIntake();
-            doArmLift();
-
-            telemetry.update();
         } //end OpModeIsActive
     }  //end runOpMode
 
@@ -114,38 +110,21 @@ public class DriverControl_LiftTest extends LinearOpMode {
     public void arcadeDrive() {
         drive.arcadeDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y, DRIVE_SPEED);
     }
-
-    public void doIntake() {
+    public void doLauncher() {
         // Use gamepad left & right Bumpers to open and close the claw
         // Use the SERVO constants defined in RobotHardware class.
         // Each time around the loop, the servos will move by a small amount.
         // Limit the total offset to half of the full travel range
+        if (gamepad2.left_bumper) {
+            launcher.setLauncherUp();
 
-        if (gamepad2.left_bumper){
-            claw.setClawOpen();
         } else {// continue looping//
         }
 
-        if (gamepad2.right_bumper){
-            claw.setClawClosed();
-        }else {// continue looping
+        if (gamepad2.right_bumper) {
+            launcher.setLauncherDown();
+        } else {// continue looping
         }
     }
 
-    public void doArmLift() {
-        //--------------------------------------------------------------------------
-        // code for the arm motor
-        // Sets arm to set levels depending on button push (requires encoders)
-        //--------------------------------------------------------------------------
-        double armPower;
-
-        //Lowers lift all the way down
-        if (gamepad2.dpad_down) lift.raiseToPosition(1,0.25);
-        //low junction
-        if(gamepad2.dpad_left) lift.raiseToPosition(2,0.25);
-        //mid junction
-        if(gamepad2.dpad_up) lift.raiseToPosition(3,0.25);
-        //high junction
-        if(gamepad2.dpad_right) lift.raiseToPosition(0,0.25);
-    }
 } //end program

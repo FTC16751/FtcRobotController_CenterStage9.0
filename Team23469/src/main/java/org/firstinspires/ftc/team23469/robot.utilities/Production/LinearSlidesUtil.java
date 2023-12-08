@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.utilities;
+package org.firstinspires.ftc.team23469.robot.utilities.Production;
 
 
 
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class LinearSlides {
+public class LinearSlidesUtil {
     private DcMotorEx leftSlide;
     private DcMotorEx rightSlide;
 
@@ -25,7 +25,7 @@ public class LinearSlides {
 
     private SlideState currentState;
 
-    public LinearSlides(HardwareMap hardwareMap) {
+    public LinearSlidesUtil(HardwareMap hardwareMap) {
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftlift");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightlift");
 

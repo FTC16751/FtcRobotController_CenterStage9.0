@@ -27,30 +27,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team23469.robot.utilities;
+package org.firstinspires.ftc.team23469.robot.utilities.Learning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-
-public class hangerServoUtil {
+public class ClawUtil {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    private Servo launcher = null;
-
+    private Servo claw = null;
+    private Servo   rightHand = null;
+    private Servo   wrist = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.0;
+    public static final double MID_SERVO       =  0.0 ;
+    public static final double WRIST_MID_SERVO       =  0.1 ;
+    public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
     public static       double offset = 0.0;
-    public static double upPosition = 0.65;
-    public static double downPosition = 0.0;
+    enum ClawState {
+        OPEN,
+        CLOSE
+    }
+
+    public enum WristState {
+        GRAB,
+        DOWN,
+        CARRY,
+        SCORE
+    }
+    ClawState clawstate = ClawState.OPEN;
+    WristState wriststate = WristState.DOWN;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
-    public hangerServoUtil(LinearOpMode opmode) {
+    public ClawUtil(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
@@ -63,28 +76,67 @@ public class hangerServoUtil {
     public void init()    {
 
         // Define and initialize ALL installed servos.
-        launcher = myOpMode.hardwareMap.get(Servo.class, "hangerservo");
-        launcher.setDirection(Servo.Direction.FORWARD);
-        launcher.setPosition(downPosition);
+        claw = myOpMode.hardwareMap.get(Servo.class, "claw");
+        wrist = myOpMode.hardwareMap.get(Servo.class, "wrist");
+        claw.setDirection(Servo.Direction.REVERSE);
+        wrist.setDirection(Servo.Direction.REVERSE);
+        //leftHand.setPosition(MID_SERVO);
+        //rightHand.setPosition(MID_SERVO);
+        //wrist.setPosition(MID_SERVO);
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
     }
-
-    public void setServoUp() {
-        myOpMode.telemetry.addData("set servo up", "Hello im here");
-        myOpMode.telemetry.update();
-        launcher.setPosition(upPosition);
+    /**
+     * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
+     *
+     * @param offset
+     */
+    public void setHandPositions(double offset) {
+        offset = Range.clip(offset, -0.3, 0.02);
+        claw.setPosition(MID_SERVO + offset);
     }
-    public void setServoDown(){
-        myOpMode.telemetry.addData("set servo down", "goodbye");
-        myOpMode.telemetry.update();
-        launcher.setPosition(downPosition);
-    }
-    public void setServoPosition(double offset) {
-        launcher.setDirection(Servo.Direction.REVERSE);
-        //offset = Range.clip(offset, -0.3, 0.02);
-        launcher.setPosition(offset);
+    public void setClawOpen() {
+        claw.setPosition(0.45);
     }
 
+    public void setClawClosed(){
+        claw.setPosition(0.25);
+    }
+    public void setWristGrab() {
+        wrist.setPosition(0.1);
+    }
+    public void setWristDown() {
+        wrist.setPosition(0.0);
+    }
+    public void setWristCarry() {
+        wrist.setPosition(0.3);
+    }
+    public void setWristScore() {
+        wrist.setPosition(0.2);
+    }
+    public boolean clawisDoneMoving(double position) {
+        if (claw.getPosition() == position) {
+            return true;
+        } else return false;
 
+    }
+
+    public void toggleWrist(WristState wriststate) {
+        switch (wriststate) {
+            case DOWN:
+                setWristDown();
+                break;
+            case GRAB:
+                setWristGrab();
+                break;
+            case CARRY:
+                setWristCarry();
+                break;
+            case SCORE:
+                setWristScore();
+                break;
+            default:
+                break;
+        }
+    }
 }

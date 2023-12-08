@@ -27,14 +27,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team23469.robot.utilities;
+package org.firstinspires.ftc.team23469.robot.utilities.Learning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
-public class launcher_coachgeorge {
+
+public class launcherUtil {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
@@ -48,7 +49,7 @@ public class launcher_coachgeorge {
     public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
     public static       double offset = 0.0;
     // Define a constructor that allows the OpMode to pass a reference to itself.
-    public launcher_coachgeorge(LinearOpMode opmode) {
+    public launcherUtil(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
@@ -69,19 +70,22 @@ public class launcher_coachgeorge {
     }
 
     public void setLauncherUp() {
+        myOpMode.telemetry.addData("set launcher up", "Hello im here");
+        myOpMode.telemetry.update();
         //-0.30 for open
         //for bot #1
-        offset = 0.020;
+        offset = -0.3;
         launcher.setPosition(MID_SERVO + offset);
     }
     public void setLauncherDown(){
+        myOpMode.telemetry.addData("set launcher down", "goodbye");
+        myOpMode.telemetry.update();
         //.30 for closed
         //for bot #1
-        offset = -0.30;
+        offset = 0.60;
         launcher.setPosition(MID_SERVO + offset);
     }
-
-    public void setLauncherPosition(double offset) {
+    public void setLauncherPositions(double offset) {
         offset = Range.clip(offset, -0.3, 0.02);
         launcher.setPosition(MID_SERVO + offset);
     }

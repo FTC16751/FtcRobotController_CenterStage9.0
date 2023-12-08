@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 
-@Autonomous(name="Blue Right Park", group="Robot")
+@Autonomous(name="Blue Wing Park", group="Blue")
 
 public class BlueRightParkAuto extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);

@@ -8,12 +8,12 @@
 
  */
 
-package org.firstinspires.ftc.team23469.TeleOp;
+package org.firstinspires.ftc.team23469.TeleOp.Learning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.team23469.robot.utilities.ClawUtil;
+import org.firstinspires.ftc.team23469.robot.utilities.Learning.ClawUtil;
 
 
 @TeleOp(name="Claw Demo", group="Teleop")

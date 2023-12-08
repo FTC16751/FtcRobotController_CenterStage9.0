@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.utilities.LauncherUtil;
 @TeleOp(name = "Coach Driver Control of GG Robot", group = "coach")
 public class DriverControlGGRobot extends LinearOpMode {
 
+
         private RobotServos robotServos;
         private LinearSlides linearSlides;
         private LauncherUtil launcherUtil;
@@ -73,6 +74,9 @@ public class DriverControlGGRobot extends LinearOpMode {
         telemetry.addData("Hanger Motor Position", hangerUtil.getHangerPosition());
         telemetry.addData("Hanger Servo Position", hangerUtil.getHangerServoPosition());
         telemetry.addData("Requested Hanger Servo Position", gamepad2.left_stick_x);
+        telemetry.addData("left lift position", linearSlides.getLeftLiftPosition());
+        telemetry.addData("right lift position", linearSlides.getRightLiftPosition());
+
         telemetry.update();
     }
 

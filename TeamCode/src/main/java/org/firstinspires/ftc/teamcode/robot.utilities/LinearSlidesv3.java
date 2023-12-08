@@ -3,17 +3,16 @@ package org.firstinspires.ftc.teamcode.robot.utilities;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class LinearSlides {
-    private DcMotorEx leftSlide;
-    private DcMotorEx rightSlide;
+public class LinearSlidesv3 {
+    private DcMotor leftSlide;
+    private DcMotor rightSlide;
 
     private final int liftLevelZero = 0;
-    private final int liftLowPosition = 1792;
+    private final int liftLowPosition = 1500;
     private final int liftMidPosition = 2000;
-    private final int liftHighPosition = 2360;
+    private final int liftHighPosition = 2300;
 
     public enum SlideState {
         LEVEL_ZERO,
@@ -25,9 +24,9 @@ public class LinearSlides {
 
     private SlideState currentState;
 
-    public LinearSlides(HardwareMap hardwareMap) {
-        leftSlide = hardwareMap.get(DcMotorEx.class, "leftlift");
-        rightSlide = hardwareMap.get(DcMotorEx.class, "rightlift");
+    public LinearSlidesv3(HardwareMap hardwareMap) {
+        leftSlide = hardwareMap.get(DcMotor.class, "leftlift");
+        rightSlide = hardwareMap.get(DcMotor.class, "rightlift");
 
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
         rightSlide.setDirection(DcMotor.Direction.REVERSE);
@@ -39,7 +38,7 @@ public class LinearSlides {
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Run without encoder for follower
 
         currentState = SlideState.IDLE;
     }
@@ -53,59 +52,58 @@ public class LinearSlides {
     }
 
     public void runStateMachine() {
+        int targetPosition = 0;
+
         switch (currentState) {
             case LEVEL_ZERO:
-                currentState = SlideState.LEVEL_ZERO;
-                moveToPosition(liftLevelZero);
-                stopSlides();
+                targetPosition = liftLevelZero;
+                moveToPosition(targetPosition);
                 break;
             case LOW_POSITION:
-                currentState = SlideState.LOW_POSITION;
-                moveToPosition(liftLowPosition);
+                targetPosition = liftLowPosition;
+                moveToPosition(targetPosition);
                 break;
             case MID_POSITION:
-                currentState = SlideState.MID_POSITION;
-                moveToPosition(liftMidPosition);
+                targetPosition = liftMidPosition;
+                moveToPosition(targetPosition);
                 break;
             case HIGH_POSITION:
-                currentState = SlideState.HIGH_POSITION;
-                moveToPosition(liftHighPosition);
+                targetPosition = liftHighPosition;
+                moveToPosition(targetPosition);
                 break;
             case IDLE:
+                stopSlides();
+                //targetPosition = 0;
+                //moveToPosition(targetPosition);
                 break;
             default:
                 stopSlides();
                 break;
         }
+
     }
 
     private void moveToPosition(int targetPosition) {
-        leftSlide.setTargetPositionTolerance(25);
-        rightSlide.setTargetPositionTolerance(25);
         leftSlide.setTargetPosition(targetPosition);
-        rightSlide.setTargetPosition(targetPosition);
-
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftSlide.setPower(.50);
-        rightSlide.setPower(.50);
-
-       while ((leftSlide.isBusy() && rightSlide.isBusy())) {
-            // Waiting for both slides to reach the target position
+        leftSlide.setPower(0.5);
+        //rightSlide.setPower(1.0);
+        // The right slide follows the left slide without encoder input
+        while (leftSlide.isBusy()) {
+            // Continuously update the power of the right slide to match the left slide
+            rightSlide.setPower(leftSlide.getPower());
         }
+        
+
         stopSlides();
     }
-
-    private void stopSlides() {
+    public void stopSlides() {
         leftSlide.setPower(0);
         rightSlide.setPower(0);
-        //resetEncoder();
-        //leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void resetEncoder(){
+    public void resetEncoders() {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
