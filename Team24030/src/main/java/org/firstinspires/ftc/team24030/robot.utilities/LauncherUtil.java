@@ -13,7 +13,7 @@ public class LauncherUtil {
     // Default positions
     private final double LAUNCHER_UP_POSITION = 0.0;
     //private final double LAUNCHER_DOWN_POSITION = 0.35;
-    private final double LAUNCHER_ANGLE_UP_POSITION = 0.15;
+    private final double LAUNCHER_ANGLE_UP_POSITION = 0.5;
    // private final double LAUNCHER_ANGLE_DOWN_POSITION = 0.0;
    private boolean toggleState;
     public LauncherUtil(HardwareMap hardwareMap) {
