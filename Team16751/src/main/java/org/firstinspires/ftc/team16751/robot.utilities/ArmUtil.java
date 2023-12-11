@@ -12,8 +12,8 @@ package org.firstinspires.ftc.team16751.robot.utilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class ArmUtil {
@@ -35,18 +35,23 @@ public class ArmUtil {
     DcMotor shoulder;
     int shoulderPosition;
     int shoulderMin = 0;
-    int shoulderMax = 1000;;
+    int shoulderMax = 1000;
 
-
+    Servo wrist;
+    int wristPosition;
+    int wristMin = 0;
+    int wristMax = 1000;
 
     //The following below reads the positions for the elbow joint (joint #2)
-    int elbowRest = (int)(2); //POSITION 1
+    int elbowRest = (int)(0); //POSITION 1
     int shoulderRest = (int)(0);
-    int elbowAcquire = -19; //POSITION 2
-    int shoulderAcquire = 110;
-    int elbowLowScore = -98;//125;//POSITION 3
-    int shoulderLowScore = 82;
+    int elbowAcquire = -100; //POSITION 2
+    int shoulderAcquire = -1080;
+    int elbowLowScore = -1000;//125;//POSITION 3
+    int shoulderLowScore = -870;
     int elbowTransport = 0;//POSITION 4
+    int shoulderTransport = 0;
+
 
     enum ArmState {
         START,
@@ -78,55 +83,58 @@ public class ArmUtil {
         shoulder.setDirection(DcMotor.Direction.FORWARD);
         shoulder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shoulder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        wrist = hardwareMap.get(Servo.class, "Wrist");
+        wrist.setDirection(Servo.Direction.FORWARD);
+        wrist.setPosition(0.25);
     }
 
 
     public void raiseToPosition(int positionLevel, Double targetSpeed) {
-        if (positionLevel == 1)
+        if (positionLevel == 1) //rest
         {
             //also zero
             elbow.setTargetPosition(elbowRest);
             elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elbow.setPower(0.5);
 
-
             shoulder.setTargetPosition(shoulderRest);
             shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             shoulder.setPower(0.5);
+            wrist.setPosition(0.25);
 
         }
-        else if (positionLevel == 2)
+        else if (positionLevel == 2) //acquire
         {
+            shoulder.setTargetPosition(shoulderAcquire);
+            shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            shoulder.setPower(0.30);
+            wrist.setPosition(0.25);
+
             elbow.setTargetPosition(elbowAcquire);
             elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elbow.setPower(0.5);
 
-
-            shoulder.setTargetPosition(shoulderAcquire);
-            shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            shoulder.setPower(0.5);
-
-
         }
-        else if (positionLevel == 3)
+        else if (positionLevel == 3) //score low
         {
             elbow.setTargetPosition(elbowLowScore);
             elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elbow.setPower(0.5);
+            elbow.setPower(.5);
 
             shoulder.setTargetPosition(shoulderLowScore);
             shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             shoulder.setPower(0.5);
 
-
+            wrist.setPosition(0.25);
 
         }
-      else if (positionLevel == 4)
+      else if (positionLevel == 4) //transport
         {
             elbow.setTargetPosition(elbowTransport);
             elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             elbow.setPower(1.0);
-
+            wrist.setPosition(0.25);
         }
         else {
             //zero again!
@@ -183,6 +191,12 @@ public class ArmUtil {
     public void setMotorPower(double v) {
             elbow.setPower(v);
     }
+    public void setElbowMotorPower(double v) {
+        elbow.setPower(v);
+    }
+    public void setShoulderMotorPower(double v) {
+        shoulder.setPower(v);
+    }
 
     public void stopArm() {
         setMotorPower(0);
@@ -196,6 +210,12 @@ public class ArmUtil {
         return elbow.getCurrentPosition();
     }
 
+    public int getelbowMotorPosition() {
+        return elbow.getCurrentPosition();
+    }
+    public int getshoulderMotorPosition() {
+        return shoulder.getCurrentPosition();
+    }
     public void setMotorMode(int mode) {
         if (mode == 1) elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (mode == 2) elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

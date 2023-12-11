@@ -9,14 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
-@TeleOp
+@TeleOp(name="PID Arm Test", group="Teleop")
+
 @Config
 
 public class PIDarm extends LinearOpMode {
-    public static double p=0, i=0,d=0,f=0;
-    public static double goalShoulder=0;
+    public static double p=0.02, i=0,d=0,f=0;
+    public static double goalShoulder=-200;
     public static double currShoulder=0;
-    public static double goalElbow = 0;
+    public static double goalElbow = -20;
     public static double currElbow = 0;
     private PIDController shoulderController;
     private PIDController elbowController;
@@ -25,13 +26,13 @@ public class PIDarm extends LinearOpMode {
     @Override
     public void runOpMode(){
         shoulder = hardwareMap.get(DcMotor.class, "Shoulder");
-        shoulder.setDirection(DcMotorSimple.Direction.REVERSE);
+        shoulder.setDirection(DcMotorSimple.Direction.FORWARD);
 
         shoulderController = new PIDController(p,i,d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry() );
 
         elbow = hardwareMap.get(DcMotor.class, "Elbow");
-        elbow.setDirection(DcMotorSimple.Direction.REVERSE);
+        elbow.setDirection(DcMotorSimple.Direction.FORWARD);
         elbowController = new PIDController(p,i,d);
         telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
 
@@ -42,11 +43,12 @@ public class PIDarm extends LinearOpMode {
             shoulder.setPower(shoulderController.calculate(currShoulder,goalShoulder));
             telemetry.addData("curr shoulder",currShoulder);
             telemetry.addData("goal shoulder",goalShoulder);
+            telemetry.addData("shoulder power",shoulderController.calculate(currShoulder,goalShoulder));
+            //Shoulder
 
-
-            shoulderController.setPID(p,i,d);
-            currElbow = shoulder.getCurrentPosition();
-            elbow.setPower(shoulderController.calculate(currElbow,goalElbow));
+            elbowController.setPID(p,i,d);
+            currElbow = elbow.getCurrentPosition();
+            elbow.setPower(elbowController.calculate(currElbow,goalElbow));
             telemetry.addData("curr elbow",currElbow);
             telemetry.addData("goal elbow",goalElbow);
             telemetry.update();

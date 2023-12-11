@@ -20,7 +20,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
-
+import org.firstinspires.ftc.team16751.PIDarm;
+import org.firstinspires.ftc.team16751.robot.utilities.LauncherUtil;
 
 @TeleOp(name="Driver Control Center Stage", group="Teleop")
 public class DriverControl_CenterStage extends LinearOpMode {
@@ -35,6 +36,9 @@ public class DriverControl_CenterStage extends LinearOpMode {
     int temp = 1;
     double DRIVE_SPEED = 1;
     double handOffset   = 0;
+
+    LauncherUtil launcherUtil;
+    boolean aButtonState = false;
     //subclass is replacing inherited behavior.
     @Override
 
@@ -48,6 +52,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
         drive.init(hardwareMap);
         armUtil.init(hardwareMap);
         claw.init(hardwareMap);
+        launcherUtil = new LauncherUtil(hardwareMap);
 
         //default drive move to 1 (arcade)
         int driveMode = 1;
@@ -61,6 +66,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
          * Runs continous until "STOP" pressed on Driver Station
          ***************************************************************/
         while (opModeIsActive()) {
+
 
             //Set driver speed as a percentage of full (normally set to full)
             if (gamepad1.right_bumper & gamepad1.left_bumper) {
@@ -102,6 +108,17 @@ public class DriverControl_CenterStage extends LinearOpMode {
             if(gamepad2.right_bumper){
                 claw.setClawClosed();
             }
+            if(gamepad2.left_trigger>0.5){
+                claw.openLeftHand();
+            } else{
+
+            }
+            if(gamepad2.right_trigger>0.5){
+                claw.openRightHand();
+
+            }
+
+
             /***************************************************************
              * Set Drive Mode
              * This section of code will allow the driver to set
@@ -129,7 +146,8 @@ public class DriverControl_CenterStage extends LinearOpMode {
             }
 
             /***end of set drive mode code */
-
+            dotelemetry();
+            dolauncher();
 
         } //end OpModeIsActive
     }  //end runOpMode
@@ -142,4 +160,32 @@ public class DriverControl_CenterStage extends LinearOpMode {
         drive.arcadeDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y, DRIVE_SPEED);
     }
 
+    public void dolauncher()
+    {
+        if(gamepad2.y && !launcherUtil.getToggleState()) {
+            launcherUtil.toggleServo();
+        }
+
+        if (gamepad2.a && !aButtonState) {
+            aButtonState = true;
+            if (!launcherUtil.isLauncherMoving()) {
+                if (launcherUtil.getLauncherAngleServoPosition() == launcherUtil.LAUNCHER_ANGLE_DOWN_POSITION) {
+                    launcherUtil.raiseLauncher();
+                } else {
+                    launcherUtil.lowerLauncherDown();
+                }
+            }
+        } else if (!gamepad2.a) {
+            aButtonState = false;
+        }
+    }
+    public void dotelemetry() {
+        telemetry.addLine("Telemetry");
+        telemetry.addData("Shoulder Position: ", armUtil.getshoulderMotorPosition());
+        telemetry.addData("Elbow Position ", armUtil.getelbowMotorPosition());
+        //telemetry.addData("Wrist Position ", claw.getWristPosition());
+        //telemetry.addData("Left Claw Position: ", claw.getLeftClawPosition());
+        //telemetry.addData("Right Claw Position: ", claw.getRightClawPosition());
+        telemetry.update();
+    }
 } //end program
