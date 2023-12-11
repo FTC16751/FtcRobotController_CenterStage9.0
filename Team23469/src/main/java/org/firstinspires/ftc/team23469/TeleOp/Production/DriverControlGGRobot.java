@@ -9,7 +9,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.LauncherUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LinearSlidesUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 
-@TeleOp(name = "Coach Driver Control of GG Robot", group = "coach")
+@TeleOp(name = "Driver Control of GG Robot", group = "coach")
 public class DriverControlGGRobot extends LinearOpMode {
 
         DriveUtil drive = new DriveUtil(this);
@@ -120,12 +120,11 @@ public class DriverControlGGRobot extends LinearOpMode {
 
         // Manual overrides using left joystick of gamepad2
         double hangerMotorPower = -gamepad2.left_stick_y;
-        double hangerServoPosition = gamepad2.left_stick_x;
+       // double hangerServoPosition = gamepad2.left_stick_x;
 
-        if (Math.abs(hangerMotorPower) >0.5 || Math.abs(hangerServoPosition) >0.5) {
+        if (Math.abs(hangerMotorPower) >0.5 ) {
             hangerUtil.setManualMove();
             hangerUtil.moveHangerManually(hangerMotorPower);
-            hangerUtil.moveHangerServoManually(hangerServoPosition);
         } else {
             hangerUtil.stopMotor();
         }

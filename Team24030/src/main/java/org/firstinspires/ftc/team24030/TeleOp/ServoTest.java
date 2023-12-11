@@ -27,9 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team23469.TeleOp.Learning;
+package org.firstinspires.ftc.team24030.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -49,6 +48,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @TeleOp(name = "Servo Test", group = "Concept")
+
 public class ServoTest extends LinearOpMode {
 
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
@@ -69,8 +69,8 @@ public class ServoTest extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        rservo = hardwareMap.get(Servo.class, "righthangerservo");
-        lservo = hardwareMap.get(Servo.class, "lefthangerservo");
+        rservo = hardwareMap.get(Servo.class, "launcher");
+        lservo = hardwareMap.get(Servo.class, "launcherangle");
         //servo.setDirection(Servo.Direction.REVERSE);
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -93,8 +93,8 @@ public class ServoTest extends LinearOpMode {
 
             // Display the current value
             telemetry.addData("Servo Position", "%5.2f", position);
-            telemetry.addData("Servo Position read from servo", "%5.2f", rservo.getPosition());
-            telemetry.addData("Servo Position read from servo", "%5.2f", lservo.getPosition());
+            telemetry.addData("Servo1 Position read from servo", "%5.2f", rservo.getPosition());
+            telemetry.addData("Servo2 Position read from servo", "%5.2f", lservo.getPosition());
 
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();

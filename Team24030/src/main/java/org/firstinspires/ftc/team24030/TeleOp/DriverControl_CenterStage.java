@@ -17,10 +17,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.team24030.robot.utilities.ClawUtil;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
+import org.firstinspires.ftc.team24030.robot.utilities.LauncherUtil;
 
 
 @TeleOp(name="Driver Control Center Stage", group="Teleop")
@@ -68,7 +70,10 @@ public class DriverControl_CenterStage extends LinearOpMode {
     // Define variables to keep track of previous bumper states
     private boolean leftBumperPrevState = false;
     private boolean rightBumperPrevState = false;
-
+    LauncherUtil launcherUtil;
+    ElapsedTime timer;
+    boolean yButtonState = false;
+    boolean aButtonState = false;
     @Override
 
 
@@ -128,6 +133,9 @@ public class DriverControl_CenterStage extends LinearOpMode {
         wristServo.setPosition(wristPosition);
         leftClaw.setPosition(leftClawPosition);
         rightClaw.setPosition(rightClawPosition);
+
+        launcherUtil = new LauncherUtil(hardwareMap);
+        timer = new ElapsedTime();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -585,6 +593,25 @@ public class DriverControl_CenterStage extends LinearOpMode {
             leftBumperPrevState = gamepad2.left_bumper;
             rightBumperPrevState = gamepad2.right_bumper;
 
+
+            // Y button rising edge detection
+            if (gamepad1.y && !launcherUtil.getToggleState()) {
+                launcherUtil.toggleServo();
+            }
+
+            // A button rising edge detection
+            if (gamepad1.a && !aButtonState) {
+                aButtonState = true;
+                if (!launcherUtil.isLauncherMoving()) {
+                    if (launcherUtil.getLauncherAngleServoPosition() == launcherUtil.LAUNCHER_ANGLE_DOWN_POSITION) {
+                        launcherUtil.raiseLauncher();
+                    } else {
+                        launcherUtil.lowerLauncherDown();
+                    }
+                }
+            } else if (!gamepad1.a) {
+                aButtonState = false;
+            }
             //telemetry
             telemetry.addData("State", state);
             telemetry.addData("elbow current position", ElbowArm.getCurrentPosition());

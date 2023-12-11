@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.team24030.robot.utilities;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -80,7 +81,7 @@ import java.util.List;
  * the bulk-read AUTO mode to streamline your cycle timing.
  */
 @TeleOp (name = "Motor Bulk Reads", group = "Tests")
-
+@Disabled
 public class ConceptMotorBulkRead extends LinearOpMode {
     enum State {
         START,

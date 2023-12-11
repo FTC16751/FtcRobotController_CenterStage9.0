@@ -10,6 +10,7 @@
 
 package org.firstinspires.ftc.team23469.TeleOp.Learning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Learning.LiftUtil;
 
 
 @TeleOp(name="Driver Control LiftTest", group="Teleop")
-
+@Disabled
 public class DriverControl_LiftTest extends LinearOpMode {
     DriveUtil drive = new DriveUtil(this);
     ClawUtil claw = new ClawUtil(this);
