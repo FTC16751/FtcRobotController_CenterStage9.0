@@ -10,6 +10,7 @@
 
 package org.firstinspires.ftc.team23469.TeleOp.Learning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Learning.launcherUtil;
 
 
 @TeleOp(name="Driver Control Demo", group="Teleop")
-
+@Disabled
 public class LauncherDemo_Abby extends LinearOpMode {
     DriveUtil drive = new DriveUtil(this);
     launcherUtil launcher = new launcherUtil(this);

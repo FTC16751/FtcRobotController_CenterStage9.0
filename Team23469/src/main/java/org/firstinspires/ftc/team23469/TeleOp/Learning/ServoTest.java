@@ -57,7 +57,8 @@ public class ServoTest extends LinearOpMode {
     static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    Servo   servo;
+    Servo   rservo;
+    Servo   lservo;
     // double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     double  position = (0.0);
     boolean rampUp = true;
@@ -68,8 +69,9 @@ public class ServoTest extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "wrist");
-        servo.setDirection(Servo.Direction.REVERSE);
+        rservo = hardwareMap.get(Servo.class, "righthangerservo");
+        lservo = hardwareMap.get(Servo.class, "lefthangerservo");
+        //servo.setDirection(Servo.Direction.REVERSE);
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
@@ -91,13 +93,15 @@ public class ServoTest extends LinearOpMode {
 
             // Display the current value
             telemetry.addData("Servo Position", "%5.2f", position);
-            telemetry.addData("Servo Position read from servo", "%5.2f", servo.getPosition());
+            telemetry.addData("Servo Position read from servo", "%5.2f", rservo.getPosition());
+            telemetry.addData("Servo Position read from servo", "%5.2f", lservo.getPosition());
 
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            servo.setPosition(position);
+            rservo.setPosition(position);
+            lservo.setPosition(position);
             sleep(CYCLE_MS);
             idle();
         }

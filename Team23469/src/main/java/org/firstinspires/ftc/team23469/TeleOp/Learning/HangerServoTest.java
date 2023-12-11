@@ -10,6 +10,7 @@
 
 package org.firstinspires.ftc.team23469.TeleOp.Learning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Learning.hangerServoUtil;
 
 
 @TeleOp(name="Hanger Servo Test", group="Teleop")
-
+@Disabled
 public class HangerServoTest extends LinearOpMode {
     hangerServoUtil hangerservo = new hangerServoUtil(this);
 

@@ -10,6 +10,7 @@
 
 package org.firstinspires.ftc.team23469.TeleOp.Learning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Learning.launcherUtil;
 
 
 @TeleOp(name="Driver Control Center Stage Test", group="Teleop")
+@Disabled
     public class DriverControl_CenterStageTEST<wriststate> extends LinearOpMode {
     DriveUtil drive = new DriveUtil(this);
     launcherUtil launcher = new launcherUtil(this);

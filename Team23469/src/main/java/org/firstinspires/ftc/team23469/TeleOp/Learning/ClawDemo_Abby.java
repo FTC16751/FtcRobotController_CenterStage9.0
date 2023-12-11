@@ -10,6 +10,7 @@
 
 package org.firstinspires.ftc.team23469.TeleOp.Learning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Learning.ClawUtil;
 
 
 @TeleOp(name="Claw Demo", group="Teleop")
-
+@Disabled
 public class ClawDemo_Abby extends LinearOpMode {
     ClawUtil claw = new ClawUtil(this);
 
