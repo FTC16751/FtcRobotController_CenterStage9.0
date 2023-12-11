@@ -183,7 +183,12 @@ public class ArmUtil {
     public void setMotorPower(double v) {
             elbow.setPower(v);
     }
-
+    public void setElbowMotorPower(double v) {
+        elbow.setPower(v);
+    }
+    public void setShoulderPower(double v) {
+        shoulder.setPower(v);
+    }
     public void stopArm() {
         setMotorPower(0);
     }//StopArm
