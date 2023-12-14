@@ -1,19 +1,33 @@
 package org.firstinspires.ftc.teamcode.robot.utilities;
 
+
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.configuration.annotations.MotorType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class NewDriveUtil2024 {
 
     // Define constants
-    private static final double ENCODER_COUNTS_PER_INCH = 50;
+    private static final double ENCODER_COUNTS_PER_INCH = 45.33;
+    //Diameter = 96mm = 3.77953 inches (approximately)
+    // Circumference = π * Diameter Circumference = π * 3.77953 inches ≈ 11.87 inches
+    //Counts per inch = Encoder Resolution / Circumference
+    //Counts per inch = 537.7 / 11.87 ≈ 45.33
+    private final double ENCODER_COUNTS_PER_DEGREE; //SET IN CONSTRUCTOR //537.7 / 360; //≈ 1.4931;
+    private final double WHEEL_DIAMETER = 3.77953;
+    private final int ENCODER_RESOLUTION = 537;
+    private final double GEAR_RATIO = 1;
     private static final double MAX_MOTOR_SPEED = 312;
     private static final double MOTOR_ACCELERATION = 1;
-    private final double ENCODER_COUNTS_PER_DEGREE;
-    private static final double WHEEL_DIAMETER = 4.0;
 
     // PID constants
     private static final double Kp = 0.5;
@@ -22,27 +36,32 @@ public class NewDriveUtil2024 {
 
     // Ramp parameters
     private static final double RAMP_UP_TIME = 0.2; // Ramp-up time in seconds
-    private static final double RAMP_DOWN_TIME = 0.1; // Ramp-down time in seconds
+    private static final double RAMP_DOWN_TIME = 0.2; // Ramp-down time in seconds
+    private static final double K_ARC = 0.1; // Adjust the value according to your requirement
+
 
     // Class members
-    private final DcMotor frontLeftMotor, frontRightMotor, rearLeftMotor, rearRightMotor;
+    public final DcMotor frontLeftMotor, frontRightMotor, rearLeftMotor, rearRightMotor;
     private final ElapsedTime runtime;
-    private final double wheelDiameter = 0;
-    private final int encoderResolution = 0;
-    private final double gearRatio = 0;
+
     private final double ERROR_THRESHOLD = 10; // Define appropriate threshold based on encoder resolution and desired accuracy
     double errorLeft, errorRight;
     double derivativeLeft, derivativeRight;
-    public enum MotorType {
-    FRONT_LEFT, FRONT_RIGHT, REAR_LEFT, REAR_RIGHT
-}
+    private double rampRate;
+
+    public enum MotorType {FRONT_LEFT, FRONT_RIGHT, REAR_LEFT, REAR_RIGHT}
+
+    // Assuming you have an IMU object initialized
+    private IMU imu;
+
+    //drive utility constructor
     public NewDriveUtil2024(HardwareMap hardwareMap) {
 
         // Initialize motor objects
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
-        rearLeftMotor = hardwareMap.get(DcMotor.class, "rear_left_motor");
-        rearRightMotor = hardwareMap.get(DcMotor.class, "rear_right_motor");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "Front_Left");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "Front_Right");
+        rearLeftMotor = hardwareMap.get(DcMotor.class, "Rear_Left");
+        rearRightMotor = hardwareMap.get(DcMotor.class, "Rear_Right");
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,19 +70,92 @@ public class NewDriveUtil2024 {
         runtime = new ElapsedTime();
         // Define ENCODER_COUNTS_PER_DEGREE based on your robot configuration
         // This depends on factors like wheel diameter, encoder resolution, and gear ratios
-     
-        ENCODER_COUNTS_PER_DEGREE = calculateEncoderCountsPerDegree(wheelDiameter, encoderResolution, gearRatio);
+        ENCODER_COUNTS_PER_DEGREE = calculateEncoderCountsPerDegree(WHEEL_DIAMETER, ENCODER_RESOLUTION, GEAR_RATIO);
+
+        //initialize the imu (gyroscope)
+        initializeIMU(hardwareMap);
+    }
+    private void initializeIMU(HardwareMap hardwareMap) {
+
+        // Retrieve and initialize the IMU.
+        // This sample expects the IMU to be in a REV Hub and named "imu".
+        imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+    }
+    Orientation myRobotOrientation;
+
+    public double getimuAxisOrientation(Axis axis) {
+        myRobotOrientation = imu.getRobotOrientation(
+                AxesReference.INTRINSIC,
+                AxesOrder.XYZ,
+                AngleUnit.DEGREES);
+
+        // Then read or display the desired values (Java type float):
+        float X_axis = myRobotOrientation.firstAngle;
+        float Y_axis = myRobotOrientation.secondAngle;
+        float Z_axis = myRobotOrientation.thirdAngle;
+
+        switch (axis) {
+            case X:
+                return X_axis;
+            case Y:
+                return Y_axis;
+            case Z:
+                return Z_axis;
+            default:
+                return X_axis;
+        }
+    }
+    enum Axis {
+        X, Y, Z
     }
 
+    private double getIMUHeading() {
+        // Your implementation to retrieve the IMU heading
+        // Return the heading in degrees or radians based on your needs
+        return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ,AngleUnit.DEGREES).firstAngle;
+    }
+    private double getHeading() {
+        // Convert average encoder position to degrees
+        double angle = getAverageEncoderAngle();
 
-    private void setMotorPowerWithRamp(DcMotor motor, double power, double maxSpeed, double acceleration) {
-        // Calculate ramped power based on target power, max speed, and acceleration
-        double desiredPower = Math.min(Math.max(power, -1.0), 1.0);
+        // Retrieve IMU heading
+        double imuHeading = getIMUHeading();
+
+        // Apply gyro correction from the IMU if available
+        angle += imuHeading;
+
+        // Normalize angle to 0-360 degrees
+        angle %= 360;
+
+        return angle;
+    }
+    public double getHeading2() {
+        // Ensure robot is stationary before measuring heading
+        stopMotors();
+
+        // Get the heading from the IMU
+        double imuHeading = getIMUHeading();
+
+        // Normalize heading to be within 0-360 degrees
+        imuHeading = imuHeading % 360.0;
+        if (imuHeading < 0.0) {
+            imuHeading += 360.0;
+        }
+
+        return imuHeading;
+    }
+    private void setMotorPowerWithRamp(DcMotor motor, double targetPower, double maxSpeed, double acceleration) {
         double currentPower = motor.getPower();
+        double desiredPower = Math.min(Math.max(targetPower, -1.0), 1.0);
         double deltaPower = desiredPower - currentPower;
-        double rampRate = Math.abs(acceleration * runtime.milliseconds() / 1000.0);
+        rampRate = Math.abs(acceleration * runtime.milliseconds() / 1000.0);
 
-        // Apply ramped power change to avoid sudden jumps
         if (deltaPower > 0) {
             motor.setPower(Math.min(currentPower + rampRate, desiredPower));
         } else if (deltaPower < 0) {
@@ -72,7 +164,88 @@ public class NewDriveUtil2024 {
             motor.setPower(desiredPower);
         }
     }
+    private void setMotorPowerWithRampUp(DcMotor motor, double targetPower, double maxSpeed, double ramp_up_time, double ramp_down_time) {
+        double currentPower = motor.getPower();
+        double desiredPower = Math.min(Math.max(targetPower, -1.0), 1.0);
+        double deltaPower = desiredPower - currentPower;
+        rampRate = Math.abs(1 * runtime.milliseconds() / 1000.0);
+        //rampRate = Math.min(desiredPower / ramp_up_time * runtime.milliseconds() / 1000.0, 1.0);;
 
+
+        if (deltaPower > 0) {
+            motor.setPower(Math.min(currentPower + rampRate, desiredPower));
+        } else if (deltaPower < 0) {
+            motor.setPower(Math.max(currentPower - rampRate, desiredPower));
+        } else {
+            motor.setPower(desiredPower);
+        }
+
+    }
+    public double getRampRate(){
+        return rampRate;
+    }
+    public double getmotorPower(DcMotor motor){
+        return motor.getPower();
+    }
+
+
+    private void driveMotorPowerWithRamp(DcMotor motor, double forwardPower, double turnPower, double maxSpeed, double acceleration) {
+        // Calculate desired power based on forward and turn power
+        double desiredPower = Math.min(Math.max(forwardPower + turnPower, -1.0), 1.0);
+        setMotorPowerWithRamp(motor, desiredPower, maxSpeed, acceleration);
+    }
+
+    public void setArcadePower(double forwardPower, double turnPower) {
+        driveMotorPowerWithRamp(frontLeftMotor, forwardPower, turnPower, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        driveMotorPowerWithRamp(frontRightMotor, forwardPower, -turnPower, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        driveMotorPowerWithRamp(rearLeftMotor, forwardPower, turnPower, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        driveMotorPowerWithRamp(rearRightMotor, forwardPower, -turnPower, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+    }
+
+    public void setMecanumPower(double forwardPower, double strafePower, double turnPower) {
+        // Calculate individual motor powers based on robot configuration
+        setMotorPowerWithRampUp(frontLeftMotor, forwardPower + strafePower + turnPower, MAX_MOTOR_SPEED, RAMP_UP_TIME, RAMP_DOWN_TIME);
+        setMotorPowerWithRampUp(frontRightMotor, forwardPower - strafePower - turnPower, MAX_MOTOR_SPEED, RAMP_UP_TIME, RAMP_DOWN_TIME);
+        setMotorPowerWithRampUp(rearLeftMotor, forwardPower + strafePower - turnPower, MAX_MOTOR_SPEED, RAMP_UP_TIME, RAMP_DOWN_TIME);
+        setMotorPowerWithRampUp(rearRightMotor, forwardPower - strafePower + turnPower, MAX_MOTOR_SPEED, RAMP_UP_TIME, RAMP_DOWN_TIME);
+    }
+
+
+    public void setFieldOrientedPower(double forwardPower, double strafePower, double turnPower) {
+        // Get the robot's current heading from the IMU
+        double currentHeading = getIMUHeading();
+
+        // Calculate the adjusted movement powers based on field orientation
+        double robotAngle = Math.atan2(forwardPower, strafePower) - Math.toRadians(currentHeading);
+        double powerMagnitude = Math.hypot(forwardPower, strafePower);
+
+        // Calculate the adjusted powers for field-oriented driving
+        double newForwardPower = powerMagnitude * Math.sin(robotAngle);
+        double newStrafePower = powerMagnitude * Math.cos(robotAngle);
+
+        // Apply adjusted powers to achieve field-oriented movement
+        setMecanumPower(newForwardPower, newStrafePower, turnPower);
+    }
+    public void fieldDrive(double forward, double strafe, double rotate) {
+        // Get IMU heading
+        double imuHeading = getIMUHeading();
+
+        // Convert the robot's movement vector from driver-centric to field-centric
+        double robotAngle = Math.atan2(forward, strafe) - Math.toRadians(imuHeading);
+        double robotSpeed = Math.sqrt(forward * forward + strafe * strafe);
+
+        // Calculate motor powers for field-oriented movement
+        final double v1 = robotSpeed * Math.sin(robotAngle + Math.PI / 4) + rotate;
+        final double v2 = robotSpeed * Math.cos(robotAngle + Math.PI / 4) - rotate;
+        final double v3 = robotSpeed * Math.cos(robotAngle + Math.PI / 4) + rotate;
+        final double v4 = robotSpeed * Math.sin(robotAngle + Math.PI / 4) - rotate;
+
+        // Set motor powers using driveMotorPowerWithRamp
+        driveMotorPowerWithRamp(frontLeftMotor, v1, v1, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        driveMotorPowerWithRamp(frontRightMotor, v2, v2, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        driveMotorPowerWithRamp(rearLeftMotor, v3, v3, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        driveMotorPowerWithRamp(rearRightMotor, v4, v4, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+    }
     /**
      * Gets the current motor power.
      * @param motor The DC motor to measure.
@@ -140,19 +313,7 @@ public class NewDriveUtil2024 {
         stopMotors();
     }
 
-    public double getEncoderDistance(DcMotor motor) {
-        // Get individual encoder distance for specified motor
-        if (motor.equals(frontLeftMotor)) {
-            return frontLeftMotor.getCurrentPosition();
-        } else if (motor.equals(frontRightMotor)) {
-            return frontRightMotor.getCurrentPosition();
-        } else if (motor.equals(rearLeftMotor)) {
-            return rearLeftMotor.getCurrentPosition();
-        } else if (motor.equals(rearRightMotor)) {
-            return rearRightMotor.getCurrentPosition();
-        }
-        throw new IllegalArgumentException("Invalid motor type for getEncoderDistance.");
-    }
+
 
     // Move the robot backward a specified distance using PID control and ramped speed.
     public void moveBackwardPID(double targetDistance, double speed) {
@@ -360,7 +521,18 @@ public class NewDriveUtil2024 {
 
 
 // ... Add methods for stopping motors, setting motor mode, etc. ...
-
+    public double getEncoderDistance(DcMotor motor) {
+        // Get individual encoder distance for specified motor
+        if (motor.equals(frontLeftMotor)) {
+            return frontLeftMotor.getCurrentPosition();
+        } else if (motor.equals(frontRightMotor)) {
+            return frontRightMotor.getCurrentPosition();
+        } else if (motor.equals(rearLeftMotor)) {
+            return rearLeftMotor.getCurrentPosition();
+        } else if (motor.equals(rearRightMotor)) {
+            return rearRightMotor.getCurrentPosition();
+        } else {return 0;}
+    }
     // Stop all motors
     public void stopMotors() {
         frontLeftMotor.setPower(0.0);
@@ -415,45 +587,8 @@ public class NewDriveUtil2024 {
 
         return averageDistance;
     }
-/*
-    public double getHeading() {
-        // Convert average encoder position to degrees
-        double angle = getAverageEncoderAngle();
 
-        // Apply gyro correction if available
-        if (gyroSensor != null) {
-            angle += gyroSensor.getHeading();
-        }
 
-        // Normalize angle to 0-360 degrees
-        angle %= 360;
-
-        return angle;
-    }
-    public double getHeading() {
-        // Ensure robot is stationary before measuring heading
-        stopMotors();
-
-        // Get average encoder distance from all motors
-        double averageEncoderDistance = getAverageEncoderDistance();
-
-        // Calculate heading based on encoder distance and robot geometry
-        double heading = (averageEncoderDistance / ENCODER_COUNTS_PER_DEGREE) * GEAR_RATIO * WHEEL_DIAMETER / ROBOT_WHEELBASE * 360.0;
-
-        // Apply compass calibration offset if available
-        if (compass != null && compass.isCalibrated()) {
-            heading += compass.getHeading();
-        }
-
-        // Normalize heading to be within 0-360 degrees
-        heading = heading % 360.0;
-        if (heading < 0.0) {
-            heading += 360.0;
-        }
-
-        return heading;
-    }
-*/
     public double getAverageEncoderAngle() {
         // Get average encoder position
         double averagePosition = getAverageEncoderPosition();
@@ -463,8 +598,8 @@ public class NewDriveUtil2024 {
 
         return angle;
     }
-/*
-    public void moveArcPID(double radius, double angle, int direction) {
+
+    public void moveArcPID(double radius, double angle, DcMotor directionMotor) {
         // Validate inputs
         if (radius <= 0 || angle <= 0 || angle > 360) {
             throw new IllegalArgumentException("Invalid parameters for moveArcPID.");
@@ -480,30 +615,30 @@ public class NewDriveUtil2024 {
         double timestamp = runtime.milliseconds();
 
         // Start moving with low initial power
-        setMotorPowerWithRamp(frontLeftMotor, direction * 0.2);
-        setMotorPowerWithRamp(frontRightMotor, direction * 0.2);
-        setMotorPowerWithRamp(rearLeftMotor, direction * 0.2);
-        setMotorPowerWithRamp(rearRightMotor, direction * 0.2);
+        setMotorPowerWithRamp(frontLeftMotor, 0.2, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        setMotorPowerWithRamp(frontRightMotor, 0.2, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        setMotorPowerWithRamp(rearLeftMotor, 0.2, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+        setMotorPowerWithRamp(rearRightMotor, 0.2, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
 
-        // Loop until target angle is reached
-        while (Math.abs(getEncoderDistance(direction)) < encoderTicks) {
-            // Calculate error and update integral term
-            error = encoderTicks - getEncoderDistance(direction);
+        // Loop until target angle is reached for the specific motor
+        while (Math.abs(getEncoderDistance(directionMotor)) < encoderTicks) {
+            // Calculate error and update integral term for the specific motor
+            error = encoderTicks - getEncoderDistance(directionMotor);
             integralTerm += error * (runtime.milliseconds() - timestamp);
 
             // Calculate derivative
             derivative = (error - previousError) / (runtime.milliseconds() - timestamp);
 
-            // Calculate PID output power for each motor
+            // Calculate PID output power for each motor based on the direction motor
             double linearPower = Kp * error + Ki * integralTerm + Kd * derivative;
             powerLeft = linearPower + (K_ARC * radius) / 2.0;
             powerRight = linearPower - (K_ARC * radius) / 2.0;
 
             // Apply ramped speed control to each motor
-            setMotorPowerWithRamp(frontLeftMotor, direction * powerLeft);
-            setMotorPowerWithRamp(frontRightMotor, direction * powerRight);
-            setMotorPowerWithRamp(rearLeftMotor, direction * powerLeft);
-            setMotorPowerWithRamp(rearRightMotor, direction * powerRight);
+            setMotorPowerWithRamp(frontLeftMotor, powerLeft, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+            setMotorPowerWithRamp(frontRightMotor, powerRight, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+            setMotorPowerWithRamp(rearLeftMotor, powerLeft, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
+            setMotorPowerWithRamp(rearRightMotor, powerRight, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
 
             // Update previous error and timestamp
             previousError = error;
@@ -514,7 +649,8 @@ public class NewDriveUtil2024 {
         stopMotors();
     }
 
- */
+
+
     private double calculateEncoderCountsPerDegree(double wheelDiameter, int encoderResolution, double gearRatio) {
         // Calculate circumference of the wheel
         double circumference = Math.PI * wheelDiameter;
