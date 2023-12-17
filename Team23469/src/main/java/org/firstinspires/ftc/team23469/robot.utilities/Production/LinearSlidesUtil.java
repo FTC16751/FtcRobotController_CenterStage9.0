@@ -57,7 +57,6 @@ public class LinearSlidesUtil {
             case LEVEL_ZERO:
                 currentState = SlideState.LEVEL_ZERO;
                 moveToPosition(liftLevelZero);
-                stopSlides();
                 break;
             case LOW_POSITION:
                 currentState = SlideState.LOW_POSITION;
@@ -80,6 +79,7 @@ public class LinearSlidesUtil {
     }
 
     private void moveToPosition(int targetPosition) {
+        double ERROR_THRESHOLD = 10.0;
         leftSlide.setTargetPositionTolerance(25);
         rightSlide.setTargetPositionTolerance(25);
         leftSlide.setTargetPosition(targetPosition);
@@ -88,13 +88,19 @@ public class LinearSlidesUtil {
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftSlide.setPower(.50);
-        rightSlide.setPower(.50);
+        leftSlide.setPower(.750);
+        rightSlide.setPower(.750);
 
-       while ((leftSlide.isBusy() && rightSlide.isBusy())) {
-            // Waiting for both slides to reach the target position
+        /*
+        if (Math.abs(leftSlide.getCurrentPosition() - targetPosition) < ERROR_THRESHOLD &&
+                Math.abs(rightSlide.getCurrentPosition() - targetPosition) < ERROR_THRESHOLD) {
+            stopSlides();
         }
-        stopSlides();
+
+
+         */
+
+
     }
 
     private void stopSlides() {

@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.team23469.TeleOp.Production;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.HangerUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LauncherUtil;
@@ -11,7 +13,6 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 
 @TeleOp(name = "Driver Control of GG Robot", group = "coach")
 public class DriverControlGGRobot extends LinearOpMode {
-
         DriveUtil drive = new DriveUtil(this);
         private ClawUtil clawUtil;
         private LinearSlidesUtil linearSlides;
@@ -22,20 +23,15 @@ public class DriverControlGGRobot extends LinearOpMode {
 
         //default drive move to 1 (arcade)
         int driveMode = 1;
+        RevBlinkinLedDriver lights;
 
         @Override
-        public void runOpMode() {
+        public void runOpMode() throws InterruptedException {
             //update status on driver station
             telemetry.addData("Status", "Initializing...");
             telemetry.update();
 
-            drive.init(hardwareMap);
-            clawUtil = new ClawUtil(hardwareMap);
-            linearSlides = new LinearSlidesUtil(hardwareMap);
-            launcherUtil = new LauncherUtil(hardwareMap);
-            hangerUtil = new HangerUtil(hardwareMap);
-            clawUtil.setWristState(0);
-            launcherUtil.setLauncherDown();
+            initHardware();
 
             telemetry.addData("Status", "Initializing Complete, waiting for start");
             telemetry.update();
@@ -49,10 +45,24 @@ public class DriverControlGGRobot extends LinearOpMode {
                 doSlides();
                 doHanger();
                 addTelemetry();
-                // Add a small delay to avoid spamming the system with commands
-                sleep(50);
+                doLights();
             }
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
         }
+
+    private void initHardware() throws InterruptedException {
+        lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
+        Thread.sleep(2000);
+        drive.init(hardwareMap);
+        clawUtil = new ClawUtil(hardwareMap);
+        linearSlides = new LinearSlidesUtil(hardwareMap);
+        launcherUtil = new LauncherUtil(hardwareMap);
+        hangerUtil = new HangerUtil(hardwareMap);
+        clawUtil.setWristState(true);
+        launcherUtil.setLauncherDown();
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+    }
 
     private void doDrive() {
         //Set driver speed as a percentage of full (normally set to full)
@@ -98,8 +108,6 @@ public class DriverControlGGRobot extends LinearOpMode {
             arcadeDrive();
             telemetry.addData("Drive Mode", "Arcade");
         }
-
-
     }
 
     public void tankDrive() {
@@ -109,6 +117,7 @@ public class DriverControlGGRobot extends LinearOpMode {
     public void arcadeDrive() {
         drive.arcadeDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y, DRIVE_SPEED);
     }
+
     private void doHanger() {
         boolean currentTriggerState = gamepad2.left_trigger > 0.5;
 
@@ -130,6 +139,51 @@ public class DriverControlGGRobot extends LinearOpMode {
         }
     }
 
+    private void doSlides() {
+        if (gamepad2.dpad_down) {
+            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+        } else if (gamepad2.dpad_left) {
+            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.LOW_POSITION);
+        } else if (gamepad2.dpad_up) {
+            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.MID_POSITION);
+        } else if (gamepad2.dpad_right) {
+            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.HIGH_POSITION);
+        }
+        linearSlides.runStateMachine();
+    }
+
+    private void doClaw() {
+        clawUtil.toggleClawWithBumper(gamepad2.left_bumper);
+        clawUtil.toggleWristWithBumper(gamepad2.right_bumper);
+    }
+
+    public void doLauncher(){
+            if (gamepad2.right_trigger > 0.5 && !launcherUtil.isLauncherMoving()) {
+                launcherUtil.raiseLauncher();
+                while (launcherUtil.isLauncherMoving()) {
+                }
+                sleep(250);
+                launcherUtil.setLauncherUp();
+            }
+        }
+
+    private void doLights() {
+        if (time < 85) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+        }
+        else if (time >= 85 && time <= 90) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+        }
+        else if (time > 90 && time < 110) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
+        }
+        else if (time >= 115 && time <= 120) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+        }
+        else
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
+
+    }
     private void addTelemetry() {
         // Telemetry to display slide and servo status
         telemetry.addData("Slide State", linearSlides.getCurrentState());
@@ -147,35 +201,4 @@ public class DriverControlGGRobot extends LinearOpMode {
 
         telemetry.update();
     }
-
-    private void doSlides() {
-        if (gamepad2.dpad_down) {
-            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
-        } else if (gamepad2.dpad_left) {
-            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.LOW_POSITION);
-        } else if (gamepad2.dpad_up) {
-            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.MID_POSITION);
-        } else if (gamepad2.dpad_right) {
-            linearSlides.setCurrentState(LinearSlidesUtil.SlideState.HIGH_POSITION);
-        }
-
-        linearSlides.runStateMachine();
-    }
-
-    private void doClaw() {
-        clawUtil.toggleClawWithBumper(gamepad2.left_bumper);
-        clawUtil.toggleWristWithBumper(gamepad2.right_bumper);
-    }
-
-    public void doLauncher(){
-            if (gamepad2.right_trigger > 0.5 && !launcherUtil.isLauncherMoving()) {
-                launcherUtil.raiseLauncher();
-
-                while (launcherUtil.isLauncherMoving()) {
-
-                }
-                sleep(250);
-                launcherUtil.setLauncherUp();
-            }
-        }
 }
