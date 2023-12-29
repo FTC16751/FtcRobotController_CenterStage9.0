@@ -23,8 +23,6 @@ public class ArmUtil {
     private LinearOpMode myOpMode = null;
 
     //using GoBuilda 5202 motor
-    static final double COUNTS_PER_MOTOR_REV = 537;
-    static final double GEAR_REDUCTION = 1.00; // output (wheel) speed / input (motor) speed
     public static double p=0.002, i=0.1,d=0.0001,f=0.1;
     //Bela delivery arm Definitions
     public double goalShoulder;
@@ -33,29 +31,16 @@ public class ArmUtil {
     private PIDController elbowController = new PIDController(p,i,d);
 
     DcMotor elbow;
-    int armPosition;
-    int minPosition = 0;
-    int maxPosition = 1000;;
-    boolean isarmBusy = false;
     public double currElbow = elbow.getCurrentPosition();
 
     DcMotor shoulder;
-    int shoulderPosition;
-    int shoulderMin = 0;
-    int shoulderMax = 1000;
     public double currShoulder = shoulder.getCurrentPosition();
     Servo wrist;
 
 
     //The following below reads the positions for the elbow joint (joint #2)
-    int elbowRest = (int)(0); //POSITION 1
-    int shoulderRest = (int)(0);
-    int elbowAcquire = -1000; //POSITION 2
-    int shoulderAcquire = -1080;
-    int elbowLowScore = -1000;//125;//POSITION 3
-    int shoulderLowScore = -870;
     int elbowTransport = 0;//POSITION 4
-    int shoulderTransport = 0;
+
 
      /* local OpMode members. */
     HardwareMap hardwareMap =  null;
@@ -149,19 +134,6 @@ public class ArmUtil {
         //return;
     }
 
-    public void lockCurrentPosition() {
-        int currentPosition;
-        currentPosition = elbow.getCurrentPosition();
-        int currentPositionShoulder;
-
-        currentPositionShoulder = shoulder.getCurrentPosition();
-        elbow.setTargetPosition(currentPosition);
-        elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elbow.setPower(1.0);
-        shoulder.setTargetPosition(currentPositionShoulder);
-        shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        shoulder.setPower(0.5);
-    }
 
     public void increasePosition(int increaseAmount) {
         int currentPosition;
