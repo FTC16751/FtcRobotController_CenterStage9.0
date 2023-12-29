@@ -10,11 +10,13 @@
 
 package org.firstinspires.ftc.team16751.robot.utilities;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
+// p =0.002 i = 0.1 d = 0.0001 f = 0.1
 
 public class ArmUtil {
     /* Declare OpMode members. */
@@ -23,53 +25,44 @@ public class ArmUtil {
     //using GoBuilda 5202 motor
     static final double COUNTS_PER_MOTOR_REV = 537;
     static final double GEAR_REDUCTION = 1.00; // output (wheel) speed / input (motor) speed
-
+    public static double p=0.002, i=0.1,d=0.0001,f=0.1;
     //Bela delivery arm Definitions
+    public double goalShoulder;
+    public double goalElbow;
+    private PIDController shoulderController = new PIDController(p,i,d);
+    private PIDController elbowController = new PIDController(p,i,d);
+
     DcMotor elbow;
     int armPosition;
     int minPosition = 0;
     int maxPosition = 1000;;
     boolean isarmBusy = false;
-
+    public double currElbow = elbow.getCurrentPosition();
 
     DcMotor shoulder;
     int shoulderPosition;
     int shoulderMin = 0;
     int shoulderMax = 1000;
-
+    public double currShoulder = shoulder.getCurrentPosition();
     Servo wrist;
-    int wristPosition;
-    int wristMin = 0;
-    int wristMax = 1000;
+
 
     //The following below reads the positions for the elbow joint (joint #2)
     int elbowRest = (int)(0); //POSITION 1
     int shoulderRest = (int)(0);
-    int elbowAcquire = -100; //POSITION 2
+    int elbowAcquire = -1000; //POSITION 2
     int shoulderAcquire = -1080;
     int elbowLowScore = -1000;//125;//POSITION 3
     int shoulderLowScore = -870;
     int elbowTransport = 0;//POSITION 4
     int shoulderTransport = 0;
 
-
-    enum ArmState {
-        START,
-        ACQUIRE,
-        LOWSCORE,
-        TRANSPORT,
-    }
-
-
-
-
-            /* local OpMode members. */
+     /* local OpMode members. */
     HardwareMap hardwareMap =  null;
 
     /* Constructor */
     public ArmUtil(LinearOpMode opmode){myOpMode = opmode;
     }
-
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
@@ -90,41 +83,45 @@ public class ArmUtil {
     }
 
 
+
+
     public void raiseToPosition(int positionLevel, Double targetSpeed) {
         if (positionLevel == 1) //rest
         {
-            //also zero
-            elbow.setTargetPosition(elbowRest);
-            elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elbow.setPower(0.5);
+            goalElbow = 0;
+            elbowController.setPID(p,i,d);
+            elbow.setPower(elbowController.calculate(currElbow,goalElbow));
 
-            shoulder.setTargetPosition(shoulderRest);
-            shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            shoulder.setPower(0.5);
+
+            goalShoulder = 0;
+            shoulderController.setPID(p,i,d);
+            shoulder.setPower(shoulderController.calculate(currShoulder,goalShoulder));
+
+
             wrist.setPosition(0.25);
 
         }
         else if (positionLevel == 2) //acquire
         {
-            shoulder.setTargetPosition(shoulderAcquire);
-            shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            shoulder.setPower(0.30);
-            wrist.setPosition(0.25);
+            goalElbow = -1000;
+            elbowController.setPID(p,i,d);
+            elbow.setPower(elbowController.calculate(currElbow,goalElbow));
 
-            elbow.setTargetPosition(elbowAcquire);
-            elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elbow.setPower(0.5);
 
+            goalShoulder = -1000;
+            shoulderController.setPID(p,i,d);
+            shoulder.setPower(shoulderController.calculate(currShoulder,goalShoulder));
         }
         else if (positionLevel == 3) //score low
         {
-            elbow.setTargetPosition(elbowLowScore);
-            elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            elbow.setPower(.5);
+            goalElbow = -700;
+            elbowController.setPID(p,i,d);
+            elbow.setPower(elbowController.calculate(currElbow,goalElbow));
 
-            shoulder.setTargetPosition(shoulderLowScore);
-            shoulder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            shoulder.setPower(0.5);
+
+            goalShoulder = -500;
+            shoulderController.setPID(p,i,d);
+            shoulder.setPower(shoulderController.calculate(currShoulder,goalShoulder));
 
             wrist.setPosition(0.25);
 

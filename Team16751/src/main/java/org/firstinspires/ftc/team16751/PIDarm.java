@@ -14,27 +14,26 @@ import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
 @Config
 
 public class PIDarm extends LinearOpMode {
-    public static double p=0.02, i=0,d=0,f=0;
-    public static double goalShoulder=-200;
-    public static double currShoulder=0;
-    public static double goalElbow = -20;
-    public static double currElbow = 0;
+    public static double p=0.002, i=0.1,d=0.0001,f=0.1;
+    public static double goalShoulder;
+    public double currShoulder;
+    public double goalElbow;
+    public double currElbow;
     private PIDController shoulderController;
     private PIDController elbowController;
     private DcMotor shoulder;
     private DcMotor elbow;
+    ArmUtil arm = new ArmUtil(this);
     @Override
     public void runOpMode(){
         shoulder = hardwareMap.get(DcMotor.class, "Shoulder");
         shoulder.setDirection(DcMotorSimple.Direction.FORWARD);
 
         shoulderController = new PIDController(p,i,d);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry() );
 
         elbow = hardwareMap.get(DcMotor.class, "Elbow");
         elbow.setDirection(DcMotorSimple.Direction.FORWARD);
         elbowController = new PIDController(p,i,d);
-        telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
 
         waitForStart();
         while(opModeIsActive()){
@@ -54,6 +53,7 @@ public class PIDarm extends LinearOpMode {
             telemetry.update();
 
         }
+
 
     }
 }
