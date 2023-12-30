@@ -34,28 +34,30 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robot.utilities.DriveUtil2023;
+import org.firstinspires.ftc.teamcode.robot.utilities.NewDriveUtil2024;
 
 @Autonomous(name="Red Left Park", group="Robot")
 
 public class RedLeftParkAuto extends LinearOpMode {
-    DriveUtil2023 drive = new DriveUtil2023(this);
-    private ElapsedTime     runtime = new ElapsedTime();
+    //DriveUtil2023 drive = new DriveUtil2023(this);
+    NewDriveUtil2024 drive = new NewDriveUtil2024(this);
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
 
         /* initialize the robot hardware */
-        drive.init(hardwareMap);
+        drive.init(hardwareMap,telemetry);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path,
-        drive.driveRobotDistanceForward(132,.75);
+        drive.driveRobotDistanceForward(60.1,.75);
 
-        drive.turnToHeading(.4,-90);
+        drive.rotateRight90Degrees();
 
-        drive.driveRobotDistanceForward(150,.75);
+        drive.driveRobotDistanceForward(60.1,.75);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

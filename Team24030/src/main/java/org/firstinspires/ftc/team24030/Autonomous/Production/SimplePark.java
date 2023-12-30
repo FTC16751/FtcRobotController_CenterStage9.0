@@ -27,20 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team24030.Autonomous;
+package org.firstinspires.ftc.team24030.Autonomous.Production;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.team24030.robot.utilities.ClawUtil;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 
-@Autonomous(name="Red Wing Park", group="Red")
+@Autonomous(name="Simple Park", group="Robot")
 
-public class RedLeftParkAuto extends LinearOpMode {
+public class SimplePark extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
-    ClawUtil claw = new ClawUtil(this);
     private ElapsedTime     runtime = new ElapsedTime();
 
     @Override
@@ -48,19 +46,17 @@ public class RedLeftParkAuto extends LinearOpMode {
 
         /* initialize the robot hardware */
         drive.init(hardwareMap);
-        claw.init();
-        claw.setClawClosed();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path,
-        drive.driveRobotDistanceForward(132,.5);
-        drive.rotateRight90Degrees();
-        //drive.turnToHeading(.4,-90);
-        drive.driveRobotDistanceForward(225,.5);
-        sleep(2000);
-        claw.setClawOpen();
-        sleep(2000);
+        drive.driveRobotDistanceForward(100,.75);
+
+
+
+
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }

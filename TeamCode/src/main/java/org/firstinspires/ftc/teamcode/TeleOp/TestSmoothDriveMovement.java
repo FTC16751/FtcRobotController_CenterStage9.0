@@ -12,45 +12,33 @@ public class TestSmoothDriveMovement extends LinearOpMode {
         private DcMotorEx frontRightMotor;
         private DcMotorEx rearLeftMotor;
         private DcMotorEx rearRightMotor;
-        private SmoothDriveMovement driveMovement;
+        private SmoothDriveMovement smoothDriveMovement;
         private ElapsedTime elapsedTime;
         private double rampRateIncrement = 0.1;
 
         @Override
         public void runOpMode() {
-            driveMovement = new SmoothDriveMovement(hardwareMap, telemetry);
+            smoothDriveMovement = new SmoothDriveMovement(hardwareMap, telemetry);
             elapsedTime = new ElapsedTime();
-
+            smoothDriveMovement.storeFirstAngle();
             waitForStart();
 
             while (opModeIsActive()) {
-                /*double forwardReverse = -gamepad1.left_stick_y; // Reversing the value if needed
-                double strafe = gamepad1.left_stick_x;
-                double turn = gamepad1.right_stick_x;
-
-                driveMovement.drive(forwardReverse, strafe, turn);
-*/
-
                 double leftStickX = gamepad1.left_stick_x;
                 double leftStickY = -gamepad1.left_stick_y; // Reversing the value if needed
                 double rightStickX = gamepad1.right_stick_x;
                 double rightStickY = -gamepad1.right_stick_y; // Reversing the value if needed
+                smoothDriveMovement.fielddrive(leftStickX, leftStickY, rightStickX,rightStickY);
 
-                if(gamepad1.left_bumper) {
-                    driveMovement.drive(leftStickX, leftStickY, rightStickX, rightStickY,true);
-                } else {
-                    driveMovement.drive(leftStickX, leftStickY, rightStickX, rightStickY, false);
-                }
-
-                if (gamepad1.left_bumper) {
+                if (gamepad1.a) {
                     // Increase ramp rate when left bumper is pressed
-                    driveMovement.setRampRate(0.1);
-                } else if (gamepad1.right_bumper) {
+                    smoothDriveMovement.setRampRate(0.01);
+                } else if (gamepad1.x) {
                     // Decrease ramp rate when right bumper is pressed
-                    driveMovement.setRampRate(-0.1);
+                    smoothDriveMovement.setRampRate(-0.01);
                 }
 
-                //telemetry.addData("Ramp Rate", driveMovement.getRampRate());
+                telemetry.addData("Ramp Rate", smoothDriveMovement.getRampRate());
                 telemetry.update();
             }
         }

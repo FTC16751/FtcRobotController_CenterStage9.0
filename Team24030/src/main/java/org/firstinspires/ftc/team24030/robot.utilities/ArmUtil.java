@@ -31,9 +31,9 @@ public class ArmUtil {
     int minPosition = 0;
     int maxPosition = (int)(COUNTS_PER_DEGREE * 270);;
 
-    int armLevel1Position = (int)(0);
-    int armLevel2Position = (int)(404);
-    int armLevel3Position = (int)(COUNTS_PER_DEGREE * 70);
+    int armLevel1Position = (int)(0);//init
+    int armLevel2Position = (int)(404);//transport
+    int armLevel3Position = (int)(COUNTS_PER_DEGREE * 70);//lowscore
     int armLevel4Position = (int)(COUNTS_PER_DEGREE * 90);
 
     /* local OpMode members. */

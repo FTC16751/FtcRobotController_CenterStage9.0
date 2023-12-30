@@ -62,9 +62,9 @@ public class ArmMotorTest extends LinearOpMode {
         int minPosition = 0;
         int maxPosition = (int)(100);
         elbowStowPosition = (int)(0);
-        elbowAcquire = (int)(5000);
-        elbowLowScore = (int)(0);
-        elbowTransport = (int)(11000);
+        elbowAcquire = (int)(3500);
+        elbowLowScore = (int)(3500);
+        elbowTransport = (int)(0);
 
         shoulder = hardwareMap.get(DcMotor.class, "Shoulder");
         shoulder.setDirection(DcMotor.Direction.FORWARD);
@@ -72,9 +72,9 @@ public class ArmMotorTest extends LinearOpMode {
         shoulder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int ShoulderminPosition = 0;
         int ShouldermaxPosition = (int)(500);
-        shoulderStowPosition = (int)(0);
-        shoulderAcquire = (int)(104);
-        shoulderLowScore = (int)(200);
+        shoulderStowPosition = (int)(388);
+        shoulderAcquire = (int)(0);
+        shoulderLowScore = (int)(1000);
         shoulderPosition3 = (int)(400);
 
         telemetry.addData("Arm Position reset: ",  "Starting at %7d", arm.getMotorPosition());

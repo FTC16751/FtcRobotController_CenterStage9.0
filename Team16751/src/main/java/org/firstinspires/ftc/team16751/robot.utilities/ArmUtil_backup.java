@@ -13,16 +13,19 @@ package org.firstinspires.ftc.team16751.robot.utilities;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 // p =0.002 i = 0.1 d = 0.0001 f = 0.1
 
-public class ArmUtil {
+public class ArmUtil_backup {
     public static final double SHOULDER_GOAL_POSITION_TRANSPORT = 300;
     //using GoBuilda 5202 motor
     public static double p = 0.002, i = 0.03, d = 0.0001, f = 0.1;
+    private final PIDController shoulderLeftController = new PIDController(p, i, d);
+    private final PIDController elbowLeftController = new PIDController(p, i, d);
+    private final PIDController shoulderRightController = new PIDController(p, i, d);
+    private final PIDController elbowRightController = new PIDController(p, i, d);
+    private final int currentState = 0;
     //Bela delivery arm Definitions
     public double goalShoulder;
     public double goalElbow;
@@ -36,15 +39,10 @@ public class ArmUtil {
     HardwareMap hardwareMap = null;
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;
-    private PIDController shoulderLeftController = new PIDController(p, i, d);
-    private PIDController elbowLeftController = new PIDController(p, i, d);
-    private PIDController shoulderRightController = new PIDController(p, i, d);
-    private PIDController elbowRightController = new PIDController(p, i, d);
-    private int currentState = 0;
     private ArmState currentArmState;
 
     /* Constructor */
-    public ArmUtil(LinearOpMode opmode) {
+    public ArmUtil_backup(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
@@ -127,14 +125,14 @@ public class ArmUtil {
             moveArmToPosition();
         } else if (positionLevel == 3) //score low
         {
-            goalShoulder = 1650;
-            goalElbow =0;
+            goalShoulder = 1250;
+            goalElbow = 0;
             moveArmToPosition();
             wrist.setPosition(0.25);
         } else if (positionLevel == 4) //transport
         {
-            goalShoulder = 1250;
-            goalElbow = 300;
+            goalShoulder = 1650;
+            goalElbow = 0;
             moveArmToPosition();
         } else {
             //zero again!

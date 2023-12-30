@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team24030.Autonomous;
+package org.firstinspires.ftc.team24030.Autonomous.Experiments;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -24,7 +24,7 @@ public class OpenCVAuto extends LinearOpMode {
     private Servo leftClaw;
     private Servo rightClaw;
     // Define servo positions for wrist and claws
-    private double wristPosition = 0.477; // Initial position
+    private double wristPosition = 0.6; // Initial position
     private double leftClawPosition = 1.0; // Initial position - close
     private double rightClawPosition = 0.0; // Initial position - close
 
@@ -91,8 +91,10 @@ public class OpenCVAuto extends LinearOpMode {
 */
 
             if(element_zone==1){
-                driveUtil2023.rotateLeft45Degrees();
-              //  driveUtil2023.driveRobotDistanceForward(73,0.5);
+                driveUtil2023.driveRobotDistanceForward(73,0.5);
+                driveUtil2023.rotateLeft90Degrees();
+                leftClaw.setPosition(0.0);
+                sleep(2000);
                 //driveUtil2023.rotateLeft90Degrees();
                /* driveUtil2023.driveRobotDistanceForward(25,0.5);
                 driveUtil2023.driveRobotDistanceBackward(25,0.5);

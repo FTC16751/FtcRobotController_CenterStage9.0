@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team24030.Autonomous;
+package org.firstinspires.ftc.team24030.Autonomous.Production;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -35,9 +35,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 
-@Autonomous(name="Red Wing Place Pixel then Park", group="Red")
+@Autonomous(name="Blue Wing Park", group="Blue")
 
-public class RedLeftPlacePixelPark extends LinearOpMode {
+public class BlueRightParkAuto extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -51,19 +51,10 @@ public class RedLeftPlacePixelPark extends LinearOpMode {
         waitForStart();
 
         // Step through each leg of the path,
-        drive.driveRobotDistanceForward(91,.50);
-        sleep(250);
-        drive.driveRobotDistanceBackward(40,.75);
-        drive.driveRobotDistanceStrafeLeft(50,.5);
-        drive.driveRobotDistanceForward(78,.5);
-
-        drive.rotateRight90Degrees();
-        drive.driveRobotDistanceForward(280,.75);
-
-
-
-
-
+        drive.driveRobotDistanceForward(132,.5);
+        //drive.turnToHeading(.4,90);
+        drive.rotateLeft90Degrees();
+        drive.driveRobotDistanceForward(225,.5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
