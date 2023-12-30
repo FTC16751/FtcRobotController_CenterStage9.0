@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -109,8 +110,10 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         int cycles;
 
         // Important Step 1:  Make sure you use DcMotorEx when you instantiate your motors.
-        m1 = hardwareMap.get(DcMotorEx.class, "leftlift");  // Configure the robot to use these 4 motor names,
-        m2 = hardwareMap.get(DcMotorEx.class, "rightlift");  // or change these strings to match your existing Robot Configuration.
+        m1 = hardwareMap.get(DcMotorEx.class, "shoulderLeft");  // Configure the robot to use these 4 motor names,
+        m2 = hardwareMap.get(DcMotorEx.class, "shoulderRight");  // or change these strings to match your existing Robot Configuration.
+        m3 = hardwareMap.get(DcMotorEx.class, "elbowLeft");  // Configure the robot to use these 4 motor names,
+        m4 = hardwareMap.get(DcMotorEx.class, "elbowRight");  // or change these strings to match your existing Robot Configuration.
 
         // Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -119,75 +122,54 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
         telemetry.addData(">", "Press play to start tests");
 
-        m2.setDirection(DcMotor.Direction.REVERSE);
+        m1.setDirection(DcMotor.Direction.REVERSE);//shoulderLeft
+        m2.setDirection(DcMotor.Direction.FORWARD);//shoulderRight
+        m3.setDirection(DcMotor.Direction.FORWARD);//elbowLeft
+        m4.setDirection(DcMotor.Direction.FORWARD);//elbowRight
+
 
         m1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         m2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        m3.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        m4.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         m1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         m2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        m3.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        m4.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
 
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Starting at", "%7d :%7d",
                 m1.getCurrentPosition(),
-                m2.getCurrentPosition());
+                m2.getCurrentPosition(),
+                m3.getCurrentPosition(),
+                m4.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //encoderDrive(DRIVE_SPEED,  4,  0, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        // encoderDrive(DRIVE_SPEED, 4, 109, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
-
-        // --------------------------------------------------------------------------------------
-        // Run control loop using legacy encoder reads
-        // In this mode, a single read is done for each encoder position, and a bulk read is done for each velocity read.
-        // This is the worst case scenario.
-        // This is the same as using LynxModule.BulkCachingMode.OFF
-        // --------------------------------------------------------------------------------------
-
-        //displayCycleTimes("Test 1 of 3 (Wait for completion)");
-
-        timer.reset();
-        cycles = 0;
         while (opModeIsActive()) {
-/*
-            switch (state) {
-                case START:
-                    telemetry.addData("start state", "Finished");
-                    state = State.RAISE_ELBOW;
-                    break;
-                case RAISE_ELBOW:
-                    telemetry.addData("Elbow state", "Finished");
-                    encoderDrive(DRIVE_SPEED,  20,  0, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-                    //state= State.RAISE_SHOULDER;
-                    break;
-                case RAISE_SHOULDER:
-                    telemetry.addData("shoulder state", "Finished");
-                    if(m2.getCurrentPosition()==4) {
-                        encoderDrive(DRIVE_SPEED, 4, 109, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-                }
-                    break;
-                default:
-                    //m1.setPower(0);
-                    //m2.setPower(0);
-                    telemetry.addData("default state", "Finished");
-            }
 
- */
             e1 = m1.getCurrentPosition();
             e2 = m2.getCurrentPosition();
+            e3 = m3.getCurrentPosition();
+            e4 = m4.getCurrentPosition();
             v1 = m1.getVelocity();
             v2 = m2.getVelocity();
 
             // Put Control loop action code here.
-            telemetry.addData("left lift", e1);
-            telemetry.addData("right lift", e2);
+            telemetry.addData("shoulder left", e1);
+            telemetry.addData("shoulder right", e2);
+            telemetry.addData("elbow left", e3);
+            telemetry.addData("elbow right", e4);
+            telemetry.addData("left shoulder direction: ", m1.getDirection());
+            telemetry.addData("right shoulder direction: ", m2.getDirection());
+
+            telemetry.addData("left elbow direction: ", m3.getDirection());
+            telemetry.addData("right elbow  direction: ", m4.getDirection());
+
             telemetry.update();
 
         }
