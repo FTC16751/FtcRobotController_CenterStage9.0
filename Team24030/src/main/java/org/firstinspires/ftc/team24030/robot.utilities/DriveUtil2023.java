@@ -448,15 +448,15 @@ public class DriveUtil2023 {
         right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void rotateRight90DegreesRobotTwo() {
+    public void rotateRight18Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 39;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
         // counts_per_rotation/circumference*
-        targetCount = (int) Math.round(COUNTS_PER_GEAR_REV / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 4);
+        targetCount = (int) Math.round(COUNTS_PER_GEAR_REV / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 2);
 
         //ensure full stop and reset motors to begin counting movement
         stopRobot();
@@ -558,15 +558,15 @@ public class DriveUtil2023 {
         right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void rotateLeft90DegreesRobotTwo() {
+    public void rotateLeft180Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
-        double diameter = 39;   //diameter in cms measured between left front and right rear or RF and LR
+        double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
         // counts_per_rotation/circumference*
-        targetCount = (int) Math.round(COUNTS_PER_GEAR_REV  / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 4);
+        targetCount = (int) Math.round(COUNTS_PER_GEAR_REV  / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 2);
 
         //ensure full stop and reset motors to begin counting movement
         stopRobot();
