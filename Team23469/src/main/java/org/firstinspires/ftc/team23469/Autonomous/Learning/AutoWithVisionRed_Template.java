@@ -75,21 +75,72 @@ public class AutoWithVisionRed_Template extends LinearOpMode {
             if(element_zone==1){
                 telemetry.addData("Zone 1 chosen", element_zone);
                 telemetry.update();
-                sleep(10000); //please remove me
+                driveUtil.driveRobotDistanceForward(50, .3); //score p pixel
+                driveUtil.rotateLeft90Degrees();
+                driveUtil.driveRobotDistanceForward(16,.3);
+                slides.moveToPosition(200);
+                sleep(250);
+                driveUtil.driveRobotDistanceBackward(20,.3);
+                driveUtil.rotateRight90Degrees();
+                driveUtil.rotateRight90Degrees();
+                driveUtil.driveRobotDistanceForward(50, .3); //to board
+               // driveUtil.driveRobotDistanceStrafeRight(15,.3);
+                slides.moveToPosition(1300);
+                sleep(2000);
+                claw.openClaw(); //score y pixel
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                sleep(2000);
+                driveUtil.driveRobotDistanceStrafeRight(55,.3);
+                driveUtil.driveRobotDistanceForward(25,.3); //park
+                sleep(2000); //reversed for red
                 //add in code to do things if element is in zone 1
             }
             else if(element_zone==2){
                 telemetry.addData("Zone 2 chosen", element_zone);
                 telemetry.update();
-                sleep(10000); //please remove me
+                driveUtil.driveRobotDistanceForward(55,.3); //score p pixel
+                slides.moveToPosition(200);
+                driveUtil.driveRobotDistanceBackward(20,.3);
+                driveUtil.rotateRight90Degrees();
+                driveUtil.driveRobotDistanceForward(55,.3); //to board
+                driveUtil.driveRobotDistanceStrafeLeft(10, .3);
+                slides.moveToPosition(1300);
+                sleep(2000);
+                claw.openClaw(); //score y pixel
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                sleep(2000);
+                driveUtil.driveRobotDistanceStrafeRight(50,.3);
+                driveUtil.driveRobotDistanceForward(25,.3); //park
+                sleep(2000); //Reversed for red
                 //add in code to do things if element is in zone 2
-                driveUtil.driveRobotDistanceForward(50,0.25);
+
 
             }
             else if (element_zone==3){
                 telemetry.addData("Zone 3 chosen", element_zone);
                 telemetry.update();
-                sleep(10000); //please remove me
+
+
+                driveUtil.driveRobotDistanceForward(45,.3);
+                driveUtil.rotateLeft45Degrees();
+                driveUtil.driveRobotDistanceForward(7  ,.3); //to spike mark
+                slides.moveToPosition(200); //move slides away from pixel
+                sleep(250);
+                driveUtil.driveRobotDistanceBackward(15, .3);
+                driveUtil.rotateRight45Degrees();
+                driveUtil.driveRobotDistanceForward(62 ,.3); //to board
+                driveUtil.driveRobotDistanceStrafeRight(6, .3);
+                slides.moveToPosition(1300);
+                sleep(2000);
+                claw.openClaw(); //score y pixel
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                sleep(2000);
+                driveUtil.driveRobotDistanceStrafeRight(40, .3);
+                driveUtil.driveRobotDistanceForward(10,.3);
+                sleep(2000); //reversed for red
                 //add in code to do things if element is in zone 3
             }
             else {

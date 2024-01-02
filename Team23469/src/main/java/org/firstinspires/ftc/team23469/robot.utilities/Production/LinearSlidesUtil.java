@@ -78,7 +78,7 @@ public class LinearSlidesUtil {
         }
     }
 
-    private void moveToPosition(int targetPosition) {
+    public void moveToPosition(int targetPosition) {
         double ERROR_THRESHOLD = 10.0;
         leftSlide.setTargetPositionTolerance(25);
         rightSlide.setTargetPositionTolerance(25);
