@@ -17,11 +17,11 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
-import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
+import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
-@TeleOp(name="Driver Control Center Stage", group="Teleop")
-public class DriverControl_CenterStage extends LinearOpMode {
+@TeleOp(name="TestDriver", group="Teleop")
+public class TestDriver extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     ArmUtil armUtil = new ArmUtil(this);
     ClawUtil claw = new ClawUtil(this);
@@ -31,7 +31,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
     DistanceSensor distanceSensor;
     RevBlinkinLedDriver lights;
     int temp = 1;
-    double DRIVE_SPEED = 1;
+    double DRIVE_SPEED = .75;
     //default drive move to 1 (arcade)
     int driveMode = 1;
     double handOffset   = 0;
@@ -77,93 +77,46 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
 
     private void doDriverControls() {
-        //Set driver speed as a percentage of full (normally set to full)
-        if (gamepad1.right_bumper & gamepad1.left_bumper) {
-            DRIVE_SPEED = .25;
-        } else if (gamepad1.left_bumper) {
-            DRIVE_SPEED = .50;
-        } else if (gamepad1.right_bumper) {
-            DRIVE_SPEED = 1.00;
-        } else {
-            DRIVE_SPEED = .80;
-        }
-
-        if (gamepad1.x) {
-            drive.driveRobotStrafeLeft(1.0);
-        }
-        if (gamepad1.b) {
-            drive.driveRobotStrafeRight(1.0);
-        }
-        /***************************************************************
-         * Set Drive Mode
-         * This section of code will allow the driver to set
-         * the drive mode between arcade drive and tank drive
-         * arcade drive is set when clicking the start button on the controller
-         * tank drive is set when clicking the back button on the controller
-         * this can be done while in teleop operation
-         * default drive mode is arcade drive
-         ***************************************************************/
-        if (gamepad1.start) driveMode = 1;
-        if (gamepad1.back) driveMode = 2;
-
-        //call the respective drive mode
-        if (driveMode == 1) {
             arcadeDrive();
-            telemetry.addData("Drive Mode", "Arcade");
-        }
-        else if (driveMode == 2) {
-            tankDrive();
-            telemetry.addData("Drive Mode", "Tank");
-        }
-        else {
-            arcadeDrive();
-            telemetry.addData("Drive Mode", "Arcade");
-        }
-        /***end of set drive mode code */
     }
 
     private void doClawControls() {
         if(gamepad1.left_bumper){
             claw.setClawOpen();
         }
-        if(gamepad2.right_bumper){
+        if(gamepad1.right_bumper){
             claw.setClawClosed();
         }
-
 
     }
 
     private void doArmControls() {
         //Controls for Pre-set arm locations
         //Resting
-        if(gamepad2.dpad_down){
+        if(gamepad1.dpad_down){
             armUtil.setCurrentState(ArmUtil.ArmState.INIT);
         }
         //transport
-        if(gamepad2.dpad_left){
+        if(gamepad1.dpad_left){
             armUtil.setCurrentState(ArmUtil.ArmState.TRANSPORT);
         }
         //LowScore
-        if(gamepad2.dpad_up){
+        if(gamepad1.dpad_up){
             armUtil.setCurrentState(ArmUtil.ArmState.LOW_SCORE);
         }
         //high score
-        if(gamepad2.dpad_right){
+        if(gamepad1.dpad_right){
             armUtil.setCurrentState(ArmUtil.ArmState.HIGH_SCORE);
         }
-        if(gamepad2.b){
+        if(gamepad1.b){
             armUtil.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE);
         }
-        if(gamepad2.y) {
-            armUtil.setWristPosition(0);
+        if(gamepad1.y) {
+            armUtil.incrementWristPosition(gamepad1.y);
         }
-        if (gamepad2.a) {
-            armUtil.setWristPosition(0.45);
+        if(gamepad1.a) {
+            armUtil.decrementWristPosition(gamepad1.a);
         }
-        if (gamepad2.x) {
-            armUtil.setWristPosition(0.55);
-        }
-
     }
     private void handleArmState() {
         armUtil.runStateMachine();

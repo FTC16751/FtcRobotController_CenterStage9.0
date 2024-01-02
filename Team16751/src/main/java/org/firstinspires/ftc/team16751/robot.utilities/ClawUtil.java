@@ -32,7 +32,6 @@ package org.firstinspires.ftc.team16751.robot.utilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 
 public class ClawUtil {
@@ -43,7 +42,8 @@ public class ClawUtil {
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     private Servo   leftHand = null;
     private Servo   rightHand = null;
-
+    private boolean leftClawClosed = false;
+    private boolean rightClawClosed = false;
     private boolean lastLeftBumperState = false;
     private boolean lastRightBumperState = false;
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
@@ -68,34 +68,54 @@ public class ClawUtil {
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
     }
-    /**
-     * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
-     *
-
-     */
 
     public void setClawOpen() {
-
-
         leftHand.setPosition(0.25);
         rightHand.setPosition(0);
     }
-
     public void setClawClosed(){
-
         leftHand.setPosition(0);
         rightHand.setPosition(0.25);
     }
     public void openLeftHand(){
-
         leftHand.setPosition(0.25);
-        rightHand.setPosition(0.25);
+    }
+    public void closeLeftHand() {
+        leftHand.setPosition(0);
     }
     public void openRightHand(){
-        leftHand.setPosition(0);
         rightHand.setPosition(0);
     }
+    public void closeRightHand() {
+        rightHand.setPosition(0.25);
+    }
 
+    public void toggleLeftClawWithBumper(boolean leftBumper) {
+        boolean leftBumperEdge = leftBumper && !lastLeftBumperState;
+
+        if (leftBumperEdge) {
+            // Toggle the claw state when the left bumper is pressed
+            if (leftClawClosed) {
+                openLeftHand();
+            } else {
+                closeLeftHand();
+            }
+        }
+        lastLeftBumperState = leftBumper;
+    }
+    public void toggleRightClawWithBumper(boolean rightBumper) {
+        boolean rightBumperEdge = rightBumper && !lastRightBumperState;
+
+        if (rightBumperEdge) {
+            // Toggle the claw state when the left bumper is pressed
+            if (rightClawClosed) {
+                openRightHand();
+            } else {
+                closeRightHand();
+            }
+        }
+        lastRightBumperState = rightBumper;
+    }
     public double getLeftClawPosition(){
        return leftHand.getPosition();
 

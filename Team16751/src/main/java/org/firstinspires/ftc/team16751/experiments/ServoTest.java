@@ -39,7 +39,7 @@ public class ServoTest extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "launcher");
+        servo = hardwareMap.get(Servo.class, "Wrist");
         //servo.setDirection(Servo.Direction.REVERSE);
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
