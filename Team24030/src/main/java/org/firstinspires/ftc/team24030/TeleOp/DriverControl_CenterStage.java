@@ -64,8 +64,8 @@ public class DriverControl_CenterStage extends LinearOpMode {
     private Servo rightClaw;
     // Define servo positions for wrist and claws
     private double wristPosition = 0.477; // Initial position
-    private double leftClawPosition = 1.0; // Initial position
-    private double rightClawPosition = 0.0; // Initial position
+    private double leftClawPosition = 0.25; // Initial position
+    private double rightClawPosition = 0.75; // Initial position
 
     // Define variables to keep track of previous bumper states
     private boolean leftBumperPrevState = false;
@@ -581,11 +581,11 @@ public class DriverControl_CenterStage extends LinearOpMode {
             // Control claws using bumpers (toggle open/close with Falling Edge Detector)
             if (gamepad2.left_bumper && !leftBumperPrevState) {
                 //1 is open .x is close
-                leftClawPosition = (leftClawPosition == 0.6) ? 1.0 : 0.6;
+                leftClawPosition = (leftClawPosition == 0.5) ? 0.25 : 0.5;
                 leftClaw.setPosition(leftClawPosition);
             }
             if (gamepad2.right_bumper && !rightBumperPrevState) {
-                rightClawPosition = (rightClawPosition == 0.0) ? 0.4 : 0.0;
+                rightClawPosition = (rightClawPosition == 0.55) ? 0.75 : 0.55;
                 rightClaw.setPosition(rightClawPosition);
             }
 

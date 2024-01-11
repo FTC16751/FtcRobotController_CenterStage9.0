@@ -50,28 +50,30 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "Servo Test", group = "Concept")
 
 public class ServoTest extends LinearOpMode {
-
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
     Servo   rservo;
     Servo   lservo;
-    // double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-    double  position = (0.0);
-    boolean rampUp = true;
-
+    private Servo wristServo;
+    private Servo leftClaw;
+    private Servo rightClaw;
+    double leftClawPosition = (1.0);
+    double rightClawPosition = (0.0);
+    double wristPosition = (0.0);
 
     @Override
     public void runOpMode() {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        rservo = hardwareMap.get(Servo.class, "launcher");
-        lservo = hardwareMap.get(Servo.class, "launcherangle");
-        //servo.setDirection(Servo.Direction.REVERSE);
+       // rservo = hardwareMap.get(Servo.class, "launcher");
+       // lservo = hardwareMap.get(Servo.class, "launcherangle");
+        wristServo = hardwareMap.get(Servo.class, "wristservo");
+        leftClaw = hardwareMap.get(Servo.class, "leftclaw");
+        rightClaw = hardwareMap.get(Servo.class, "rightclaw");
+
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
@@ -83,31 +85,37 @@ public class ServoTest extends LinearOpMode {
 
             // slew the servo, according to the rampUp (direction) variable.
             if (gamepad1.y){
-                position += INCREMENT;
+                leftClawPosition += INCREMENT;
             }
             if (gamepad1.a){
-                position -= INCREMENT;
+                leftClawPosition -= INCREMENT;
             }
 
-
+            if (gamepad1.b){
+                rightClawPosition += INCREMENT;
+            }
+            if (gamepad1.x){
+                rightClawPosition -= INCREMENT;
+            }
+            if (gamepad1.dpad_up){
+                wristPosition += INCREMENT;
+            }
+            if (gamepad1.dpad_down){
+                wristPosition -= INCREMENT;
+            }
 
             // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", position);
-            telemetry.addData("Servo1 Position read from servo", "%5.2f", rservo.getPosition());
-            telemetry.addData("Servo2 Position read from servo", "%5.2f", lservo.getPosition());
-
-            telemetry.addData(">", "Press Stop to end test." );
+            telemetry.addData("Left Servo Position", "%5.2f", leftClawPosition);
+            telemetry.addData("Right Servo Position", "%5.2f", rightClawPosition);
+            telemetry.addData("Wrist Servo Position", "%5.2f", wristPosition);
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            rservo.setPosition(position);
-            lservo.setPosition(position);
+            leftClaw.setPosition(leftClawPosition);
+            rightClaw.setPosition(rightClawPosition);
+            wristServo.setPosition(wristPosition);
             sleep(CYCLE_MS);
             idle();
         }
-
-        // Signal done;
-        telemetry.addData(">", "Done");
-        telemetry.update();
     }
 }
