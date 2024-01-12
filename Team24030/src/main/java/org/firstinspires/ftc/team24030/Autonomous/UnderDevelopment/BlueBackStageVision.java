@@ -127,16 +127,25 @@ public class BlueBackStageVision extends LinearOpMode {
         waitForStart();
 
             if(element_zone==1){
-                driveUtil2023.driveRobotDistanceForward(75,0.5);
+                //drive robot to spike marks
+                driveUtil2023.driveRobotDistanceForward(90,0.5);
+                //move the custom game element out of the way
+                driveUtil2023.driveRobotDistanceStrafeLeft(30,.5);
+              //  driveUtil2023.driveRobotDistanceBackward(20,.5);
+                //come back and drop the purple game piece
+                driveUtil2023.driveRobotDistanceStrafeRight(5,.5);
+                driveUtil2023.driveRobotDistanceBackward(30,0.5);
+                leftClaw.setPosition(0.20);
+                sleep(500);
+                //drive path towards the backdrop
+                driveUtil2023.driveRobotDistanceBackward(20,.5);
                 driveUtil2023.rotateLeft90Degrees();
-                leftClaw.setPosition(0.0);
-                sleep(2000);
-                driveUtil2023.driveRobotDistanceStrafeLeft(65,.5);
-                driveUtil2023.driveRobotDistanceForward(91,.5);
+                //drive to the backdrop
+                driveUtil2023.driveRobotDistanceForward(60,.5);
 
-
+                //set the arm to score (raise shoulder, then extend elbow)
                 telemetry.addData("State", "Score");
-                shoulderPosition = shoulderPosition3;
+                shoulderPosition = 500;
                 ShoulderArm.setTargetPosition(shoulderPosition);
                 ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 ShoulderArm.setPower(1.0);
@@ -150,7 +159,124 @@ public class BlueBackStageVision extends LinearOpMode {
                     //hello
                 }
 
-                driveUtil2023.driveRobotDistanceStrafeRight(40,.25);
+                //make some fine tuned movements to the backdrop
+                driveUtil2023.driveRobotDistanceStrafeRight(10,.25);
+                driveUtil2023.driveRobotDistanceForward(7,.15);
+                sleep(500);
+
+                //open claw to drop yellow game piece
+                rightClaw.setPosition(0.8);
+                sleep(250);
+
+                //move away from backdrop, lower arm and park in corner
+                driveUtil2023.driveRobotDistanceBackward(20,.25);
+                sleep(500);
+                shoulderPosition = shoulderStowPosition;
+                ShoulderArm.setTargetPosition(0);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1.0);
+
+                elbowPosition = elbowStowPosition;
+                ElbowArm.setTargetPosition(0);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(0.75);
+
+                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
+                    //hello
+                }
+
+                //go park
+                driveUtil2023.driveRobotDistanceStrafeLeft(35,.5);
+                driveUtil2023.driveRobotDistanceForward(30,.5);
+
+            }
+            else if(element_zone==2){
+                //driveUtil2023.driveRobotDistanceForward(80,0.5);
+                //driveUtil2023.driveRobotDistanceBackward(15,0.5);
+
+                //copied from red zone 2
+                driveUtil2023.driveRobotDistanceForward(65,0.5);
+                leftClaw.setPosition(0.2);
+                sleep(1000);
+                driveUtil2023.driveRobotDistanceBackward(10,.5);
+                driveUtil2023.rotateLeft90Degrees();
+                //
+                driveUtil2023.driveRobotDistanceForward(80,.5);
+
+
+                telemetry.addData("State", "Score");
+                shoulderPosition = 500;
+                ShoulderArm.setTargetPosition(shoulderPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1.0);
+
+                elbowPosition = 2000;
+                ElbowArm.setTargetPosition(elbowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1.0);
+
+                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
+                    //hello
+                }
+                //driveUtil2023.driveRobotDistanceStrafeLeft(15,.25);
+                //sleep(1500);
+                wristServo.setPosition(0.7);
+                driveUtil2023.driveRobotDistanceStrafeRight(15,.5);
+                driveUtil2023.driveRobotDistanceForward(15,.15);
+                sleep(500);
+                rightClaw.setPosition(0.8);
+                sleep(250);
+                driveUtil2023.driveRobotDistanceBackward(20,.25);
+                sleep(500);
+                shoulderPosition = shoulderStowPosition;
+                ShoulderArm.setTargetPosition(0);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1.0);
+
+                elbowPosition = elbowStowPosition;
+                ElbowArm.setTargetPosition(0);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1.0);
+
+                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
+                    //hello
+                }
+                driveUtil2023.driveRobotDistanceStrafeLeft(65,.5);
+                driveUtil2023.driveRobotDistanceForward(30,.5);
+                //sleep(2500);
+
+
+            }
+            else if (element_zone==3){
+                //driveUtil2023.driveRobotDistanceForward(73,0.5);
+                //driveUtil2023.rotateRight90Degrees();
+
+                //copied from red zone 1
+                driveUtil2023.driveRobotDistanceForward(75,0.5);
+                driveUtil2023.rotateRight90Degrees();
+                leftClaw.setPosition(0.2);
+                sleep(2000);
+                driveUtil2023.driveRobotDistanceBackward(10,.5);
+                driveUtil2023.rotateLeft180Degrees();
+                //driveUtil2023.driveRobotDistanceStrafeLeft(65,.5);
+                driveUtil2023.driveRobotDistanceForward(70,.5);
+
+
+                telemetry.addData("State", "Score");
+                shoulderPosition = 500;
+                ShoulderArm.setTargetPosition(shoulderPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1.0);
+
+                elbowPosition = 2000;
+                ElbowArm.setTargetPosition(elbowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1.0);
+
+                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
+                    //hello
+                }
+                //driveUtil2023.driveRobotDistanceStrafeLeft(15,.25);
                 sleep(1500);
                 driveUtil2023.driveRobotDistanceForward(7,.15);
                 sleep(500);
@@ -166,24 +292,14 @@ public class BlueBackStageVision extends LinearOpMode {
                 elbowPosition = elbowPosition3;
                 ElbowArm.setTargetPosition(elbowStowPosition);
                 ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ElbowArm.setPower(0.75);
+                ElbowArm.setPower(1.0);
 
                 while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
                     //hello
                 }
-                sleep(2000);
-
-
-
-            }
-            else if(element_zone==2){
-                driveUtil2023.driveRobotDistanceForward(80,0.5);
-                driveUtil2023.driveRobotDistanceBackward(15,0.5);
-
-            }
-            else if (element_zone==3){
-                driveUtil2023.driveRobotDistanceForward(73,0.5);
-                driveUtil2023.rotateRight90Degrees();
+                driveUtil2023.driveRobotDistanceStrafeLeft(70,.5);
+                driveUtil2023.driveRobotDistanceForward(30,.5);
+                sleep(2500);
 
             }
             else {
