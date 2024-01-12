@@ -28,9 +28,11 @@ public class ServoTest extends LinearOpMode {
     static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    Servo   servo;
+    Servo leftHandservo, righHandServo, wristservo;
     // double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-    double  position = (0.0);
+    double left_position = (0.0);
+    double  right_position = (0.0);
+    double  wrist_position = (0.0);
     boolean rampUp = true;
 
 
@@ -39,7 +41,9 @@ public class ServoTest extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "Wrist");
+        leftHandservo = hardwareMap.get(Servo.class, "Left Hand");
+        righHandServo = hardwareMap.get(Servo.class, "Right Hand");
+        wristservo = hardwareMap.get(Servo.class, "Wrist");
         //servo.setDirection(Servo.Direction.REVERSE);
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -52,23 +56,40 @@ public class ServoTest extends LinearOpMode {
 
             // slew the servo, according to the rampUp (direction) variable.
             if (gamepad1.y){
-                position += INCREMENT;
+                left_position += INCREMENT;
             }
             if (gamepad1.a){
-                position -= INCREMENT;
+                left_position -= INCREMENT;
             }
-
+            if (gamepad1.x){
+                right_position += INCREMENT;
+            }
+            if (gamepad1.b){
+                right_position -= INCREMENT;
+            }
+            if (gamepad1.dpad_up){
+                wrist_position += INCREMENT;
+            }
+            if (gamepad1.dpad_down){
+                wrist_position -= INCREMENT;
+            }
 
 
             // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", position);
-            telemetry.addData("Servo Position read from servo", "%5.2f", servo.getPosition());
+            telemetry.addData("Servo Position", "%5.2f", left_position);
+            telemetry.addData("Servo Position send to servo", "%5.2f", leftHandservo.getPosition());
 
-            telemetry.addData(">", "Press Stop to end test." );
+            telemetry.addData("Right Hand Servo Position", "%5.2f", right_position);
+            telemetry.addData("Right Hand Servo Position sent to servo", "%5.2f",righHandServo.getPosition());
+
+            telemetry.addData("Wrist Servo Position", "%5.2f", wrist_position);
+            telemetry.addData("Wrist Servo Position sent to servo", "%5.2f", wristservo.getPosition());
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            servo.setPosition(position);
+            leftHandservo.setPosition(left_position);
+            righHandServo.setPosition(right_position);
+            wristservo.setPosition(wrist_position);
             sleep(CYCLE_MS);
             idle();
         }

@@ -70,24 +70,28 @@ public class ClawUtil {
     }
 
     public void setClawOpen() {
-        leftHand.setPosition(0.25);
-        rightHand.setPosition(0);
+        openLeftHand();
+        openRightHand();
+//        leftHand.setPosition(0.50);
+//        rightHand.setPosition(0.70);
     }
     public void setClawClosed(){
-        leftHand.setPosition(0);
-        rightHand.setPosition(0.25);
+        closeLeftHand();
+        closeRightHand();
+        //leftHand.setPosition(0.70);
+       // rightHand.setPosition(0.40);
     }
     public void openLeftHand(){
-        leftHand.setPosition(0.25);
+        leftHand.setPosition(0.30);
     }
     public void closeLeftHand() {
-        leftHand.setPosition(0);
+        leftHand.setPosition(0.70);
     }
     public void openRightHand(){
-        rightHand.setPosition(0);
+        rightHand.setPosition(0.70);
     }
     public void closeRightHand() {
-        rightHand.setPosition(0.25);
+        rightHand.setPosition(0.30);
     }
 
     public void toggleLeftClawWithBumper(boolean leftBumper) {

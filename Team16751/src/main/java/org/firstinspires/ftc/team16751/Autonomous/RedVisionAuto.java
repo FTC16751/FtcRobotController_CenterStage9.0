@@ -89,8 +89,8 @@ public class RedVisionAuto extends LinearOpMode{
                 driveUtil2023.driveRobotDistanceForward(60,0.5);
                 driveUtil2023.rotateRight90Degrees();
                 driveUtil2023.driveRobotDistanceForward(260,0.5);
-                armUtil.raiseToPosition(3,0.5);
-                armUtil.raiseToPosition(0,0.5);*/
+                arm.raiseToPosition(3,0.5);
+                arm.raiseToPosition(0,0.5);*/
 
 
             }

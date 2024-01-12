@@ -53,7 +53,8 @@ public class DriverControl_CenterStage extends LinearOpMode {
         claw.init(hardwareMap);
        // launcherUtil = new LauncherUtil(hardwareMap);
 
-
+        lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -70,6 +71,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
             doClawControls();
             dotelemetry();
             dolauncher();
+            setLights();
 
         } //end OpModeIsActive
     }  //end runOpMode
@@ -123,7 +125,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
     }
 
     private void doClawControls() {
-        if(gamepad1.left_bumper){
+        if(gamepad2.left_bumper){
             claw.setClawOpen();
         }
         if(gamepad2.right_bumper){
@@ -155,14 +157,19 @@ public class DriverControl_CenterStage extends LinearOpMode {
             armUtil.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE);
         }
         if(gamepad2.y) {
-            armUtil.setWristPosition(0);
+            armUtil.setCurrentState(ArmUtil.ArmState.HANG_READY);
         }
-        if (gamepad2.a) {
-            armUtil.setWristPosition(0.45);
+        if(gamepad2.a) {
+            armUtil.setCurrentState(ArmUtil.ArmState.HANG);
         }
-        if (gamepad2.x) {
-            armUtil.setWristPosition(0.55);
+
+        if(gamepad2.right_stick_y==-1.0){
+            //armUtil.incrementWristPosition();
         }
+        if(gamepad2.right_stick_y==1.0){
+           // armUtil.decrementWristPosition();
+        }
+
 
     }
     private void handleArmState() {
@@ -199,12 +206,31 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
          */
     }
+    public void setLights(){
+        if (time < 85) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
+        }
+        else if (time >= 85 && time <= 90) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+        }
+        else if (time > 90 && time < 110) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
+        }
+        else if (time >= 110 && time <= 120) {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+        }
+        //from 91seconds to 94 seconds
+        //(time > 85 && time <= 120)
+        else
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
+    } //end OpModeIsActive
     public void dotelemetry() {
         telemetry.addLine("Telemetry");
         telemetry.addData("Left Shoulder Position: ", armUtil.getLeftShoulderMotorPosition());
         telemetry.addData("Right Shoulder Position: ", armUtil.getRightShoulderMotorPosition());
         telemetry.addData("Left Elbow Position ", armUtil.getLeftElbowMotorPosition());
         telemetry.addData("Right Elbow Position ", armUtil.getRightElbowMotorPosition());
+        telemetry.addData("right stick y: ", gamepad2.right_stick_y);
        // telemetry.addData("Wrist Position ", claw.getWristPosition());
         //telemetry.addData("Left Claw Position: ", claw.getLeftClawPosition());
         //telemetry.addData("Right Claw Position: ", claw.getRightClawPosition());

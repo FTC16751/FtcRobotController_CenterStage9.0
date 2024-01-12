@@ -111,11 +111,11 @@ public class TestDriver extends LinearOpMode {
         if(gamepad1.b){
             armUtil.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE);
         }
-        if(gamepad1.y) {
-            armUtil.incrementWristPosition(gamepad1.y);
-        }
         if(gamepad1.a) {
-            armUtil.decrementWristPosition(gamepad1.a);
+            armUtil.setCurrentState(ArmUtil.ArmState.HANG_READY);
+        }
+        if(gamepad1.y) {
+            armUtil.setCurrentState(ArmUtil.ArmState.HANG);
         }
     }
     private void handleArmState() {

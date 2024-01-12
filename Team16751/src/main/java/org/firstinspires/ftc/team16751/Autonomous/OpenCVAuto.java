@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team16751.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.TeamElementSubsystem;
@@ -19,8 +18,8 @@ public class OpenCVAuto extends LinearOpMode {
     private TeamElementSubsystem teamElementDetection = null;
 
     boolean togglePreview = true;
-    private DriveUtil2023 driveUtil2023 = null;
-    ArmUtil armUtil = new ArmUtil(this);
+    private DriveUtil2023 drive = null;
+    ArmUtil arm = new ArmUtil(this);
     ClawUtil claw = new ClawUtil(this);
 //Initializing Hardware
     public void HardwareStart() {
@@ -28,11 +27,11 @@ public class OpenCVAuto extends LinearOpMode {
         telemetry.update();
 
         teamElementDetection = new TeamElementSubsystem(hardwareMap);
-        driveUtil2023 = new DriveUtil2023(this);
-        driveUtil2023.init(hardwareMap);
+        drive = new DriveUtil2023(this);
+        drive.init(hardwareMap);
         telemetry.addData("Object Creation", "Done");
         telemetry.update();
-        armUtil.init(hardwareMap);
+        arm.init(hardwareMap);
         claw.init(hardwareMap);
     }
 
@@ -70,49 +69,131 @@ public class OpenCVAuto extends LinearOpMode {
             telemetry.addData("Object", "Passed waitForStart");
 
             telemetry.update();
-            armUtil.raiseToPosition(2,0.5);
-
+            arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
         }
       //  while(opModeIsActive()&& !isStopRequested()){
         waitForStart();
-            if(element_zone==1){
-                driveUtil2023.driveRobotDistanceForward(73,0.5);
-                driveUtil2023.rotateLeft90Degrees();
-                driveUtil2023.driveRobotDistanceForward(25,0.5);
-                driveUtil2023.driveRobotDistanceBackward(25,0.5);
-                driveUtil2023.rotateRight90Degrees();
-                driveUtil2023.driveRobotDistanceForward(60,0.5);
-                driveUtil2023.rotateLeft90Degrees();
-                driveUtil2023.driveRobotDistanceForward(260,0.5);
-                armUtil.raiseToPosition(3,0.5);
+            if(element_zone==1&&curAlliance=="blue"){
+                drive.driveRobotDistanceForward(73,0.5);
+                drive.rotateLeft90Degrees();
+                arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
+                claw.openRightHand();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.rotateRight90Degrees();
+                drive.driveRobotDistanceForward(60,0.5);
+                drive.rotateLeft90Degrees();
+                drive.driveRobotDistanceForward(260,0.5);
+                drive.driveRobotDistanceStrafeLeft(100,0.5);
+                arm.setCurrentState(ArmUtil.ArmState.LOW_SCORE);
                 claw.setClawOpen();
-                armUtil.raiseToPosition(0,0.5);
-
+                claw.setClawClosed();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.driveRobotDistanceStrafeLeft(75,0.5);
+                drive.driveRobotDistanceForward(20,0.5);
 
             }
-            else if(element_zone==2){
-                driveUtil2023.driveRobotDistanceForward(80,0.5);
-                driveUtil2023.driveRobotDistanceBackward(15,0.5);
-                driveUtil2023.rotateLeft90Degrees();
-                driveUtil2023.driveRobotDistanceForward(194.38,0.5);
-               armUtil.raiseToPosition(3,0.5);
-               claw.setClawOpen();
-               armUtil.raiseToPosition(0,0.5);
-                driveUtil2023.driveRobotDistanceStrafeRight(75,0.5);
-                driveUtil2023.driveRobotDistanceForward(20,0.5);
+            else if(element_zone==2&&curAlliance=="blue"){
+                /*claw.openRightHand();
+                sleep(2000);
+                claw.closeRightHand();
+                sleep(2000);
+                claw.openLeftHand();
+                sleep(2000);
+                claw.closeLeftHand();
+                sleep(26000);*/
+               drive.driveRobotDistanceForward(70,0.5);
+                //arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
+                claw.openRightHand();
+                drive.driveRobotDistanceBackward(5,0.5);
+                claw.closeRightHand();
+               // arm.raiseToPosition(2,.5);
+                //arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
+                //arm.runStateMachine();
+                drive.rotateLeft90Degrees();
+
+                drive.driveRobotDistanceForward(180,0.5);
+                //arm.setCurrentState(ArmUtil.ArmState.LOW_SCORE);
+              //  arm.runStateMachine();
+                claw.setClawOpen();
+                sleep(1000);
+                claw.setClawClosed();
+                //arm.setCurrentState(ArmUtil.ArmState.INIT);
+              //  arm.runStateMachine();
+                drive.driveRobotDistanceStrafeRight(60,0.5);
+                drive.driveRobotDistanceForward(60,0.5);
             }
-            else if (element_zone==3){
-                driveUtil2023.driveRobotDistanceForward(73,0.5);
-                driveUtil2023.rotateRight90Degrees();
-                driveUtil2023.driveRobotDistanceBackward(220,0.5);
-                driveUtil2023.driveRobotDistanceStrafeRight(75,0.5);
-                driveUtil2023.driveRobotDistanceBackward(50,0.5);
-               armUtil.raiseToPosition(3,0.5);
-               claw.setClawOpen();
-                armUtil.raiseToPosition(0,0.5);
+            else if (element_zone==3&&curAlliance=="blue") {
+                drive.driveRobotDistanceForward(70,0.5);
+                drive.rotateRight90Degrees();
+               // arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
+                claw.openRightHand();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.driveRobotDistanceBackward(190,0.5);
+                arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE);
+                claw.setClawOpen();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.driveRobotDistanceStrafeLeft(80,0.5);
+                drive.driveRobotDistanceBackward(50,0.5);
+
             }
             else {
         }
+            if(element_zone==1&&curAlliance=="red"){
+                drive.driveRobotDistanceForward(70,0.5);
+                drive.rotateLeft90Degrees();
+                arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
+                arm.runStateMachine();
+                claw.openRightHand();
+                sleep(200);
+                claw.closeRightHand();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.driveRobotDistanceBackward(190,0.5);
+                arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_RAISE_ARM);
+                arm.runStateMachine();
+                arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_SET_SERVO);
+                arm.runStateMachine();
+                claw.setClawOpen();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                arm.runStateMachine();
+                drive.driveRobotDistanceStrafeRight(60,0.5);
+                drive.driveRobotDistanceBackward(60,0.5);
+            }
+            else if (element_zone==2&&curAlliance=="red"){
+                drive.driveRobotDistanceForward(70,0.5);
+               // arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
+                claw.openRightHand();
+                sleep(1000);
+                drive.driveRobotDistanceBackward(5,0.5);
+                claw.closeRightHand();
+                //arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.rotateRight90Degrees();
+                drive.driveRobotDistanceForward(180,0.5);
+                //arm.setCurrentState(ArmUtil.ArmState.LOW_SCORE);
+                claw.setClawOpen();
+                sleep(1000);
+                claw.setClawClosed();
+                //arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.driveRobotDistanceStrafeLeft(60,0.5);
+                drive.driveRobotDistanceForward(60,0.5);
+        }
+            else if (element_zone==3&&curAlliance=="red"){
+                drive.driveRobotDistanceForward(73,0.5);
+                drive.rotateLeft90Degrees();
+                arm.setCurrentState(ArmUtil.ArmState.TRANSPORT);
+                claw.openRightHand();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.rotateRight90Degrees();
+                drive.driveRobotDistanceForward(60,0.5);
+                drive.rotateRight90Degrees();
+                drive.driveRobotDistanceForward(260,0.5);
+                drive.driveRobotDistanceStrafeRight(100,0.5);
+                arm.setCurrentState(ArmUtil.ArmState.LOW_SCORE);
+                claw.setClawOpen();
+                claw.setClawClosed();
+                arm.setCurrentState(ArmUtil.ArmState.INIT);
+                drive.driveRobotDistanceStrafeRight(75,0.5);
+                drive.driveRobotDistanceForward(20,0.5);
+            }
         //}
         }
     }

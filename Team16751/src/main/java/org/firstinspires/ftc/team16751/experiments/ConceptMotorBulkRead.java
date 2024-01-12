@@ -97,7 +97,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         m2 = hardwareMap.get(DcMotorEx.class, "shoulderRight");  // or change these strings to match your existing Robot Configuration.
         m3 = hardwareMap.get(DcMotorEx.class, "elbowLeft");
         m4 = hardwareMap.get(DcMotorEx.class, "elbowRight");
-        wrist = hardwareMap.get(Servo.class, "Wrist");
+        //wrist = hardwareMap.get(Servo.class, "Wrist");
 
 
         m1.setDirection(DcMotor.Direction.FORWARD);
@@ -116,7 +116,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         m4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        wrist.setPosition(0.25);
+        //wrist.setPosition(0.25);
 
         telemetry.addData(">", "Press play to start tests");
         // Send telemetry message to indicate successful Encoder reset
@@ -125,7 +125,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
                 m2.getCurrentPosition());
                 m3.getCurrentPosition();
                 m4.getCurrentPosition();
-                wrist.getPosition();
+                //wrist.getPosition();
         telemetry.update();
 
         waitForStart();
@@ -138,12 +138,12 @@ public class ConceptMotorBulkRead extends LinearOpMode {
             if (gamepad1.a){
                 position -= INCREMENT;
             }
-            wrist.setPosition(position);
+            //wrist.setPosition(position);
             telemetry.addData("shoulder left location",     m1.getCurrentPosition());
             telemetry.addData("shoulder right location",    m2.getCurrentPosition());
             telemetry.addData("elbow left location",     m3.getCurrentPosition());
             telemetry.addData("elbow right location",    m4.getCurrentPosition());
-            telemetry.addData("Wrist Location: ",           wrist.getPosition());
+            //telemetry.addData("Wrist Location: ",           wrist.getPosition());
             telemetry.update();
         }
 

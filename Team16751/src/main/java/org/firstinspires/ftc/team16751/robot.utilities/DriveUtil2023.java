@@ -449,120 +449,11 @@ public class DriveUtil2023 {
         right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void rotateRight90DegreesRobotTwo() {
-        int targetCount;
-        double targetSpeed = 0.5;
-        double diameter = 39;   //diameter in cms measured between left front and right rear or RF and LR
-
-        //convert centimeters to number cycles to drive
-        //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
-        // counts_per_rotation/circumference*
-        targetCount = (int) Math.round(COUNTS_PER_GEAR_REV / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 4);
-
-        //ensure full stop and reset motors to begin counting movement
-        stopRobot();
-        sleep(10);
-        left_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //revere motors
-        //  reverseMotor(right_front_motor);
-        //  reverseMotor(right_rear_motor);
-
-        //set target stop and mode for running to a position
-        left_front_motor.setTargetPosition(targetCount);
-        right_front_motor.setTargetPosition(-targetCount);
-        left_rear_motor.setTargetPosition(targetCount);
-        right_rear_motor.setTargetPosition(-targetCount);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //continue driving until all of the motors hits the distance
-        while (left_front_motor.isBusy() || right_front_motor.isBusy() || left_rear_motor.isBusy()
-                || right_rear_motor.isBusy()) {
-            // Send calculated power to wheels
-            left_front_motor.setPower(targetSpeed);
-            right_front_motor.setPower(targetSpeed);
-            left_rear_motor.setPower(targetSpeed);
-            right_rear_motor.setPower(targetSpeed);
-        }//end while
-
-        stopRobot();
-
-        //return to normal motors
-        // reverseMotor(right_front_motor);
-        // reverseMotor(right_rear_motor);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
 
     public void rotateLeft90Degrees() {
         int targetCount;
         double targetSpeed = 0.5;
         double diameter = 62;   //diameter in cms measured between left front and right rear or RF and LR
-
-        //convert centimeters to number cycles to drive
-        //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
-        // counts_per_rotation/circumference*
-        targetCount = (int) Math.round(COUNTS_PER_GEAR_REV  / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 4);
-
-        //ensure full stop and reset motors to begin counting movement
-        stopRobot();
-        sleep(10);
-        left_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //revere motors
-        //reverseMotor(left_front_motor);
-        //reverseMotor(left_rear_motor);
-
-        //set target stop and mode for running to a position
-        left_front_motor.setTargetPosition(-targetCount);
-        right_front_motor.setTargetPosition(targetCount);
-        left_rear_motor.setTargetPosition(-targetCount);
-        right_rear_motor.setTargetPosition(targetCount);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //conitnue driving until all of the motors hits the distance
-        while (left_front_motor.isBusy() || right_front_motor.isBusy() || left_rear_motor.isBusy()
-                || right_rear_motor.isBusy()) {
-            // Send calculated power to wheels
-            left_front_motor.setPower(targetSpeed);
-            right_front_motor.setPower(targetSpeed);
-            left_rear_motor.setPower(targetSpeed);
-            right_rear_motor.setPower(targetSpeed);
-        }//end while
-
-        stopRobot();
-
-        //return to normal motors
-        // reverseMotor(left_front_motor);
-        //reverseMotor(left_rear_motor);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void rotateLeft90DegreesRobotTwo() {
-        int targetCount;
-        double targetSpeed = 0.5;
-        double diameter = 39;   //diameter in cms measured between left front and right rear or RF and LR
 
         //convert centimeters to number cycles to drive
         //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -668,60 +559,6 @@ public class DriveUtil2023 {
         left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void rotateRight45DegreesRobotTwo() {
-        int targetCount;
-        double targetSpeed = 0.5;
-        double diameter = 39;   //diameter in cms measured between left front and right rear or RF and LR
-
-        //convert centimeters to number cycles to drive
-        //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8
-        // counts_per_rotation/circumference*
-        targetCount = (int) Math.round((COUNTS_PER_GEAR_REV / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 8));
-        //targetCount = (int) Math.round(targetCount*(5/7));
-        //ensure full stop and reset motors to begin counting movement
-        stopRobot();
-        sleep(10);
-        left_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //revere motors
-        //  reverseMotor(right_front_motor);
-        //  reverseMotor(right_rear_motor);
-
-        //set target stop and mode for running to a position
-        left_front_motor.setTargetPosition(targetCount);
-        right_front_motor.setTargetPosition(-targetCount);
-        left_rear_motor.setTargetPosition(targetCount);
-        right_rear_motor.setTargetPosition(-targetCount);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //continue driving until all of the motors hits the distance
-        while (left_front_motor.isBusy() || right_front_motor.isBusy() || left_rear_motor.isBusy()
-                || right_rear_motor.isBusy()) {
-            // Send calculated power to wheels
-            left_front_motor.setPower(targetSpeed);
-            right_front_motor.setPower(targetSpeed);
-            left_rear_motor.setPower(targetSpeed);
-            right_rear_motor.setPower(targetSpeed);
-        }//end while
-
-        stopRobot();
-
-        //return to normal motors
-        // reverseMotor(right_front_motor);
-        // reverseMotor(right_rear_motor);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
 
     public void rotateLeft45Degrees() {
         int targetCount;
@@ -733,60 +570,6 @@ public class DriveUtil2023 {
         // counts_per_rotation/circumference*
         targetCount = (int) Math.round(COUNTS_PER_GEAR_REV  / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 8);
 
-        //ensure full stop and reset motors to begin counting movement
-        stopRobot();
-        sleep(10);
-        left_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //revere motors
-        //reverseMotor(left_front_motor);
-        //reverseMotor(left_rear_motor);
-
-        //set target stop and mode for running to a position
-        left_front_motor.setTargetPosition(-targetCount);
-        right_front_motor.setTargetPosition(targetCount);
-        left_rear_motor.setTargetPosition(-targetCount);
-        right_rear_motor.setTargetPosition(targetCount);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //conitnue driving until all of the motors hits the distance
-        while (left_front_motor.isBusy() || right_front_motor.isBusy() || left_rear_motor.isBusy()
-                || right_rear_motor.isBusy()) {
-            // Send calculated power to wheels
-            left_front_motor.setPower(targetSpeed);
-            right_front_motor.setPower(targetSpeed);
-            left_rear_motor.setPower(targetSpeed);
-            right_rear_motor.setPower(targetSpeed);
-        }//end while
-
-        stopRobot();
-
-        //return to normal motors
-        // reverseMotor(left_front_motor);
-        //reverseMotor(left_rear_motor);
-
-        left_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void rotateLeft45DegreesRobotTwo() {
-        int targetCount;
-        double targetSpeed = 0.5;
-        double diameter = 39;   //diameter in cms measured between left front and right rear or RF and LR
-
-        //convert centimeters to number cycles to drive
-        //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8
-        // counts_per_rotation/circumference*
-        targetCount = (int) Math.round((COUNTS_PER_GEAR_REV  / WHEEL_CIRCUMFERENCE * diameter * Math.PI / 8));
-        //targetCount = (int) Math.round(targetCount*(5/7));
         //ensure full stop and reset motors to begin counting movement
         stopRobot();
         sleep(10);
