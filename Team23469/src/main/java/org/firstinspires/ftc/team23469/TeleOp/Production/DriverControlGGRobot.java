@@ -140,6 +140,12 @@ public class DriverControlGGRobot extends LinearOpMode {
     }
 
     private void doSlides() {
+        if(gamepad2.start) {
+            linearSlides.resetEncoder();
+        }
+        if(gamepad2.right_stick_y==1.0) linearSlides.decreasePosition(100);
+        if(gamepad2.right_stick_y==-1.0) linearSlides.increasePosition(100);
+
         if (gamepad2.dpad_down) {
             linearSlides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
         } else if (gamepad2.dpad_left) {

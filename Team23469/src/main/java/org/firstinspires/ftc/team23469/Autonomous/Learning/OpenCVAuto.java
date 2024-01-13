@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team23469.Autonomous.Learning;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Learning.TeamElementSubsystem;
 
 @Autonomous(name="OpenCVAuto", group="Auto")
-
+@Disabled
 public class OpenCVAuto extends LinearOpMode {
 
     public int element_zone = 1;
