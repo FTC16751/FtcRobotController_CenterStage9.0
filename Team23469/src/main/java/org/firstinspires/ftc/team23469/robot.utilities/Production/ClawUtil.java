@@ -71,13 +71,13 @@ public class ClawUtil {
     }
 
     public void openLeftClaw() {
-        leftServoClaw.setPosition(0.30); // Adjust this value based on your servo's range
+        leftServoClaw.setPosition(0.40); // Adjust this value based on your servo's range
     }
     public void closeLeftClaw() {
         leftServoClaw.setPosition(0.15); // Adjust this value based on your servo's range
     }
     public void openRightClaw() {
-        rightServoClaw.setPosition(0.70); // Adjust this value based on your servo's range
+        rightServoClaw.setPosition(0.80); // Adjust this value based on your servo's range
     }
     public void closeRightClaw() {
         rightServoClaw.setPosition(0.95); // Adjust this value based on your servo's range
@@ -92,7 +92,7 @@ public class ClawUtil {
         wristState = false;
     }
     public void setWristState(boolean wristState) {
-        double position = wristState ? 0.65 : 0.4;// : 0.2;
+        double position = wristState ? 0.7 : 0.4;// : 0.2;
         // Set the wrist position using the calculated position value
         wristServo.setPosition(position);
     }
