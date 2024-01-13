@@ -15,6 +15,30 @@ public class LinearSlidesUtil {
     private final int liftMidPosition = 2000;
     private final int liftHighPosition = 2360;
 
+    public void decreasePosition(int decreaseAmount) {
+        int currentPosition;
+        int newPosition;
+        currentPosition = leftSlide.getCurrentPosition();
+        newPosition = currentPosition - decreaseAmount;
+        changePosition(newPosition);
+    }
+    public void increasePosition(int increaseAmount) {
+        int currentPosition;
+        int newPosition;
+        currentPosition = leftSlide.getCurrentPosition();
+        newPosition = currentPosition + increaseAmount;
+        changePosition(newPosition);
+    }
+    public void changePosition(int newPosition) {
+        leftSlide.setTargetPosition(newPosition);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setPower(1.0);
+        rightSlide.setTargetPosition(newPosition);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setPower(1.0);
+    }
+
+
     public enum SlideState {
         LEVEL_ZERO,
         LOW_POSITION,
@@ -57,6 +81,9 @@ public class LinearSlidesUtil {
             case LEVEL_ZERO:
                 currentState = SlideState.LEVEL_ZERO;
                 moveToPosition(liftLevelZero);
+                if (slidesAtTargetPosition(liftLevelZero)) {
+                    stopSlides();
+                }
                 break;
             case LOW_POSITION:
                 currentState = SlideState.LOW_POSITION;
@@ -91,15 +118,6 @@ public class LinearSlidesUtil {
         leftSlide.setPower(.750);
         rightSlide.setPower(.750);
 
-        /*
-        if (Math.abs(leftSlide.getCurrentPosition() - targetPosition) < ERROR_THRESHOLD &&
-                Math.abs(rightSlide.getCurrentPosition() - targetPosition) < ERROR_THRESHOLD) {
-            stopSlides();
-        }
-
-
-         */
-
 
     }
 
@@ -122,5 +140,12 @@ public class LinearSlidesUtil {
 
     public int getRightLiftPosition() {
         return rightSlide.getCurrentPosition();
+    }
+
+    public boolean slidesAtTargetPosition(int targetPosition) {
+        // Implement logic to check if the arm is sufficiently close to the target position
+        // Return true when the arm is at or close to the target
+        return Math.abs(leftSlide.getCurrentPosition() - targetPosition) < 10
+                && Math.abs(rightSlide.getCurrentPosition() - targetPosition) < 10;
     }
 }

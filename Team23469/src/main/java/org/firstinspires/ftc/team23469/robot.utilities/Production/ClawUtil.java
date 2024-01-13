@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ClawUtil {
-    private Servo servoClaw;
+    private Servo rightServoClaw, leftServoClaw;
     private Servo wristServo;
     private boolean clawClosed = true; // Initial state of the claw
    // private int wristState = 0; // 0: Down,2 score// 1: Grab, 2: Carry, 3: Score
@@ -12,7 +12,8 @@ public class ClawUtil {
     private boolean lastLeftBumperState = false;
     private boolean lastRightBumperState = false;
     public ClawUtil(HardwareMap hardwareMap) {
-        servoClaw = hardwareMap.servo.get("claw");
+        rightServoClaw = hardwareMap.servo.get("claw");
+        leftServoClaw = hardwareMap.servo.get("rclaw");
         wristServo = hardwareMap.servo.get("wrist");
         wristServo.setDirection(Servo.Direction.REVERSE);
 
@@ -58,24 +59,40 @@ public class ClawUtil {
 
  */
     public void openClaw() {
-        servoClaw.setPosition(0.50); // Adjust this value based on your servo's range
+        openLeftClaw();
+        openRightClaw();
         clawClosed = false;
     }
 
     public void closeClaw() {
-        servoClaw.setPosition(0.85); // Adjust this value based on your servo's range
+        closeLeftClaw();
+        closeRightClaw();
         clawClosed = true;
     }
+
+    public void openLeftClaw() {
+        leftServoClaw.setPosition(0.30); // Adjust this value based on your servo's range
+    }
+    public void closeLeftClaw() {
+        leftServoClaw.setPosition(0.15); // Adjust this value based on your servo's range
+    }
+    public void openRightClaw() {
+        rightServoClaw.setPosition(0.70); // Adjust this value based on your servo's range
+    }
+    public void closeRightClaw() {
+        rightServoClaw.setPosition(0.95); // Adjust this value based on your servo's range
+    }
+
     public void lowerWrist(){
-        wristServo.setPosition(0.01);
+        wristServo.setPosition(0.65);
         wristState = true;
     }
     public void raiseWrist(){
-        wristServo.setPosition(0.2);
+        wristServo.setPosition(0.4);
         wristState = false;
     }
     public void setWristState(boolean wristState) {
-        double position = wristState ? 0.01 : 0.2;
+        double position = wristState ? 0.65 : 0.4;// : 0.2;
         // Set the wrist position using the calculated position value
         wristServo.setPosition(position);
     }
@@ -101,7 +118,7 @@ public class ClawUtil {
     */
 
     public double getClawPosition() {
-        return servoClaw.getPosition();
+        return rightServoClaw.getPosition();
     }
 
     public double getWristPosition() {
