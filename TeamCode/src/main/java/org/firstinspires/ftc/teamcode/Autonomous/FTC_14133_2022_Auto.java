@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.robot.utilities.TeamElementSubsystem;
+import org.firstinspires.ftc.teamcode.robot_utilities.TeamElementSubsystem;
 
 @Autonomous(name="FTC_14133_2022_Auto", group="Auto")
 

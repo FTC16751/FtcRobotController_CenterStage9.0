@@ -176,6 +176,7 @@ public class OpenCVAuto extends LinearOpMode {
                 drive.driveRobotDistanceStrafeLeft(60,0.5);
                 drive.driveRobotDistanceForward(60,0.5);
         }
+
             else if (element_zone==3&&curAlliance=="red"){
                 drive.driveRobotDistanceForward(73,0.5);
                 drive.rotateLeft90Degrees();

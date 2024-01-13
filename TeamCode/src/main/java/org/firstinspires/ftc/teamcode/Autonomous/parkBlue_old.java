@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.robot.utilities.DriveUtil2023;
+import org.firstinspires.ftc.teamcode.robot_utilities.DriveUtil2023;
 
 //@TeleOp
 @Autonomous(name="Simple Autonomous", group="Autonomous")

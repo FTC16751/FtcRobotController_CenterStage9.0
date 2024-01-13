@@ -14,7 +14,7 @@ import java.util.List;
 public class SplitAveragePipeline extends OpenCvPipeline {
 
     int CAMERA_WIDTH = 800/*800*/;
-    int CAMERA_HEIGHT = 448/*448*/;
+    int CAMERA_HEIGHT =  448/*448*/;
 
     List<Integer> ELEMENT_COLOR = Arrays.asList(255, 0, 0); //(red, green, blue)
 
@@ -38,6 +38,7 @@ public class SplitAveragePipeline extends OpenCvPipeline {
 
         //Creating duplicate of original frame with no edits
         //Mat original = input.clone();
+
 
         //input = input.submat(new Rect(0));
 

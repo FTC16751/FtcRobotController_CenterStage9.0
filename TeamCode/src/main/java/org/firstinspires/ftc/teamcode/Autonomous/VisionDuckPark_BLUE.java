@@ -3,15 +3,10 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.robot.utilities.DriveUtil2023;
-import org.firstinspires.ftc.teamcode.robot.utilities.OpenCVUtil;
-import org.firstinspires.ftc.teamcode.robot.utilities.DeliveryUtil;
-import org.firstinspires.ftc.teamcode.robot.utilities.DriveUtil;
-import org.firstinspires.ftc.teamcode.robot.utilities.IntakeUtil;
-import org.firstinspires.ftc.teamcode.robot.utilities.SpinnerUtil;
+import org.firstinspires.ftc.teamcode.robot_utilities.DriveUtil2023;
+import org.firstinspires.ftc.teamcode.robot_utilities.OpenCVUtil;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 

@@ -118,8 +118,8 @@ public class ArmUtil {
                 raiseToPosition(1, .5);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.IDLE;
-                    stopArm();
-                    resetArmEncoders();
+                    //stopArm();
+                    //resetArmEncoders();
                 }
                 break;
             case TRANSPORT:
@@ -265,7 +265,7 @@ public class ArmUtil {
             //zero again!
         }
     } //end raise to position
-    public void raiseToPosition(int positionLevel, Double targetSpeed, boolean usePID) {
+    public void raiseToPositionNoPID(int positionLevel, Double targetSpeed, boolean usePID) {
         if (positionLevel == 1) //rest
         {
             goalShoulder = 0;

@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.robot.utilities.NewDriveUtil2024;
+import org.firstinspires.ftc.teamcode.robot_utilities.NewDriveUtil2024;
 
 @Autonomous(name="Simple Auto New Class", group="Robot")
 

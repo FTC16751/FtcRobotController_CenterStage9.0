@@ -134,64 +134,11 @@ public class RedBackStageVision extends LinearOpMode {
                 driveUtil2023.driveRobotDistanceForward(75,0.5);
                 driveUtil2023.rotateLeft90Degrees();
                 leftClaw.setPosition(0.2);
-                sleep(2000);
+                sleep(1000);
                 driveUtil2023.driveRobotDistanceBackward(10,.5);
                 driveUtil2023.rotateLeft180Degrees();
                 //driveUtil2023.driveRobotDistanceStrafeLeft(65,.5);
                 driveUtil2023.driveRobotDistanceForward(70,.5);
-
-
-                telemetry.addData("State", "Score");
-                shoulderPosition = 800;
-                ShoulderArm.setTargetPosition(shoulderPosition);
-                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ShoulderArm.setPower(1.0);
-
-                elbowPosition = 2000;
-                ElbowArm.setTargetPosition(elbowPosition);
-                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ElbowArm.setPower(1.0);
-
-                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
-                    //hello
-                }
-                //driveUtil2023.driveRobotDistanceStrafeLeft(15,.25);
-                sleep(1500);
-                driveUtil2023.driveRobotDistanceForward(7,.15);
-                sleep(500);
-                rightClaw.setPosition(1.0);
-                sleep(250);
-                driveUtil2023.driveRobotDistanceBackward(20,.25);
-                sleep(500);
-                shoulderPosition = shoulderPosition3;
-                ShoulderArm.setTargetPosition(shoulderStowPosition);
-                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ShoulderArm.setPower(1.0);
-
-                elbowPosition = elbowPosition3;
-                ElbowArm.setTargetPosition(elbowStowPosition);
-                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ElbowArm.setPower(1.0);
-
-                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
-                    //hello
-                }
-                driveUtil2023.driveRobotDistanceStrafeRight(80,.5);
-                driveUtil2023.driveRobotDistanceForward(30,.5);
-                sleep(2500);
-                //armUtil.raiseToPosition(3,0.5);
-                //armUtil.raiseToPosition(0,0.5);
-
-
-            }
-            else if(element_zone==2){
-                driveUtil2023.driveRobotDistanceForward(65,0.5);
-                leftClaw.setPosition(0.2);
-                sleep(2000);
-                driveUtil2023.driveRobotDistanceBackward(10,.5);
-                driveUtil2023.rotateRight90Degrees();
-                //
-                driveUtil2023.driveRobotDistanceForward(80,.5);
 
 
                 telemetry.addData("State", "Score");
@@ -209,8 +156,59 @@ public class RedBackStageVision extends LinearOpMode {
                     //hello
                 }
                 //driveUtil2023.driveRobotDistanceStrafeLeft(15,.25);
-                sleep(1500);
-                driveUtil2023.driveRobotDistanceStrafeLeft(30,.5);
+                wristServo.setPosition(0.7);
+                driveUtil2023.driveRobotDistanceForward(7,.15);
+                sleep(1000);
+                rightClaw.setPosition(1.0);
+                sleep(250);
+                driveUtil2023.driveRobotDistanceBackward(20,.25);
+                sleep(250);
+                shoulderPosition = shoulderPosition3;
+                ShoulderArm.setTargetPosition(shoulderStowPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(0.5);
+
+                elbowPosition = elbowPosition3;
+                ElbowArm.setTargetPosition(elbowStowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1.0);
+
+                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
+                    //hello
+                }
+                driveUtil2023.driveRobotDistanceStrafeRight(80,.5);
+                driveUtil2023.driveRobotDistanceForward(30,.5);
+                sleep(2500);
+
+
+            }
+            else if(element_zone==2){
+                driveUtil2023.driveRobotDistanceForward(65,0.5);
+                sleep(1000);
+                leftClaw.setPosition(0.2);
+                sleep(1000);
+                driveUtil2023.driveRobotDistanceBackward(10,.5);
+                driveUtil2023.rotateRight90Degrees();
+                driveUtil2023.driveRobotDistanceForward(80,.5);
+
+
+                telemetry.addData("State", "Score");
+                shoulderPosition = 500;
+                ShoulderArm.setTargetPosition(shoulderPosition);
+                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ShoulderArm.setPower(1.0);
+
+                elbowPosition = 2000;
+                ElbowArm.setTargetPosition(elbowPosition);
+                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ElbowArm.setPower(1.0);
+
+                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
+                    //hello
+                }
+
+                driveUtil2023.driveRobotDistanceStrafeLeft(20,.5);
+                wristServo.setPosition(0.7);
                 driveUtil2023.driveRobotDistanceForward(7,.15);
                 sleep(500);
                 rightClaw.setPosition(0.8);
@@ -220,7 +218,7 @@ public class RedBackStageVision extends LinearOpMode {
                 shoulderPosition = shoulderStowPosition;
                 ShoulderArm.setTargetPosition(0);
                 ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ShoulderArm.setPower(1.0);
+                ShoulderArm.setPower(.5);
 
                 elbowPosition = elbowStowPosition;
                 ElbowArm.setTargetPosition(0);
@@ -239,22 +237,24 @@ public class RedBackStageVision extends LinearOpMode {
                 //drive robot to spike marks
                 driveUtil2023.driveRobotDistanceForward(90,0.5);
                 //move the custom game element out of the way
-                driveUtil2023.driveRobotDistanceStrafeRight(30,.5);
+                driveUtil2023.driveRobotDistanceStrafeRight(35,.5);
                 //  driveUtil2023.driveRobotDistanceBackward(20,.5);
                 //come back and drop the purple game piece
                 driveUtil2023.driveRobotDistanceStrafeLeft(5,.5);
                 driveUtil2023.driveRobotDistanceBackward(30,0.5);
+                //open the left clasw and drop the purple pixel
                 leftClaw.setPosition(0.20);
                 sleep(500);
+
                 //drive path towards the backdrop
-                driveUtil2023.driveRobotDistanceBackward(20,.5);
-                driveUtil2023.rotateRight90Degrees();
+                driveUtil2023.driveRobotDistanceBackward(20,.5); //get out of the way of hte purple pixel
+                driveUtil2023.rotateRight90Degrees(); //rotate toward the backdrop
                 //drive to the backdrop
                 driveUtil2023.driveRobotDistanceForward(60,.5);
 
                 //set the arm to score (raise shoulder, then extend elbow)
                 telemetry.addData("State", "Score");
-                shoulderPosition = 800;
+                shoulderPosition = 500;
                 ShoulderArm.setTargetPosition(shoulderPosition);
                 ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 ShoulderArm.setPower(1.0);
@@ -264,7 +264,7 @@ public class RedBackStageVision extends LinearOpMode {
                 ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 ElbowArm.setPower(0.75);
 
-                wristServo.setPosition(0.6);
+                wristServo.setPosition(0.7);
 
                 while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
                     //hello
@@ -297,8 +297,9 @@ public class RedBackStageVision extends LinearOpMode {
                 }
 
                 //go park
-                driveUtil2023.driveRobotDistanceStrafeRight(35,.5);
+                driveUtil2023.driveRobotDistanceStrafeRight(40,.5);
                 driveUtil2023.driveRobotDistanceForward(30,.5);
+                sleep(2500);
             } //strafe over more at the end and go forward more before dropping the claw
             else {
         }

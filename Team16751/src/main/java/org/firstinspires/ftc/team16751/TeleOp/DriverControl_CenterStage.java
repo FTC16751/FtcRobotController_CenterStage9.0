@@ -51,6 +51,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
         drive.init(hardwareMap);
         armUtil.init(hardwareMap);
         claw.init(hardwareMap);
+        armUtil.setCurrentState(ArmUtil.ArmState.INIT);
        // launcherUtil = new LauncherUtil(hardwareMap);
 
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
@@ -231,6 +232,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
         telemetry.addData("Left Elbow Position ", armUtil.getLeftElbowMotorPosition());
         telemetry.addData("Right Elbow Position ", armUtil.getRightElbowMotorPosition());
         telemetry.addData("right stick y: ", gamepad2.right_stick_y);
+        telemetry.addData("current state: ", armUtil.getCurrentState());
        // telemetry.addData("Wrist Position ", claw.getWristPosition());
         //telemetry.addData("Left Claw Position: ", claw.getLeftClawPosition());
         //telemetry.addData("Right Claw Position: ", claw.getRightClawPosition());
