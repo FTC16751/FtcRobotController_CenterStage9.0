@@ -1,4 +1,4 @@
-    package org.firstinspires.ftc.team16751.robot.utilities;
+    package org.firstinspires.ftc.team23469.robot.utilities.Production;
 
 
     import static android.os.SystemClock.sleep;
@@ -21,7 +21,7 @@
     import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
     import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-    public class NewDriveUtil2024 {
+    public class DriveUtil2024 {
         private LinearOpMode myOpMode = null;
         // Define constants
         private static final double ENCODER_COUNTS_PER_INCH = 45.33;
@@ -97,7 +97,7 @@
       //  public NewDriveUtil2024(HardwareMap hardwareMap, Telemetry telemetry) {
        // }
 
-        public NewDriveUtil2024(LinearOpMode opmode) {
+        public DriveUtil2024(LinearOpMode opmode) {
             myOpMode = opmode;
         }
         //drive utility constructor
@@ -135,7 +135,7 @@
             // Retrieve and initialize the IMU.
             // This sample expects the IMU to be in a REV Hub and named "imu".
             imu = hardwareMap.get(IMU.class, "imu");
-            RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+            RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
             RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
             RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
             // Now initialize the IMU with this mounting orientation
@@ -175,12 +175,7 @@
             // Return the heading in degrees or radians based on your needs
             return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY,AngleUnit.DEGREES).firstAngle;
         }
-
-        public double getHeading() {
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            return orientation.getYaw(AngleUnit.DEGREES);
-        }
-        private double getHeading2() {
+        private double getHeading() {
             // Convert average encoder position to degrees
             double angle = getAverageEncoderAngle();
 
@@ -218,12 +213,6 @@
             /* tested */
             return motor.getPower();
         }
-        public boolean motorisBusyLF() {
-            return left_front_motor.isBusy();
-        }
-        public boolean motorisBusyRF() {
-            return right_front_motor.isBusy();
-        }
         public void driveMecanum(double forwardPower, double strafePower, double turnPower, double rightStickY, double driveSpeed) {
             String name = new Object(){}.getClass().getEnclosingMethod().getName();
             StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
@@ -254,12 +243,13 @@
 
             setMotorPowersWithRamp(motors, powers, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
         }
-public double getBotHeading() {
-            return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-}
+
         public void driveFieldOriented(double forwardPower, double strafePower, double turnPower, double rightStickY, double driveSpeed) {
             /** TESTED **/
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            forwardPower = forwardPower*driveSpeed;
+            strafePower = strafePower*driveSpeed;
+            turnPower = turnPower*driveSpeed;
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = strafePower * Math.cos(-botHeading) - forwardPower * Math.sin(-botHeading);
@@ -337,7 +327,7 @@ public double getBotHeading() {
             RIGHT
         }
 
-        public void movePID(Direction direction, double targetDistance, double speed, long timeoutMillis) {
+            public void movePID(Direction direction, double targetDistance, double speed, long timeoutMillis) {
 
             String name = new Object(){}.getClass().getEnclosingMethod().getName();
             StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
@@ -345,14 +335,14 @@ public double getBotHeading() {
             RobotLog.dd("GAMLOG", "current method: "+name+": called from: "+e);
 
             DcMotor[] motors = {left_front_motor, right_front_motor, left_rear_motor, right_rear_motor};
-            double countsToTravel = (targetDistance*.85*.93) * ENCODER_COUNTS_PER_INCH;
+            double countsToTravel = targetDistance * ENCODER_COUNTS_PER_INCH;
 
             double initialPosition = getAverageEncoderPosition(motors);
 
             double errorSum = 0;
             double lastError = 0;
             long startTime = System.currentTimeMillis();
-            //resetEncoders();
+
 
             while ((System.currentTimeMillis() - startTime) < timeoutMillis &&
                     Math.abs(getAverageEncoderPosition(motors) - initialPosition) < countsToTravel) {
@@ -556,62 +546,7 @@ public double getBotHeading() {
                 motor.setPower(0);
             }
         }
-        /*
-        public void moveForwardPID(double targetDistance, double speed) {
-            // Determine the total encoder distance needed for each motor
-            double totalTargetDistance = Math.abs(targetDistance);
-            double targetEncoderTicks = totalTargetDistance * ENCODER_COUNTS_PER_INCH;
 
-            // Initialize PID variables
-            double error, integral, derivative, powerLeft, powerRight;
-            double previousErrorLeft = 0.0;
-            double previousErrorRight = 0.0;
-            double integralTermLeft = 0.0;
-            double integralTermRight = 0.0;
-            double timestamp = runtime.milliseconds();
-
-            // Start moving forward with initial power
-            setMotorPowerWithRamp(frontLeftMotor, speed, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-            setMotorPowerWithRamp(frontRightMotor, speed, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-            setMotorPowerWithRamp(rearLeftMotor, speed, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-            setMotorPowerWithRamp(rearRightMotor, speed, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-
-            // Keep moving until both motors reach target distance
-            while (Math.abs(getEncoderDistance(frontLeftMotor) - targetEncoderTicks) > ERROR_THRESHOLD &&
-                    Math.abs(getEncoderDistance(frontRightMotor) - targetEncoderTicks) > ERROR_THRESHOLD) {
-                // Calculate individual errors for each motor
-                errorLeft = targetEncoderTicks - getEncoderDistance(frontLeftMotor);
-                errorRight = targetEncoderTicks - getEncoderDistance(frontRightMotor);
-
-                // Update integral terms for each motor
-                integralTermLeft += errorLeft * (runtime.milliseconds() - timestamp);
-                integralTermRight += errorRight * (runtime.milliseconds() - timestamp);
-
-                // Calculate individual derivatives for each motor
-                derivativeLeft = (errorLeft - previousErrorLeft) / (runtime.milliseconds() - timestamp);
-                derivativeRight = (errorRight - previousErrorRight) / (runtime.milliseconds() - timestamp);
-
-                // Calculate PID output power for each motor
-                powerLeft = speed + Kp * errorLeft + Ki * integralTermLeft + Kd * derivativeLeft;
-                powerRight = speed + Kp * errorRight + Ki * integralTermRight + Kd * derivativeRight;
-
-                // Apply ramped speed control to each motor
-                setMotorPowerWithRamp(frontLeftMotor, powerLeft, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-                setMotorPowerWithRamp(frontRightMotor, powerRight, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-                setMotorPowerWithRamp(rearLeftMotor, powerLeft, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-                setMotorPowerWithRamp(rearRightMotor, powerRight, MAX_MOTOR_SPEED, MOTOR_ACCELERATION);
-
-                // Update previous errors and timestamp
-                previousErrorLeft = errorLeft;
-                previousErrorRight = errorRight;
-                timestamp = runtime.milliseconds();
-            }
-
-            // Stop motors when target distance is reached
-            stopMotors();
-        }
-
-         */
 
         public void moveBackwardPID(double targetDistance, double speed, long timeoutMillis) {
             String name = new Object(){}.getClass().getEnclosingMethod().getName();
@@ -882,70 +817,6 @@ public double getBotHeading() {
             stopMotors(motors); // Stop the motors after reaching the target angle or timeout
         }
 
-        public void rotateByXDegrees(boolean clockwise, double targetAngle, double speed, long timeoutMillis) {
-            String name = new Object(){}.getClass().getEnclosingMethod().getName();
-            RobotLog.dd("GAMLOG", "current method: "+name);
-
-            DcMotor[] motors = {left_front_motor, right_front_motor, left_rear_motor, right_rear_motor};
-            int targetCount;
-            double targetSpeed = speed;
-            double diameter = 64;//80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
-            long startTime = System.currentTimeMillis();
-            //convert centimeters to number cycles to drive
-            //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
-            // counts_per_rotation/circumference*
-            targetCount = (int) Math.round(COUNTS_PER_GEAR_REV / WHEEL_CIRCUMFERENCE * diameter * Math.PI / (360/targetAngle));
-            double initialPosition = getAverageEncoderPosition(motors);
-            //ensure full stop and reset motors to begin counting movement
-            stopRobot();
-            sleep(10);
-            resetEncoders();
-
-
-            if (clockwise) {
-                //set target stop and mode for running to a position
-                left_front_motor.setTargetPosition(targetCount);
-                right_front_motor.setTargetPosition(-targetCount);
-                left_rear_motor.setTargetPosition(targetCount);
-                right_rear_motor.setTargetPosition(-targetCount);
-            } else {
-                left_front_motor.setTargetPosition(-targetCount);
-                right_front_motor.setTargetPosition(targetCount);
-                left_rear_motor.setTargetPosition(-targetCount);
-                right_rear_motor.setTargetPosition(targetCount);
-            }
-            left_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            right_front_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            left_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            right_rear_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            //continue driving until all of the motors hits the distance
-            while ( (System.currentTimeMillis() - startTime) < timeoutMillis &&
-                    (left_front_motor.isBusy()
-                     || right_front_motor.isBusy()
-                     //|| left_rear_motor.isBusy()
-                     //|| right_rear_motor.isBusy()
-                    )
-            ) {
-                // Send calculated power to wheels
-                left_front_motor.setPower(targetSpeed);
-                right_front_motor.setPower(targetSpeed);
-                left_rear_motor.setPower(targetSpeed);
-                right_rear_motor.setPower(targetSpeed);
-            }//end while
-
-            stopRobot();
-
-            //return to normal motors
-            // reverseMotor(right_front_motor);
-            // reverseMotor(right_rear_motor);
-
-            left_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            right_front_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
 
 
     // ... Add methods for stopping motors, setting motor mode, etc. ...
@@ -1027,6 +898,9 @@ public double getBotHeading() {
             return angle;
         }
 
+        public void resetYaw () {
+            imu.resetYaw();
+        }
         public void moveArcPID(double radius, double angle, DcMotor directionMotor) {
             // Validate inputs
             if (radius <= 0 || angle <= 0 || angle > 360) {
@@ -1154,6 +1028,8 @@ public double getBotHeading() {
             left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }  //end drive robot distance forward
+
+
         /////////////// from driveutil 2023
         public void stopRobot() {
             String name = new Object(){}.getClass().getEnclosingMethod().getName();
@@ -1433,7 +1309,7 @@ public double getBotHeading() {
             RobotLog.dd("GAMLOG", "current method: "+name);
             int targetCount;
             double targetSpeed = 0.5;
-            double diameter = 65;//80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+            double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
             //convert centimeters to number cycles to drive
             //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -1491,7 +1367,7 @@ public double getBotHeading() {
             RobotLog.dd("GAMLOG", "current method: "+name);
             int targetCount;
             double targetSpeed = 0.5;
-            double diameter = 62;//80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+            double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
             //convert centimeters to number cycles to drive
             //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 4
@@ -1548,7 +1424,7 @@ public double getBotHeading() {
             RobotLog.dd("GAMLOG", "current method: "+name);
             int targetCount;
             double targetSpeed = 0.5;
-            double diameter = 62;//80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
+            double diameter = 80;//56.8;   //diameter in cms measured between left front and right rear or RF and LR
 
             //convert centimeters to number cycles to drive
             //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8
@@ -1605,7 +1481,7 @@ public double getBotHeading() {
             RobotLog.dd("GAMLOG", "current method: "+name);
             int targetCount;
             double targetSpeed = 0.5;
-            double diameter = 62;//80;//56.8;  //diameter in cms measured between left front and right rear or RF and LR
+            double diameter = 80;//56.8;  //diameter in cms measured between left front and right rear or RF and LR
 
             //convert centimeters to number cycles to drive
             //to make a 90 degree turn, use diameter divide by four; so, diameter * pi / 8
@@ -1656,8 +1532,6 @@ public double getBotHeading() {
             left_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             right_rear_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-
-
 
         DcMotor reverseMotor(DcMotor thisMotor) {
             /****************
@@ -1757,9 +1631,6 @@ public double getBotHeading() {
             setMotorPowers(frontLeftPower,backLeftPower,backRightPower,frontRightPower);
         }
 
-        public void resetIMUYaw() {
-            imu.resetYaw();
-        }
         public void turnToHeading(double maxTurnSpeed, double heading) {
             double  headingError  = 0;
             double  turnSpeed  = 0;
@@ -1776,13 +1647,12 @@ public double getBotHeading() {
                 turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
 
                 // Pivot in place by applying the turning correction
-                //moveRobot(0,0, turnSpeed);
-                driveMecanum(0,0,turnSpeed,0,.25);
+                moveRobot(0,0, turnSpeed);
 
             }
 
             // Stop all motion;
-            stopMotors();
+            moveRobot(0, 0,0);
         }
 
         public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
@@ -1800,5 +1670,4 @@ public double getBotHeading() {
             // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
             return Range.clip(headingError * proportionalGain, -1, 1);
         }
-
     }

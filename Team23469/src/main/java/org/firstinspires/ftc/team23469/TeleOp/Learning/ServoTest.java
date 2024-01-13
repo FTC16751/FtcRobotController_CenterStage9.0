@@ -69,8 +69,8 @@ public class ServoTest extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        rservo = hardwareMap.get(Servo.class, "righthangerservo");
-        lservo = hardwareMap.get(Servo.class, "lefthangerservo");
+        rservo = hardwareMap.get(Servo.class, "wrist");
+        //lservo = hardwareMap.get(Servo.class, "lefthangerservo");
         //servo.setDirection(Servo.Direction.REVERSE);
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -94,14 +94,14 @@ public class ServoTest extends LinearOpMode {
             // Display the current value
             telemetry.addData("Servo Position", "%5.2f", position);
             telemetry.addData("Servo Position read from servo", "%5.2f", rservo.getPosition());
-            telemetry.addData("Servo Position read from servo", "%5.2f", lservo.getPosition());
+            //telemetry.addData("Servo Position read from servo", "%5.2f", lservo.getPosition());
 
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
             // Set the servo to the new position and pause;
             rservo.setPosition(position);
-            lservo.setPosition(position);
+           // lservo.setPosition(position);
             sleep(CYCLE_MS);
             idle();
         }

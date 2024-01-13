@@ -207,6 +207,13 @@ public class ArmUtil {
                     currentArmState = ArmState.IDLE;
                 }
                 break;
+            case INCREASE_SHOULDER_POSITION:
+                currentArmState = ArmState.INCREASE_SHOULDER_POSITION;
+                increaseShoulderPosition(100);
+                if (armAtTargetPosition()) {
+                    currentArmState = ArmState.IDLE;
+                }
+                break;
             case IDLE:
                 currentArmState = ArmState.IDLE;
                 moveArmToPosition(); //should retain the last place we sent the arm
@@ -412,26 +419,55 @@ public class ArmUtil {
         // Return true when the arm is at or close to the target
         return(Math.abs(elbowLeft.getCurrentPosition() - goalElbow) < 15);
     }
-    public void increasePosition(int increaseAmount) {
+    public void increaseElbowPosition(int increaseAmount) {
         int currentPosition;
         int newPosition;
         currentPosition = elbowLeft.getCurrentPosition();
         newPosition = currentPosition + increaseAmount;
-
+        changeElbowPosition(newPosition);
     }
 
-    public void decreasePosition(int decreaseAmount) {
+    public void decreaseElbowPosition(int decreaseAmount) {
         int currentPosition;
         int newPosition;
         currentPosition = elbowLeft.getCurrentPosition();
         newPosition = currentPosition - decreaseAmount;
-        changePosition(newPosition);
+        changeElbowPosition(newPosition);
     }
 
-    public void changePosition(int newPosition) {
+    public void changeElbowPosition(int newPosition) {
         elbowLeft.setTargetPosition(newPosition);
         elbowLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elbowLeft.setPower(1.0);
+        elbowRight.setTargetPosition(newPosition);
+        elbowRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbowRight.setPower(1.0);
+    }
+
+    public void increaseShoulderPosition(int increaseAmount) {
+        int currentPosition;
+        int newPosition;
+        currentPosition = shoulderLeft.getCurrentPosition();
+        newPosition = currentPosition + increaseAmount;
+        changeShoulderPosition(newPosition);
+    }
+    public void decreaseShoulderPosition(int decreaseAmount) {
+        int currentPosition;
+        int newPosition;
+        currentPosition = shoulderLeft.getCurrentPosition();
+        newPosition = currentPosition - decreaseAmount;
+        changeShoulderPosition(newPosition);
+    }
+
+    public void changeShoulderPosition(int newPosition) {
+        shoulderLeft.setTargetPosition(newPosition);
+        shoulderLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderLeft.setPower(1.0);
+
+        shoulderRight.setTargetPosition(newPosition);
+        shoulderRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderRight.setPower(1.0);
+
     }
 
     public void setElbowMotorPower(double v) {
@@ -535,6 +571,7 @@ public class ArmUtil {
         HANG_READY_RAISE_ARM,
         HANG_READY,
         HANG_RAISE_ARM,
+        INCREASE_SHOULDER_POSITION,
         HANG
     }
     private final int[] armMoveOrder = {1, 2, 3};

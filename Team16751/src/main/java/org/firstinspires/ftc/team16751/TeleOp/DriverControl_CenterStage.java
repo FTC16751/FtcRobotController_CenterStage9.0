@@ -93,9 +93,11 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
         if (gamepad1.x) {
             drive.driveRobotStrafeLeft(1.0);
+
         }
         if (gamepad1.b) {
             drive.driveRobotStrafeRight(1.0);
+
         }
         /***************************************************************
          * Set Drive Mode
@@ -164,12 +166,6 @@ public class DriverControl_CenterStage extends LinearOpMode {
             armUtil.setCurrentState(ArmUtil.ArmState.HANG);
         }
 
-        if(gamepad2.right_stick_y==-1.0){
-            //armUtil.incrementWristPosition();
-        }
-        if(gamepad2.right_stick_y==1.0){
-           // armUtil.decrementWristPosition();
-        }
 
 
     }
@@ -233,6 +229,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
         telemetry.addData("Right Elbow Position ", armUtil.getRightElbowMotorPosition());
         telemetry.addData("right stick y: ", gamepad2.right_stick_y);
         telemetry.addData("current state: ", armUtil.getCurrentState());
+        telemetry.addData("robot heading: ", drive.getHeading());
        // telemetry.addData("Wrist Position ", claw.getWristPosition());
         //telemetry.addData("Left Claw Position: ", claw.getLeftClawPosition());
         //telemetry.addData("Right Claw Position: ", claw.getRightClawPosition());

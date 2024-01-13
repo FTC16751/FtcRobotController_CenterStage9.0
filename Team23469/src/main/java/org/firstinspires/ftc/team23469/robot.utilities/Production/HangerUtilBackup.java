@@ -4,32 +4,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class HangerUtil {
+public class HangerUtilBackup {
     private DcMotor hanger;
     private Servo rhangerServo;
     private Servo lhangerServo;
 
-    public enum HangerState {
-        RASIE_HANGER,
-        HANG_HANGER,
-        LOWER_HANGER,
-        RAISE_HANGER_SERVO,
-        LOWER_HANGER_SERVO,
-        MANUAL_MOVE,
-        IDLE
-    }
-
-    public enum HangerServoState {
-        RAISE_HANGER_SERVO,
-        LOWER_HANGER_SERVO
+    enum HangerState {
+        DOWN,
+        UP,
+        HANG,
+        MANUAL_MOVE
     }
 
     private HangerState currentState;
-    public HangerServoState currentServoState = HangerServoState.LOWER_HANGER_SERVO;
     private static final double MANUAL_MOVE_MAX_POSITION = 0.65;
     private static final double MANUAL_MOVE_INCREMENT = 0.05;
 
-    public HangerUtil(HardwareMap hardwareMap) {
+    public HangerUtilBackup(HardwareMap hardwareMap) {
         hanger = hardwareMap.dcMotor.get("hanger");
         hanger.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hanger.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -40,67 +31,76 @@ public class HangerUtil {
         lhangerServo = hardwareMap.servo.get("lefthangerservo");
         lhangerServo.setPosition(0.5);
 
-        currentState = HangerState.RASIE_HANGER;
+        currentState = HangerState.DOWN;
     }
 
     public void toggleHanger() {
         switch (currentState) {
-            case RASIE_HANGER:
+            case DOWN:
                 raiseHanger();
                 break;
-            case HANG_HANGER:
+            case UP:
                 hangHanger();
                 break;
-            case LOWER_HANGER:
+            case HANG:
                 lowerHanger();
                 break;
-            case RAISE_HANGER_SERVO:
-                raiseHangerServo();
-                break;
-            case LOWER_HANGER_SERVO:
-                lowerHangerServo();
-                break;
             case MANUAL_MOVE:
-                break;
-            case IDLE:
                 break;
             default:
                 break;
         }
     }
 
-    public void raiseHanger() {
-        currentState = HangerState.RASIE_HANGER;
+    private void raiseHanger() {
+
         hanger.setTargetPosition(12000);
         hanger.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hanger.setPower(1.0);
+
+        while (hanger.isBusy()) {
+            // Wait for the motor to reach the target position
+        }
+        // Automatically move hangerServo to ServoUp position
+        rhangerServo.setPosition(.45);
+        lhangerServo.setPosition(.80);
+
+        //set new sate
+        currentState = HangerState.UP;
+
+
+       /* if (hangerAtTargetPosition(12000)) {
+            // Automatically move hangerServo to ServoUp position
+            rhangerServo.setPosition(.45);
+            lhangerServo.setPosition(.80);
+
+        }
+
+ */
     }
 
-    public void hangHanger() {
-        currentState = HangerState.HANG_HANGER;
+    private void hangHanger() {
+        currentState = HangerState.HANG;
         hanger.setTargetPosition(2000);
         hanger.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hanger.setPower(1.0);
+        while (hanger.isBusy()) {
+            // Wait for the motor to reach the target position
+        }
+
     }
 
-    public void lowerHanger() {
-        currentState = HangerState.LOWER_HANGER;
+    private void lowerHanger() {
+        currentState = HangerState.DOWN;
         hanger.setTargetPosition(0);
         hanger.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hanger.setPower(1.0);
-    }
-
-    public void raiseHangerServo() {
-        currentServoState = HangerServoState.RAISE_HANGER_SERVO;
-        //move hangerServo to ServoUp position
-        rhangerServo.setPosition(.45);
-        lhangerServo.setPosition(.80);
-    }
-
-    public void lowerHangerServo() {
-        currentServoState = HangerServoState.LOWER_HANGER_SERVO;
+        while (hanger.isBusy()) {
+            // Wait for the motor to reach the target position
+        }
         rhangerServo.setPosition(0.8);
         lhangerServo.setPosition(0.5);
+
     }
 
     public void setManualMove() {
@@ -108,8 +108,9 @@ public class HangerUtil {
     }
 
     public void moveHangerManually(double power) {
-       currentState = HangerState.MANUAL_MOVE;
-       hanger.setPower(power);
+        if (currentState == HangerState.MANUAL_MOVE) {
+            hanger.setPower(power);
+        }
     }
 
     public void moveHangerServoManually(double position) {
@@ -122,16 +123,8 @@ public class HangerUtil {
         return currentState;
     }
 
-    public void setCurrentState(HangerState newState) {
-        currentState = newState;
-    }
-
     public int getHangerPosition() {
         return hanger.getCurrentPosition();
-    }
-
-    public double getHangerPower() {
-        return hanger.getPower();
     }
 
     public double getHangerServoPosition() {
