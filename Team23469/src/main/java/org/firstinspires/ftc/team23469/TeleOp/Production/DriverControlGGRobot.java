@@ -23,7 +23,7 @@ public class DriverControlGGRobot extends LinearOpMode {
         private HangerUtil hangerUtil;
 
         private boolean lastTriggerState = false;
-        double DRIVE_SPEED = .7;
+        double DRIVE_SPEED = .55;
         double forwardPower; // Forward/backward
         double strafePower; // Left/right strafe
         double turnPower; // Turn
@@ -89,7 +89,7 @@ public class DriverControlGGRobot extends LinearOpMode {
         } else if (gamepad1.right_bumper) {
             DRIVE_SPEED = 1.00; //speed boost to 100%
         } else {
-            DRIVE_SPEED = .70; //default to 70% drive speed
+            DRIVE_SPEED = .6; //default to 70% drive speed
         }
         forwardPower = -gamepad1.left_stick_y; // Forward/backward
         strafePower = gamepad1.left_stick_x; // Left/right strafe

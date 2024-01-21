@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team23469.Autonomous.Learning;
+package org.firstinspires.ftc.team23469.Autonomous.InUse;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -9,9 +9,9 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LinearSlidesUtil;
 
-@Autonomous(name="Red Vision WING", group="Auto")
+@Autonomous(name="Blue Vision Backstage", group="Auto")
 
-public class AutoRedVisionWing extends LinearOpMode {
+public class AutoBlueVisionBackstage extends LinearOpMode {
     public int element_zone = 1;
     private TeamElementSubsystem teamElementDetection = null;
     boolean togglePreview = true;
@@ -52,7 +52,7 @@ public class AutoRedVisionWing extends LinearOpMode {
         telemetry.update();
 
         //set the alliance color (red or blue)
-        String curAlliance = "red";
+        String curAlliance = "blue";
 
         //loop through the following while opmode is active:
         while (!opModeIsActive() && !isStopRequested()) {
@@ -84,8 +84,28 @@ public class AutoRedVisionWing extends LinearOpMode {
                 drive.driveRobotDistanceBackward(15, .3);
                 while (drive.motorisBusyLF()) {}
                 claw.closeRightClaw();
-                drive.rotateRight45Degrees();
-
+                drive.rotateLeft45Degrees();
+                drive.driveRobotDistanceForward(55,.3); //to board
+                //driveUtil.driveRobotDistanceStrafeLeft(3, .3);
+                slides.moveToPosition(1300);
+                sleep(1000);
+                claw.raiseWrist();
+                drive.driveRobotDistanceForward(5,.15); //to board slowly
+                while (drive.motorisBusyLF()){}
+                claw.openClaw(); //score y pixel
+                sleep(1000);
+                drive.driveRobotDistanceBackward(5.5,.5); //move away from board
+                while (drive.motorisBusyLF()){}
+                claw.closeClaw();
+                claw.lowerWrist();
+                sleep(250);
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                sleep(1000);
+                drive.driveRobotDistanceStrafeLeft(37, .3);
+                drive.driveRobotDistanceForward(25,.3); //park
+                sleep(2000); //please remove me //don't remove me (coach george)
+                //add in code to do things if element is in zone 1
             }
             else if(element_zone==2){
                 telemetry.addData("Zone 2 chosen", element_zone);
@@ -100,32 +120,28 @@ public class AutoRedVisionWing extends LinearOpMode {
                 drive.driveRobotDistanceBackward(20,.3);
                 while (drive.motorisBusyLF()){}
                 claw.closeRightClaw();
-                drive.driveRobotDistanceStrafeLeft(20,.5);
-                drive.driveRobotDistanceForward(55,.5);
-                drive.rotateRight90Degrees();
-                drive.driveRobotDistanceForward(160, .5);
-
-                //attempt to score doesnt work
-                /*
-                drive.driveRobotDistanceStrafeRight(61, .3);
+                drive.rotateLeft90Degrees();
+                drive.driveRobotDistanceForward(58,.3); //to board
+                drive.driveRobotDistanceStrafeRight(20, .3);
                 slides.moveToPosition(1300);
-                //sleep(2000);
+                sleep(2000);
                 claw.raiseWrist();
-                drive.driveRobotDistanceForward(8,.15); //to board slowly
+                drive.driveRobotDistanceForward(5.5,.15); //to board slowly
                 while (drive.motorisBusyLF()){}
                 claw.openClaw(); //score y pixel
                 sleep(1000);
-                drive.driveRobotDistanceBackward(5.5,.5); //move away from board
+                drive.driveRobotDistanceBackward(6,.5); //move away from board
                 while (drive.motorisBusyLF()){}
                 claw.closeClaw();
                 claw.lowerWrist();
                 sleep(250);
                 slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
                 slides.runStateMachine();
-                drive.driveRobotDistanceStrafeRight(40, .3);
-                drive.driveRobotDistanceForward(10,.3);
-                sleep(2000); //reversed for red
-*/
+                drive.driveRobotDistanceStrafeLeft(45,.3);
+                drive.driveRobotDistanceForward(20,.3); //park
+                sleep(200); //please remove me
+                //add in code to do things if element is in zone 2
+
             }
             else if (element_zone==3){
                 telemetry.addData("Zone 3 chosen", element_zone);
@@ -140,9 +156,28 @@ public class AutoRedVisionWing extends LinearOpMode {
                 claw.openRightClaw();
                 sleep(500);
                 drive.driveRobotDistanceBackward(20,.3);
+                drive.rotateLeft90Degrees();
+                drive.rotateLeft90Degrees();
+                drive.driveRobotDistanceForward(40, .3); //to board
+                drive.driveRobotDistanceStrafeRight(15,.3);
+                slides.moveToPosition(1300);
+                sleep(2000);
+                claw.raiseWrist();
+                drive.driveRobotDistanceForward(6.5,.15); //to board slowly
                 while (drive.motorisBusyLF()){}
-                claw.closeRightClaw();
-
+                claw.openClaw(); //score y pixel
+                sleep(1000);
+                drive.driveRobotDistanceBackward(6,.5); //move away from board
+                while (drive.motorisBusyLF()){}
+                claw.closeClaw();
+                claw.lowerWrist();
+                sleep(250);
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                drive.driveRobotDistanceStrafeLeft(55,.3);
+                drive.driveRobotDistanceForward(25,.3); //park
+                sleep(2000); //please remove me
+                //add in code to do things if element is in zone 3
             }
             else {
                 telemetry.addData("i'm in else", "just chillin");

@@ -78,7 +78,7 @@ public class P3AutoVIsionBackstage extends LinearOpMode {
             sleep(250);
             drive.movePID(NewDriveUtil2024.Direction.BACKWARD,6,0.5,5000 );
             drive.rotateByXDegrees(true,90,0.25,5000);
-            drive.movePID(NewDriveUtil2024.Direction.BACKWARD,16,0.5,5000 );
+            drive.movePID(NewDriveUtil2024.Direction.BACKWARD,26,0.5,5000 );
             arm.raiseToPositionNoPID(5,.5,false); //low score
             sleep(1000);
             arm.setWristPosition(0.0);
@@ -141,7 +141,7 @@ public class P3AutoVIsionBackstage extends LinearOpMode {
             claw.openRightHand();
             sleep(500);
             arm.setWristPosition(0.3);
-            drive.movePID(NewDriveUtil2024.Direction.BACKWARD,6,0.5,5000 );
+            drive.movePID(NewDriveUtil2024.Direction.BACKWARD,12,0.5,5000 );
             drive.driveRobotDistanceStrafeLeft(10,.5);
             while (drive.motorisBusyLF() || drive.motorisBusyRF()) {}
             claw.closeRightHand();
@@ -317,8 +317,8 @@ public class P3AutoVIsionBackstage extends LinearOpMode {
             arm.raiseToPositionNoPID(5,.5,false); //low score
             sleep(1000);
             arm.setWristPosition(0.0);
-            drive.driveRobotDistanceStrafeRight(45,.3);
-            drive.movePID(NewDriveUtil2024.Direction.BACKWARD,10,0.15,5000 );
+            drive.driveRobotDistanceStrafeLeft(45,.3);
+            drive.movePID(NewDriveUtil2024.Direction.BACKWARD,20,0.15,5000 );
             while (drive.motorisBusyLF() || drive.motorisBusyRF()) {
             }
             claw.setClawOpen();
