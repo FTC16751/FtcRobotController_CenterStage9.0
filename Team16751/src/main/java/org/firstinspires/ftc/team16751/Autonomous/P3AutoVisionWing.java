@@ -113,7 +113,7 @@ public class P3AutoVisionWing extends LinearOpMode {
             arm.setWristPosition(0.3);
             sleep(1000);
             claw.setClawOpen();
-            drive.driveRobotDistanceBackward(5,0.5);
+            sleep(1000);
             claw.setClawClosed();
             sleep(1000);
             arm.raiseToPositionNoPID(1,.5,false);
@@ -131,7 +131,7 @@ public class P3AutoVisionWing extends LinearOpMode {
             claw.closeRightHand();
             arm.raiseToPositionNoPID(2,0.5,false);
             arm.setWristPosition(0.3);
-            drive.driveRobotDistanceBackward(210,0.5);
+            drive.driveRobotDistanceBackward(205,0.5);
             drive.driveRobotDistanceStrafeRight(20,0.5);
             arm.raiseToPositionNoPID(5,0.5, false);
             sleep(1000);
@@ -162,9 +162,7 @@ public class P3AutoVisionWing extends LinearOpMode {
             drive.driveRobotDistanceStrafeRight(20,0.5);
             arm.raiseToPositionNoPID(5,0.5, false);
             sleep(1000);
-            arm.setWristPosition(0.45);
-            drive.driveRobotDistanceBackward(5,0.5);
-            arm.setWristPosition(0.3);
+            arm.setWristPosition(0.75);
             claw.setClawOpen();
             arm.raiseToPositionNoPID(1,0.5,false);
             sleep(500);
@@ -211,12 +209,12 @@ public class P3AutoVisionWing extends LinearOpMode {
 
             //drive to backdrop
             drive.driveRobotDistanceForward(180,0.55);
-            drive.driveRobotDistanceStrafeRight(90,0.6);
+            drive.driveRobotDistanceStrafeRight(120,0.6);
 
             //score pixel
             arm.raiseToPositionNoPID(3, 0.5,false);
             arm.setWristPosition(0.3);
-            drive.driveRobotDistanceForward(20,.25);
+            drive.driveRobotDistanceForward(6,.25);
             sleep(1000);
             claw.setClawOpen();
             //park

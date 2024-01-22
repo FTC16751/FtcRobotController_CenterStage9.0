@@ -62,173 +62,151 @@ public class ArmUtil {
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hardwareMap = ahwMap;
+        //shoulder = hardwareMap.get(DcMotor.class, "Shoulder");
+        //elbow = hardwareMap.get(DcMotor.class, "Elbow");
+        shoulderLeft = hardwareMap.get(DcMotor.class, "shoulderLeft");
+        shoulderLeft.setDirection(DcMotor.Direction.FORWARD);
+        shoulderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoulderLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        setupMotor(shoulderLeft, "shoulderLeft", DcMotor.Direction.FORWARD);
-        setupMotor(shoulderRight, "shoulderRight", DcMotor.Direction.FORWARD);
-        setupMotor(elbowLeft, "elbowLeft", DcMotor.Direction.FORWARD);
-        setupMotor(elbowRight, "elbowRight", DcMotor.Direction.REVERSE);
+        shoulderRight = hardwareMap.get(DcMotor.class, "shoulderRight");
+        shoulderRight.setDirection(DcMotor.Direction.FORWARD);
+        shoulderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoulderRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        setupServo(wrist, "Wrist", Servo.Direction.FORWARD, 0.45);
+
+        elbowLeft = hardwareMap.get(DcMotor.class, "elbowLeft");
+        elbowLeft.setDirection(DcMotor.Direction.FORWARD);
+        elbowLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbowLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        elbowRight = hardwareMap.get(DcMotor.class, "elbowRight");
+        elbowRight.setDirection(DcMotor.Direction.REVERSE);
+        elbowRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbowRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        wrist = hardwareMap.get(Servo.class, "Wrist");
+        wrist.setDirection(Servo.Direction.FORWARD);
+        wristPosition = 0.45;
+        wrist.setPosition(wristPosition);
 
         currentArmState = ArmState.INIT;
     }
 
-    private void setupMotor(DcMotor motor, String motorName, DcMotor.Direction direction) {
-        motor = hardwareMap.get(DcMotor.class, motorName);
-        motor.setDirection(direction);
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    private void setupServo(Servo servo, String servoName, Servo.Direction direction, double initialPosition) {
-        servo = hardwareMap.get(Servo.class, servoName);
-        servo.setDirection(direction);
-        servo.setPosition(initialPosition);
-    }
-
-    public void setCurrentState(ArmState state) {
-        currentArmState = state;
-    }
     public ArmState getCurrentState() {
         return currentArmState;
     }
-    public void runStateMachine() {
-        // Constants for wrist positions and arm speed
-        final double WRIST_POSITION_LOW = 0.0;
-        final double WRIST_POSITION_MEDIUM = 0.25;
-        final double WRIST_POSITION_HIGH = 0.45;
-        final double WRIST_POSITION_CUSTOM = 0.30;
-        final double ARM_SPEED = 0.5;
 
-        // Switch based on the current state
+    public void setCurrentState(ArmState state) {
+
+        currentArmState = state;
+
+    }
+
+    public void runStateMachine() {
         switch (currentArmState) {
-            // Initialization state
             case INIT:
                 currentArmState = ArmState.INIT_SET_SERVO;
                 break;
-
-            // Set servo position during initialization
             case INIT_SET_SERVO:
-                wristPosition = WRIST_POSITION_HIGH;
+                wristPosition = 0.45;
                 wrist.setPosition(wristPosition);
                 currentArmState = ArmState.INIT_RAISE_ARM;
                 break;
-
-            // Raise the arm during initialization
             case INIT_RAISE_ARM:
-                raiseToPosition(1, ARM_SPEED);
+                currentArmState = ArmState.INIT_RAISE_ARM;
+                raiseToPosition(1, .5);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.IDLE;
+                    //stopArm();
+                    //resetArmEncoders();
                 }
                 break;
-
-            // Transport state
             case TRANSPORT:
                 currentArmState = ArmState.TRANSPORT_RAISE_ARM;
                 break;
-
-            // Raise the arm during transport
             case TRANSPORT_RAISE_ARM:
-                raiseToPosition(2, ARM_SPEED);
+                currentArmState = ArmState.TRANSPORT_RAISE_ARM;
+                raiseToPosition(2, .5);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.TRANSPORT_SET_SERVO;
                 }
                 break;
-
-            // Set servo position during transport
             case TRANSPORT_SET_SERVO:
-                wristPosition = WRIST_POSITION_HIGH;
+                currentArmState = ArmState.TRANSPORT_SET_SERVO;
+                wristPosition = 0.45;
                 wrist.setPosition(wristPosition);
                 currentArmState = ArmState.IDLE;
                 break;
 
-            // Low score state
             case LOW_SCORE:
                 currentArmState = ArmState.LOW_SCORE_RAISE_ARM;
                 break;
-
-            // Raise the arm during low scoring
             case LOW_SCORE_RAISE_ARM:
-                raiseToPosition(3, ARM_SPEED);
+                currentArmState = ArmState.LOW_SCORE_RAISE_ARM;
+                raiseToPosition(3, .5);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.LOW_SCORE_SET_SERVO;
                 }
                 break;
-
-            // Set servo position during low scoring
             case LOW_SCORE_SET_SERVO:
-                wristPosition = WRIST_POSITION_MEDIUM;
+                currentArmState = ArmState.LOW_SCORE_SET_SERVO;
+                wristPosition = 0.25;
                 wrist.setPosition(wristPosition);
                 currentArmState = ArmState.IDLE;
                 break;
-
-            // High score state
             case HIGH_SCORE:
                 currentArmState = ArmState.HIGH_SCORE_RAISE_ARM;
                 break;
-
-            // Raise the arm during high scoring
             case HIGH_SCORE_RAISE_ARM:
-                raiseToPosition(4, ARM_SPEED);
-                if (armAtTargetPosition()) {
+                currentArmState = ArmState.HIGH_SCORE_RAISE_ARM;
+                raiseToPosition(4, .5);
+                if (armAtTargetPosition()){
                     currentArmState = ArmState.HIGH_SCORE_SET_SERVO;
                 }
                 break;
-
-            // Set servo position during high scoring
             case HIGH_SCORE_SET_SERVO:
-                wristPosition = WRIST_POSITION_CUSTOM;
+                currentArmState = ArmState.HIGH_SCORE_SET_SERVO;
+                wristPosition = 0.30;
                 wrist.setPosition(wristPosition);
                 currentArmState = ArmState.IDLE;
                 break;
-
-            // Back low score state
             case BACK_LOW_SCORE:
                 currentArmState = ArmState.BACK_LOW_SCORE_RAISE_ARM;
                 break;
-
-            // Raise the arm during back low scoring
             case BACK_LOW_SCORE_RAISE_ARM:
-                raiseToPosition(5, ARM_SPEED);
+                currentArmState = ArmState.BACK_LOW_SCORE_RAISE_ARM;
+                raiseToPosition(5, .5);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.BACK_LOW_SCORE_SET_SERVO;
                 }
                 break;
-
-            // Set servo position during back low scoring
             case BACK_LOW_SCORE_SET_SERVO:
-                wristPosition = WRIST_POSITION_LOW;
+                currentArmState = ArmState.BACK_LOW_SCORE_SET_SERVO;
+                wristPosition = 0.0;
                 wrist.setPosition(wristPosition);
                 currentArmState = ArmState.IDLE;
                 break;
-
-            // Hang ready state
             case HANG_READY:
                 currentArmState = ArmState.HANG_READY_RAISE_ARM;
                 break;
-
-            // Raise the arm during hang ready
             case HANG_READY_RAISE_ARM:
-                raiseToPosition(6, ARM_SPEED);
+                currentArmState = ArmState.HANG_READY_RAISE_ARM;
+                raiseToPosition(6, .5);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.IDLE;
                 }
                 break;
-
-            // Hang state
             case HANG:
                 currentArmState = ArmState.HANG_RAISE_ARM;
                 break;
-
-            // Raise the arm during hanging
             case HANG_RAISE_ARM:
-                raiseToPosition(7, ARM_SPEED);
+                currentArmState = ArmState.HANG_RAISE_ARM;
+                raiseToPosition(7, .5);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.IDLE;
                 }
                 break;
-
-            // Increase shoulder position state
             case INCREASE_SHOULDER_POSITION:
                 currentArmState = ArmState.INCREASE_SHOULDER_POSITION;
                 increaseShoulderPosition(100);
@@ -236,151 +214,158 @@ public class ArmUtil {
                     currentArmState = ArmState.IDLE;
                 }
                 break;
-
-            // Idle state
             case IDLE:
                 currentArmState = ArmState.IDLE;
-                moveArmToPositionPID(); // Retains the last place we sent the arm
+                moveArmToPosition(); //should retain the last place we sent the arm
                 break;
-
-            // Default case (if needed)
             default:
-                // Handle default case if needed
                 break;
         }
     }
 
     public void raiseToPosition(int positionLevel, Double targetSpeed) {
-        switch (positionLevel) {
-            case 1:
-                goalShoulder = 0;
-                goalElbow = 0;
-                moveArmToPositionPID();
-                break;
-            case 2:
-                goalShoulder = 300;
-                goalElbow = 100;
-                moveArmToPositionPID();
-                break;
-            case 3:
-                goalShoulder = 1520;
-                goalElbow = 100;
-                moveArmToPositionPID();
-                break;
-            case 4:
-                goalShoulder = 1690;
-                goalElbow = 300;
-                moveArmToPositionPID();
-                break;
-            case 5:
-                goalShoulder = 600;
-                goalElbow = 900;
-                moveArmToPositionPID();
-                break;
-            case 6:
-                goalShoulder = 1150;
-                goalElbow = 430;
-                moveArmToPositionPID();
-                break;
-            case 7:
-                goalShoulder = 650;
-                moveArmToPositionPID();
+        if (positionLevel == 1) //rest
+        {
+            goalShoulder = 0;
+            goalElbow = 0;
+            moveArmToPosition();
 
-                if (armShoulderAtTargetPosition()) {
-                    goalElbow = 200;
-                    goalShoulder = 400;
-                    moveArmToHangPosition();
-                }
-                break;
-            default:
-                // Handle the case for other position levels or set to zero again.
-                break;
+        } else if (positionLevel == 2) //transport
+        {
+            //wrist.setPosition(0.45);
+            goalShoulder = 300;
+            goalElbow = 100;
+            moveArmToPosition();
+        } else if (positionLevel == 3) //score low
+        {
+            goalShoulder = 1520;
+            goalElbow =100;
+            moveArmToPosition();
+        } else if (positionLevel == 4) //score high
+        {
+            goalShoulder = 1690;
+            goalElbow = 300;
+            moveArmToPosition();
+        } else if (positionLevel == 5) //Back low score
+        {
+            //wrist.setPosition(0.45);
+            goalShoulder = 600;
+            goalElbow = 900;
+            moveArmToPosition();
+        }else if (positionLevel == 6) //Hang ready position
+        {
+            goalShoulder =1150;
+            goalElbow = 430;
+            moveArmToPosition();
+        }else if (positionLevel == 7) //Hang ready position
+        {
+            goalShoulder =650;
+            moveArmToPosition();
+            if (armShoulderAtTargetPosition()){
+                goalElbow = 200;
+                goalShoulder = 400;
+                moveArmToHangPosition();
+            }
+
+
+        }else {
+            //zero again!
         }
     } //end raise to position
     public void raiseToPositionNoPID(int positionLevel, Double targetSpeed, boolean usePID) {
-        switch (positionLevel) {
-            case 1:
-                goalShoulder = 0;
-                goalElbow = 0;
-                if (!usePID) moveArmToPositionNoPID();
-                else moveArmToPositionPID();
-                break;
-            case 2:
-                goalShoulder = 300;
-                goalElbow = 100;
-                if (!usePID) moveArmToPositionNoPID();
-                else moveArmToPositionPID();
-                break;
-            case 3:
-                goalShoulder = 1520;
-                goalElbow = 100;
-                if (!usePID) moveArmToPositionNoPID();
-                else moveArmToPositionPID();
-                break;
-            case 4:
-                goalShoulder = 1690;
-                goalElbow = 300;
-                if (!usePID) moveArmToPositionNoPID();
-                else moveArmToPositionPID();
-                break;
-            case 5:
-                goalShoulder = 600;
-                goalElbow = 900;
-                if (!usePID) moveArmToPositionNoPID();
-                else moveArmToPositionPID();
-                break;
-            case 6:
-                goalShoulder = 1150;
-                goalElbow = 430;
-                if (!usePID) moveArmToPositionNoPID();
-                else moveArmToPositionPID();
-                break;
-            case 7:
-                goalShoulder = 650;
-                if (!usePID) moveArmToPositionNoPID();
-                else moveArmToPositionPID();
+        if (positionLevel == 1) //rest
+        {
+            goalShoulder = 0;
+            goalElbow = 0;
 
-                if (armShoulderAtTargetPosition()){
-                    goalElbow = 200;
-                    goalShoulder = 400;
-                    moveArmToHangPosition();
-                }
-                break;
-            default:
-                // Handle the case for other position levels or set to zero again.
-                break;
+            if (!usePID) {
+                moveArmToPositionNoPID();
+            } else moveArmToPosition();
+
+
         }
-    }//end raise to position
-    public void moveArmToPositionPID() {
-        // Configure PID parameters for elbow movement
-        elbowLeftController.setPID(pE, iE, dE);
-        elbowRightController.setPID(pE, iE, dE);
+        else if (positionLevel == 2) //transport
+        {
+            //wrist.setPosition(0.45);
+            goalShoulder = 300;
+            goalElbow = 100;
+            if (!usePID) {
+                moveArmToPositionNoPID();
+            } else moveArmToPosition();
+        }
+        else if (positionLevel == 3) //score low
+        {
+            goalShoulder = 1520;
+            goalElbow =100;
+            if (!usePID) {
+                moveArmToPositionNoPID();
+            } else moveArmToPosition();
+        }
+        else if (positionLevel == 4) //score high
+        {
+            goalShoulder = 1690;
+            goalElbow = 300;
+            if (!usePID) {
+                moveArmToPositionNoPID();
+            } else moveArmToPosition();
+        }
+        else if (positionLevel == 5) //Back low score
+        {
+            //wrist.setPosition(0.45);
+            goalShoulder = 600;
+            goalElbow = 900;
+            if (!usePID) {
+                moveArmToPositionNoPID();
+            } else moveArmToPosition();
+        }
+        else if (positionLevel == 6) //Hang ready position
+        {
+            goalShoulder =1150;
+            goalElbow = 430;
+            if (!usePID) {
+                moveArmToPositionNoPID();
+            } else moveArmToPosition();
+        }
+        else if (positionLevel == 7) //Hang ready position
+        {
+            goalShoulder =650;
+            if (!usePID) {
+                moveArmToPositionNoPID();
+            } else moveArmToPosition();
 
-        // Move elbows to the target position
+            if (armShoulderAtTargetPosition()){
+                goalElbow = 200;
+                goalShoulder = 400;
+                moveArmToHangPosition();
+            }
+
+
+        }else {
+            //zero again!
+        }
+    } //end raise to position
+    public void moveArmToPosition() {
+        elbowLeftController.setPID(pE, iE, dE);
         elbowLeft.setPower(elbowLeftController.calculate(elbowLeft.getCurrentPosition(), goalElbow));
+
+        elbowRightController.setPID(pE, iE, dE);
         elbowRight.setPower(elbowRightController.calculate(elbowRight.getCurrentPosition(), goalElbow));
 
-        // Check if the elbows are at the target position before moving the shoulders
-        if (armAtElbowTargetPosition()) {
-            // Configure PIDF parameters for shoulder movement
-            shoulderLeftController.setPIDF(pS, iS, dS, fS);
-            shoulderRightController.setPIDF(pS, iS, dS, fS);
-
-            // Move shoulders to the target position
+        if (armAtElbowTargetPosition()){
+            shoulderLeftController.setPIDF(pS, iS, dS,fS);
             shoulderLeft.setPower(shoulderLeftController.calculate(shoulderLeft.getCurrentPosition(), goalShoulder));
+
+            shoulderRightController.setPIDF(pS, iS, dS,fS);
             shoulderRight.setPower(shoulderRightController.calculate(shoulderRight.getCurrentPosition(), goalShoulder));
-        } else {
-            // Elbows are not at target position, do nothing
         }
+        else {}
 
-        // Check if the shoulders have reached the target position
-        if (armShoulderAtTargetPosition()) {
-            // Perform actions when both elbows and shoulders are at target positions
-        } else {
-            // Shoulders are not at target position, do nothing
-        }
+        if (armShoulderAtTargetPosition()){
 
-        // Check if the entire arm has reached the target position and update the state if needed
+        } else{}
+
+
+        // Check if the arm has reached the target position and update the state if needed
         if (armAtTargetPosition()) {
             // Update state or perform other necessary actions
         }
@@ -416,32 +401,6 @@ public class ArmUtil {
         shoulderRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         shoulderLeft.setPower(.5);
         shoulderRight.setPower(.5);
-    }
-    public void moveArmToPositionNoPIDv2(double targetElbow, double targetShoulder, double power) {
-        // Set target position and mode for elbows
-        setMotorTargetAndMode(elbowLeft, targetElbow);
-        setMotorTargetAndMode(elbowRight, targetElbow);
-        // Power elbows to move to the target position
-        setMotorPower(elbowLeft, power);
-        setMotorPower(elbowRight, power);
-
-        // Set target position and mode for shoulders
-        setMotorTargetAndMode(shoulderLeft, targetShoulder);
-        setMotorTargetAndMode(shoulderRight, targetShoulder);
-        // Power shoulders to move to the target position
-        setMotorPower(shoulderLeft, power);
-        setMotorPower(shoulderRight, power);
-    }
-
-    // Helper method to set target position and mode for a motor
-    private void setMotorTargetAndMode(DcMotor motor, double targetPosition) {
-        motor.setTargetPosition((int) targetPosition);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    // Helper method to set power for a motor
-    private void setMotorPower(DcMotor motor, double power) {
-        motor.setPower(power);
     }
 
     public boolean armAtTargetPosition() {
