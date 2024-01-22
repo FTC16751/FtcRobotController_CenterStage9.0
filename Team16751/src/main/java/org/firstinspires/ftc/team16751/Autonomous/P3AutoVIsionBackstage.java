@@ -31,6 +31,7 @@ public class P3AutoVIsionBackstage extends LinearOpMode {
         arm.init(hardwareMap);
         claw.init(hardwareMap);
         claw.setClawClosed();
+        arm.setWristPosition(.45);
 
     }
 

@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.team16751.tuning;
+package org.firstinspires.ftc.team16751.roadrunner.tuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.AngularRampLogger;
-import com.acmerobotics.roadrunner.ftc.DeadWheelDirectionDebugger;
 import com.acmerobotics.roadrunner.ftc.DriveType;
 import com.acmerobotics.roadrunner.ftc.DriveView;
 import com.acmerobotics.roadrunner.ftc.DriveViewFactory;
@@ -22,10 +21,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.team16751.MecanumDrive;
-import org.firstinspires.ftc.team16751.TankDrive;
-import org.firstinspires.ftc.team16751.ThreeDeadWheelLocalizer;
-import org.firstinspires.ftc.team16751.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.team16751.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.team16751.roadrunner.TankDrive;
+import org.firstinspires.ftc.team16751.roadrunner.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.team16751.roadrunner.TwoDeadWheelLocalizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -158,7 +157,6 @@ public final class TuningOpModes {
         manager.register(metaForClass(LateralRampLogger.class), new LateralRampLogger(dvf));
         manager.register(metaForClass(ManualFeedforwardTuner.class), new ManualFeedforwardTuner(dvf));
         manager.register(metaForClass(MecanumMotorDirectionDebugger.class), new MecanumMotorDirectionDebugger(dvf));
-        manager.register(metaForClass(DeadWheelDirectionDebugger.class), new DeadWheelDirectionDebugger(dvf));
 
         manager.register(metaForClass(ManualFeedbackTuner.class), ManualFeedbackTuner.class);
         manager.register(metaForClass(SplineTest.class), SplineTest.class);
