@@ -71,8 +71,8 @@ public class ServoTest extends LinearOpMode {
        // rservo = hardwareMap.get(Servo.class, "launcher");
        // lservo = hardwareMap.get(Servo.class, "launcherangle");
         wristServo = hardwareMap.get(Servo.class, "wristservo");
-        leftClaw = hardwareMap.get(Servo.class, "leftclaw");
-        rightClaw = hardwareMap.get(Servo.class, "rightclaw");
+        //leftClaw = hardwareMap.get(Servo.class, "leftclaw");
+        //rightClaw = hardwareMap.get(Servo.class, "rightclaw");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -105,14 +105,14 @@ public class ServoTest extends LinearOpMode {
             }
 
             // Display the current value
-            telemetry.addData("Left Servo Position", "%5.2f", leftClawPosition);
-            telemetry.addData("Right Servo Position", "%5.2f", rightClawPosition);
+            //telemetry.addData("Left Servo Position", "%5.2f", leftClawPosition);
+            //telemetry.addData("Right Servo Position", "%5.2f", rightClawPosition);
             telemetry.addData("Wrist Servo Position", "%5.2f", wristPosition);
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            leftClaw.setPosition(leftClawPosition);
-            rightClaw.setPosition(rightClawPosition);
+           // leftClaw.setPosition(leftClawPosition);
+            //rightClaw.setPosition(rightClawPosition);
             wristServo.setPosition(wristPosition);
             sleep(CYCLE_MS);
             idle();

@@ -62,13 +62,33 @@ public class ArmUtil {
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hardwareMap = ahwMap;
+        //shoulder = hardwareMap.get(DcMotor.class, "Shoulder");
+        //elbow = hardwareMap.get(DcMotor.class, "Elbow");
+        shoulderLeft = hardwareMap.get(DcMotor.class, "shoulderLeft");
+        shoulderLeft.setDirection(DcMotor.Direction.FORWARD);
+        shoulderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoulderLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        setupMotor(shoulderLeft, "shoulderLeft", DcMotor.Direction.FORWARD);
-        setupMotor(shoulderRight, "shoulderRight", DcMotor.Direction.FORWARD);
-        setupMotor(elbowLeft, "elbowLeft", DcMotor.Direction.FORWARD);
-        setupMotor(elbowRight, "elbowRight", DcMotor.Direction.REVERSE);
+        shoulderRight = hardwareMap.get(DcMotor.class, "shoulderRight");
+        shoulderRight.setDirection(DcMotor.Direction.FORWARD);
+        shoulderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoulderRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        setupServo(wrist, "Wrist", Servo.Direction.FORWARD, 0.45);
+
+        elbowLeft = hardwareMap.get(DcMotor.class, "elbowLeft");
+        elbowLeft.setDirection(DcMotor.Direction.FORWARD);
+        elbowLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbowLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        elbowRight = hardwareMap.get(DcMotor.class, "elbowRight");
+        elbowRight.setDirection(DcMotor.Direction.REVERSE);
+        elbowRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbowRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        wrist = hardwareMap.get(Servo.class, "Wrist");
+        wrist.setDirection(Servo.Direction.FORWARD);
+        wristPosition = 0.45;
+        wrist.setPosition(wristPosition);
 
         currentArmState = ArmState.INIT;
     }
@@ -194,7 +214,12 @@ public class ArmUtil {
                     currentArmState = ArmState.BACK_LOW_SCORE_SET_SERVO;
                 }
                 break;
-
+            case BACK_LOW_SCORE_DRIVER:
+                raiseToPosition(8, ARM_SPEED);
+                if(armAtTargetPosition()){
+                    currentArmState = ArmState.BACK_LOW_SCORE_SET_SERVO;
+                }
+                break;
             // Set servo position during back low scoring
             case BACK_LOW_SCORE_SET_SERVO:
                 wristPosition = WRIST_POSITION_LOW;
@@ -274,9 +299,10 @@ public class ArmUtil {
                 break;
             case 5:
                 goalShoulder = 600;
-                goalElbow = 900;
+                goalElbow = 1100;
                 moveArmToPositionPID();
                 break;
+             //auto back score
             case 6:
                 goalShoulder = 1150;
                 goalElbow = 430;
@@ -284,6 +310,10 @@ public class ArmUtil {
                 break;
             case 7:
                 goalShoulder = 650;
+                moveArmToPositionPID();
+            case 8://driver back low score
+                goalShoulder=600;
+                goalElbow = 900;
                 moveArmToPositionPID();
 
                 if (armShoulderAtTargetPosition()) {
@@ -607,6 +637,7 @@ public class ArmUtil {
         HIGH_SCORE_SET_SERVO,
         BACK_LOW_SCORE,
         BACK_LOW_SCORE_RAISE_ARM,
+        BACK_LOW_SCORE_DRIVER,
         BACK_LOW_SCORE_SET_SERVO,
         IDLE,
         HANG_READY_RAISE_ARM,

@@ -38,11 +38,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
@@ -58,70 +60,21 @@ import org.firstinspires.ftc.team23469.robot.utilities.Learning.TeamElementSubsy
 import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LinearSlidesUtil;
+import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil2024;
 
 /**
  * FTC WIRES Autonomous Example for only vision detection using tensorflow and park
  */
-@Autonomous(name = "FTC Wires testing around", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
+@Autonomous(name = "Road Runner Auto Test", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
 public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
-    public static String TEAM_NAME = "EDIT TEAM NAME"; //TODO: Enter team Name
-    public static int TEAM_NUMBER = 0; //TODO: Enter team Number
-
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    //Vision parameters
-    private FTCWiresAutoVisionOpenCV.VisionOpenCV visionOpenCV;
-    //Define and declare Robot Starting Locations
-    public enum START_POSITION{
-        BLUE_LEFT,
-        BLUE_RIGHT,
-        RED_LEFT,
-        RED_RIGHT
-    }
-    public static START_POSITION startPosition;
-
-    public enum IDENTIFIED_SPIKE_MARK_LOCATION {
-        LEFT,
-        MIDDLE,
-        RIGHT
-    }
-    public static IDENTIFIED_SPIKE_MARK_LOCATION selectedSpikeMarkLocation;
-    public enum ALLIANCE{
-        BLUE,
-        RED,
-    } ALLIANCE selectedAlliance;
-    public enum FIELD_SIDE {
-        BACKSTAGE,
-        WING,
-    } FIELD_SIDE selectedFieldSide;
-    public enum AUTO_PATH {
-        GATE,
-        TRUSS,
-    } AUTO_PATH selectedAutoPath;
-    public enum PARK_LOCATION {
-        INSIDE,
-        OUTSIDE,
-    } PARK_LOCATION selectedParkLocation;
-    public static IDENTIFIED_SPIKE_MARK_LOCATION identifiedSpikeMarkLocation;//= IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
-    double waitSecondsBeforeDrop = 0;
-
-    Boolean allianceselected = null;
-    Boolean fieldsideselected = null;
-    Boolean autopathselected = null;
-    Boolean parkingselected = null;
-    boolean initilized = false;
-    Boolean previousX = null;
-    Boolean previousB = null;
-    Boolean waitsecondsselected = false;
-    Boolean spikemarklocationselected = false;
-
     /* add in our vision stuff */
-    private TeamElementSubsystem teamElementDetection = null;
-    boolean togglePreview = true;
     public int element_zone = 1;
 
+    private TeamElementSubsystem teamElementDetection = null;
+
+    boolean togglePreview = true;
     /* declare our subystems */
-    private DriveUtil drive = null;
+    private DriveUtil2024 drive = null;
     private ClawUtil claw = null;
     private LinearSlidesUtil slides = null;
 
@@ -139,7 +92,6 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
 
         //initialize the slides
         slides = new LinearSlidesUtil(hardwareMap);
-
         //set things up in initiual state for autonomous (open/closed,set positions, etc)
         //example
         claw.closeClaw();
@@ -147,6 +99,48 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
 
  */
     }
+    //Define and declare Robot Starting Locations
+    public enum ALLIANCE{
+        BLUE,
+        RED,
+    }
+    public static ALLIANCE selectedAlliance;
+    public enum FIELD_SIDE {
+        BACKSTAGE,
+        WING,
+    }
+    public static FIELD_SIDE selectedFieldSide;
+    public enum IDENTIFIED_SPIKE_MARK_LOCATION {
+        LEFT,
+        MIDDLE,
+        RIGHT
+    }
+    public static IDENTIFIED_SPIKE_MARK_LOCATION selectedSpikeMarkLocation;
+    public static IDENTIFIED_SPIKE_MARK_LOCATION identifiedSpikeMarkLocation;//= IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
+    public enum AUTO_PATH {
+        GATE,
+        TRUSS,
+    }
+    public static AUTO_PATH selectedAutoPath;
+    public enum PARK_LOCATION {
+        INSIDE,
+        OUTSIDE,
+    }
+    public static PARK_LOCATION selectedParkLocation;
+    double waitSecondsBeforeDrop = 0;
+    Boolean
+            allianceselected = null,
+            fieldsideselected = null,
+            autopathselected = null,
+            parkingselected = null,
+            initilized = false,
+            previousX = null,
+            previousB = null,
+            waitsecondsselected = false,
+            spikemarklocationselected = false;
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -161,23 +155,10 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
             //setSafeWaitSeconds();
         }
 
-        //Key Pay inputs to selecting Starting Position of robot
-        //selectStartingPosition();
-        telemetry.addData("Status,","initilized");
-        telemetry.addData("Alliance", selectedAlliance);
-        telemetry.addData("spike mark location", selectedSpikeMarkLocation);
-
-        telemetry.addData("Starting Field Side", selectedFieldSide);
-        telemetry.addData("Path", selectedAutoPath);
-        telemetry.addData("Parking Location", selectedParkLocation);
-        telemetry.addData("Wait seconds before Yellow Pixel Score: ", waitSecondsBeforeDrop);
-        telemetry.addLine();
-
-
+        //we added this to convert from the alliance selection string of 'BLUE' to 'blue' which is what our
+        //existing opencv pipeline code expects (blue or red in lowercase).
         String curAlliance = selectedAlliance.toString().toLowerCase();
-        telemetry.addData("curAlliance", curAlliance);
-        telemetry.update();
-        //loop through the following while opmode is active:
+
         while (!opModeIsActive() && !isStopRequested()) {
             element_zone = teamElementDetection.elementDetection(telemetry);
             if (togglePreview && gamepad2.a) {
@@ -190,19 +171,15 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
             telemetry.addData("Status,","initilized");
             telemetry.addData("Alliance", selectedAlliance);
             telemetry.addData("spike mark location", selectedSpikeMarkLocation);
-
             telemetry.addData("Starting Field Side", selectedFieldSide);
             telemetry.addData("Path", selectedAutoPath);
             telemetry.addData("Parking Location", selectedParkLocation);
             telemetry.addData("Wait seconds before Yellow Pixel Score: ", waitSecondsBeforeDrop);
             telemetry.addLine();
             telemetry.addData("curAlliance", curAlliance);
-
             // Wait for the DS start button to be touched.
             telemetry.addData(">", "Touch Play to start OpMode");
             telemetry.update();
-
-
         }
 
         waitForStart();
@@ -210,29 +187,54 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
 
         //Game Play Button  is pressed
         if (opModeIsActive() && !isStopRequested()) {
-            if (element_zone == 1) {
-                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
-            } else if (element_zone == 2) {
-                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
-            } else if (element_zone == 3) {
-                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT;
-            } else {
-                //default to middle if nothing was detected
-                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
-            }
+            //convert the identified spike mark location from our existing opencv to the spike mark locations of this program
+            //we used 1,2,3 wheareas this program uses Right,Left,Center
+            //something to be optimized later
+            updateIdentifiedSpikeMarkLocation();
             //Build parking trajectory based on last detected target by vision
             runAutonoumousMode();
         }
     }   // end runOpMode()
+    private void updateIdentifiedSpikeMarkLocation() {
+        //**********************BEGIN LOGGING CODE**********************************
+        String name = new Object(){}.getClass().getEnclosingMethod().getName();
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[3];//maybe this number needs to be corrected
+        RobotLog.dd("ROBOLOG", "current method: "+name+": called from: "+e);
+        //**********************END LOGGING CODE*************************************
 
+
+        switch (element_zone) {
+            case 1:
+                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
+                break;
+            case 2:
+                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
+                break;
+            case 3:
+                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT;
+                break;
+            default:
+                identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
+                break;
+        }
+    }
     public void runAutonoumousMode() {
-        telemetry.addData("wait seconds boolean:", waitSecondsBeforeDrop);
-        telemetry.addData("wait seconds boolean:", waitsecondsselected);
-        telemetry.update();
+
+        /**********************BEGIN LOGGING CODE**********************************
+         * Logging code snippet. This block of code willl log information to android studio logger for analysis
+         */
+        String name = new Object(){}.getClass().getEnclosingMethod().getName();
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[3];//maybe this number needs to be corrected
+        RobotLog.dd("ROBOLOG", "current method: "+name+": called from: "+e);
+        //**********************END LOGGING CODE*************************************
+
+
         //safeWaitSeconds(30);
         //identifiedSpikeMarkLocation = selectedSpikeMarkLocation;
         //Initialize all the separate pose paths the robot will take. these are not the path coordinates. just initialization.
-        Pose2d initPose = new Pose2d(0, 0, 0); // Starting Pose
+        Pose2d startingPose = new Pose2d(0, 0, 0); // Starting Pose
         Pose2d moveBeyondTrussPose = new Pose2d(0,0,0);  //small move to get robot past truss on start
         Pose2d dropPurplePixelPose = new Pose2d(0, 0, 0); // path to drop purple pixel on spike mark
         Pose2d midwayPose1 = new Pose2d(0,0,0); //this path can be used to move robot away from purple pixel
@@ -242,38 +244,52 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
         Pose2d midwayPose2a = new Pose2d(0,0,0); //safe spot on backdrop side right before scoring pixel
         Pose2d dropYellowPixelPose = new Pose2d(0, 0, 0); //positions of dropping yellow pixel
         Pose2d parkPose = new Pose2d(0,0, 0); // park position
-        //waitSecondsBeforeDrop = 0;
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initPose); //init mecanum drive with starting position
+        double slowdropYellowPixelPoseYcoordinate = 0; //positions of dropping yellow pixel
 
-        initPose = new Pose2d(0, 0, Math.toRadians(0)); //Starting pose
+        MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose); //init mecanum drive with starting position
+        startingPose = new Pose2d(0, 0, Math.toRadians(0)); //Starting pose
         moveBeyondTrussPose = new Pose2d(23,0,0);
-        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
+
+        //TODO *************REMOVE ME
+        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
+
         switch (selectedAlliance) {
             case BLUE:
-                if (selectedFieldSide == FIELD_SIDE.BACKSTAGE) {
-                    drive = new MecanumDrive(hardwareMap, initPose);
-                    switch(identifiedSpikeMarkLocation){
-                        case LEFT:
-                            dropPurplePixelPose = new Pose2d(26, 8, Math.toRadians(45));
-                            dropYellowPixelPose = new Pose2d(21.6, 0, Math.toRadians(90));
-                            break;
-                        case MIDDLE:
-                            dropPurplePixelPose = new Pose2d(34, 0, Math.toRadians(0));
-                            dropYellowPixelPose = new Pose2d(27.1, 0,  Math.toRadians(90));
-                            break;
-                        case RIGHT:
-                            dropPurplePixelPose = new Pose2d(30, -9, Math.toRadians(-45));
-                            dropYellowPixelPose = new Pose2d(34, 0, Math.toRadians(90));
-                            break;
-                    }
-                    midwayPose1 = new Pose2d(23, 0, Math.toRadians(0));
-                    //waitSecondsBeforeDrop = 0; //TODO: Adjust time to wait for alliance partner to move from board
-                    parkPose = new Pose2d(8, 30, Math.toRadians(90));
-                }
-                else if (selectedFieldSide == FIELD_SIDE.WING) {
-                        drive = new MecanumDrive(hardwareMap, initPose);
-                        switch(identifiedSpikeMarkLocation){
+                RobotLog.dd("ROBOLOG", "Alliance Case: " + selectedAlliance);
+                switch (selectedFieldSide) {
+                    case BACKSTAGE:
+                        drive = new MecanumDrive(hardwareMap, startingPose);
+                        // Set up poses and actions for BLUE/BACKSTAGE scenario
+                        switch (identifiedSpikeMarkLocation) {
+                            case LEFT:
+                                RobotLog.dd("ROBOLOG", "Spike Mark : " + identifiedSpikeMarkLocation);
+
+                                dropPurplePixelPose = new Pose2d(26, 8, Math.toRadians(45));
+                                dropYellowPixelPose = new Pose2d(19, 36, Math.toRadians(90));
+                                break;
+                            case MIDDLE:
+                                RobotLog.dd("ROBOLOG", "Spike Mark : " + identifiedSpikeMarkLocation);
+
+                                dropPurplePixelPose = new Pose2d(34, 0, Math.toRadians(0));
+                                dropYellowPixelPose = new Pose2d(27.1, 36, Math.toRadians(90));
+                                break;
+                            case RIGHT:
+                                RobotLog.dd("ROBOLOG", "Spike Mark : " + identifiedSpikeMarkLocation);
+
+                                dropPurplePixelPose = new Pose2d(30, -9, Math.toRadians(-45));
+                                dropYellowPixelPose = new Pose2d(34, 36, Math.toRadians(90));
+                                break;
+                        }
+                        midwayPose1 = new Pose2d(23, 0, Math.toRadians(0));
+                        parkPose = new Pose2d(6, 36, Math.toRadians(90));
+                        slowdropYellowPixelPoseYcoordinate = 32;
+                        break;
+
+                    case WING:
+                        drive = new MecanumDrive(hardwareMap, startingPose);
+                        //driveWingBlue(startingPose, dropPurplePixelPose, dropYellowPixelPose, moveAwayfromPurplePixelPose, parkPose, midwayPose1a, midwayPose2, midwayPose2a);
+                        switch (identifiedSpikeMarkLocation) {
                             case LEFT:
                                 dropPurplePixelPose = new Pose2d(28, 7.7, Math.toRadians(45));
                                 dropYellowPixelPose = new Pose2d(21.6, 77, Math.toRadians(90));
@@ -292,60 +308,75 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
                         //intakeStack = new Pose2d(52, -19,Math.toRadians(-90));
                         midwayPose2 = new Pose2d(53, 50, Math.toRadians(90));
                         midwayPose2a = new Pose2d(53, 75, Math.toRadians(90));
-
-                        //waitSecondsBeforeDrop = 2; //TODO: Adjust time to wait for alliance partner to move from board
                         parkPose = new Pose2d(52, 82, Math.toRadians(90));
-
+                        slowdropYellowPixelPoseYcoordinate = 86;
+                        break;//break from field side
                 }
-                break;
+                break;//break from alliance selection
             case RED:
-                if (selectedFieldSide == FIELD_SIDE.BACKSTAGE) {
-                    drive = new MecanumDrive(hardwareMap, initPose);
-                    switch (identifiedSpikeMarkLocation) {
-                        case LEFT:
-                            dropPurplePixelPose = new Pose2d(28, 9, Math.toRadians(45));
-                            dropYellowPixelPose = new Pose2d(21, -36, Math.toRadians(90));
-                            break;
-                        case MIDDLE:
-                            dropPurplePixelPose = new Pose2d(34, 0, Math.toRadians(0));
-                            dropYellowPixelPose = new Pose2d(29, -36, Math.toRadians(90));
-                            break;
-                        case RIGHT:
-                            dropPurplePixelPose = new Pose2d(28, -8, Math.toRadians(-45));
-                            dropYellowPixelPose = new Pose2d(37, -36, Math.toRadians(90));
-                            break;
-                    }
-                    midwayPose1 = new Pose2d(14, -13, Math.toRadians(45));
-                    //waitSecondsBeforeDrop = 2; //TODO: Adjust time to wait for alliance partner to move from board
-                    parkPose = new Pose2d(8, -30, Math.toRadians(90));
+                switch (selectedFieldSide) {
+                    case BACKSTAGE:
+                        RobotLog.dd("ROBOLOG", "Alliance Case: " + selectedAlliance);
+                        drive = new MecanumDrive(hardwareMap, startingPose);
+                        // Set up poses and actions for RED/BACKSTAGE scenario
+                        switch (identifiedSpikeMarkLocation) {
+                            case LEFT:
+                                RobotLog.dd("ROBOLOG", "Spike Mark : " + identifiedSpikeMarkLocation);
+                                dropPurplePixelPose = new Pose2d(30, 9, Math.toRadians(45));
+                                dropYellowPixelPose = new Pose2d(36, -36, Math.toRadians(-90));
+                                break;
+                            case MIDDLE:
+                                RobotLog.dd("ROBOLOG", "Spike Mark : " + identifiedSpikeMarkLocation);
+                                dropPurplePixelPose = new Pose2d(34, 0, Math.toRadians(0));
+                                dropYellowPixelPose = new Pose2d(29, -36, Math.toRadians(-90));
+                                break;
+                            case RIGHT:
+                                RobotLog.dd("ROBOLOG", "Spike Mark : " + identifiedSpikeMarkLocation);
+                                dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(-45));
+                                dropYellowPixelPose = new Pose2d(24, -36, Math.toRadians(-90));
+                                break;
+                        }
+                        midwayPose1 = new Pose2d(18, 0, Math.toRadians(0));
+                        parkPose = new Pose2d(6, -36, Math.toRadians(-90));
+                        slowdropYellowPixelPoseYcoordinate = -32;
+                        break;
+
+                    case WING:
+                        drive = new MecanumDrive(hardwareMap, startingPose);
+                        // Set up poses and actions for RED/WING scenario
+                        switch (identifiedSpikeMarkLocation) {
+                            case LEFT:
+                                dropPurplePixelPose = new Pose2d(28, 8, Math.toRadians(0));
+                                dropYellowPixelPose = new Pose2d(21.6, -77, Math.toRadians(90));
+                                break;
+                            case MIDDLE:
+                                dropPurplePixelPose = new Pose2d(34, 0, Math.toRadians(0));
+                                dropYellowPixelPose = new Pose2d(27.1, -77, Math.toRadians(90));
+                                break;
+                            case RIGHT:
+                                dropPurplePixelPose = new Pose2d(28, -9, Math.toRadians(-45));
+                                dropYellowPixelPose = new Pose2d(34, -77, Math.toRadians(90));
+                                break;
+                        }
+                        midwayPose1 = new Pose2d(8, 8, Math.toRadians(0));
+                        midwayPose1a = new Pose2d(18, 18, Math.toRadians(90));
+                        midwayPose2 = new Pose2d(52, -62, Math.toRadians(90));
+                        parkPose = new Pose2d(50, -84, Math.toRadians(90));
+                        slowdropYellowPixelPoseYcoordinate = -86;
+                        break; //break from field side
                 }
-                else if (selectedFieldSide == FIELD_SIDE.WING) {
-                    drive = new MecanumDrive(hardwareMap, initPose);
-                    switch (identifiedSpikeMarkLocation) {
-                        case LEFT:
-                            dropPurplePixelPose = new Pose2d(28, 8, Math.toRadians(0));
-                            dropYellowPixelPose = new Pose2d(21.6, -77, Math.toRadians(90));
-                            break;
-                        case MIDDLE:
-                            dropPurplePixelPose = new Pose2d(34, 0, Math.toRadians(0));
-                            dropYellowPixelPose = new Pose2d(27.1, -77, Math.toRadians(90));
-                            break;
-                        case RIGHT:
-                            dropPurplePixelPose = new Pose2d(28, -9, Math.toRadians(-45));
-                            dropYellowPixelPose = new Pose2d(34, -77, Math.toRadians(90));
-                            break;
-                    }
-                    midwayPose1 = new Pose2d(8, 8, Math.toRadians(0));
-                    midwayPose1a = new Pose2d(18, 18, Math.toRadians(90));
-                    intakeStack = new Pose2d(52, 19, Math.toRadians(90));
-                    midwayPose2 = new Pose2d(52, -62, Math.toRadians(90));
-                    //waitSecondsBeforeDrop = 2; //TODO: Adjust time to wait for alliance partner to move from board
-                    parkPose = new Pose2d(50, -84, Math.toRadians(90));
-                }
-                break;
+                break; //break from alliance selection
         }
 
+        /*********************************
+         * after defining all the paths (pose2d's) for each scenario, we now execute the paths using actions.runblocking
+         * mixed inbetween the actions we also execute other robot sub-system code
+         *********************************/
+
         //Move robot to dropPurplePixel based on identified Spike Mark Location
+        RobotLog.dd("ROBOLOG", "Auto Drive: Move Beyond Truss and Drop Purple Pixel ");
+        RobotLog.dd("ROBOLOG", "moveBeyondTrussPose "+moveBeyondTrussPose.position+" with Heading: "+moveBeyondTrussPose.heading);
+        RobotLog.dd("ROBOLOG", "dropPurplePixelPose "+dropPurplePixelPose.position+" with Heading: "+dropPurplePixelPose.heading);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(moveBeyondTrussPose.position, moveBeyondTrussPose.heading)
@@ -356,40 +387,32 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
         safeWaitSeconds(1);
 
         //Move robot to midwayPose1
-        telemetry.addData("midwayPose", "start");
-        telemetry.update();
+        RobotLog.dd("ROBOLOG", "midwayPose1 "+midwayPose1.position+" with Heading: "+midwayPose1.heading);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(midwayPose1.position, midwayPose1.heading)
                         .build());
 
-        telemetry.addData("midwayPose1", "start");
-        Actions.runBlocking(
-                drive.actionBuilder(drive.pose)
-                        .strafeToLinearHeading(midwayPose1a.position, midwayPose1.heading)
-                        .build());
-
         //For Blue Right and Red Left, intake pixel from stack
         if (selectedFieldSide== FIELD_SIDE.WING) {
-            telemetry.addData("midwayPose2", "start");
-            telemetry.update();
-            //Move robot to midwayPose2 and to dropYellowPixelPose
+
+            RobotLog.dd("ROBOLOG", "midwayPose1a "+midwayPose1a.position+" with Heading: "+midwayPose1a.heading);
+            RobotLog.dd("ROBOLOG", "midwayPose2 "+midwayPose2.position+" with Heading: "+midwayPose2.heading);
+            RobotLog.dd("ROBOLOG", "waitSecondsBeforeDrop "+waitSecondsBeforeDrop);
+            RobotLog.dd("ROBOLOG", "midwayPose2a "+midwayPose2a.position+" with Heading: "+midwayPose2a.heading);
             Actions.runBlocking(
                     drive.actionBuilder(drive.pose)
+                            .strafeToLinearHeading(midwayPose1a.position, midwayPose1.heading)
+                            //Move robot to midwayPose2 and to dropYellowPixelPose
                             .strafeToLinearHeading(midwayPose2.position, midwayPose2.heading)
-                            .build());
-
-            safeWaitSeconds(waitSecondsBeforeDrop);
-
-            Actions.runBlocking(
-                    drive.actionBuilder(drive.pose)
+                            .waitSeconds(waitSecondsBeforeDrop)
                             .strafeToLinearHeading(midwayPose2a.position, midwayPose2a.heading)
                             .build());
         }
 
-        telemetry.addData("dropYellowPixelPose", "start");
-        telemetry.update();
+
         //Move robot to midwayPose2 and to dropYellowPixelPose
+        RobotLog.dd("ROBOLOG", "dropYellowPixelPose "+dropYellowPixelPose.position+" with Heading: "+dropYellowPixelPose.heading);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .setReversed(true)
@@ -398,15 +421,16 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
 
         //TODO : Code to drop Pixel on Backdrop
         safeWaitSeconds(1);
-
-        telemetry.addData("park", "start");
-        telemetry.update();
+/*
+        RobotLog.dd("ROBOLOG", "parkPose "+parkPose.position+" with Heading: "+parkPose.heading);
         //Move robot to park in Backstage
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
-                        .strafeToLinearHeading(parkPose.position, parkPose.heading)
-                        //.splineToLinearHeading(parkPose,0)
+                        //.strafeToLinearHeading(parkPose.position, parkPose.heading)
+                        .splineToLinearHeading(parkPose,0)
                         .build());
+
+ */
     }
 
     public void selectAutoParams() {
@@ -436,7 +460,9 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
                 selectedFieldSide = FIELD_SIDE.WING;
                 fieldsideselected = true;
             }
-        } else if (spikemarklocationselected == false) {
+        }
+        /*
+        else if (spikemarklocationselected == false) {
             telemetry.addData("TESTING SPIKE MARK LOCATION: ", "X = LEFT, Y = MIDDLE, B = RIGHT");
             telemetry.update();
             if (currentX && !previousX){
@@ -474,7 +500,9 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
                 selectedParkLocation = PARK_LOCATION.OUTSIDE;
                 parkingselected = true;
             }
-        } else if (waitsecondsselected == false) {
+        }
+        */
+        else if (waitsecondsselected == false) {
             telemetry.addData("---------------------------------------","");
             telemetry.addData("set safe wait using YA on Logitech on gamepad 1:","");
             telemetry.addData("    2 second wait   ", "(dpad left)");
@@ -504,164 +532,12 @@ public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
         }
         previousX = currentX;
         previousB = currentB;
-
-
     }
-
-
     //method to wait safely with stop button working if needed. Use this instead of sleep
     public void safeWaitSeconds(double time) {
         ElapsedTime timer = new ElapsedTime(SECONDS);
         timer.reset();
         while (!isStopRequested() && timer.time() < time) {
         }
-    }
-
-    /**
-     * Initialize the Open CV Object Detection processor.
-     */
-    public Rect rectLeftOfCameraMid, rectRightOfCameraMid;
-    private void initOpenCV() {
-       // visionOpenCV = new VisionOpenCV(hardwareMap);
-
-        if (startPosition == START_POSITION.RED_LEFT ||
-                startPosition == START_POSITION.BLUE_LEFT) {
-            rectLeftOfCameraMid = new Rect(10, 40, 150, 240);
-            rectRightOfCameraMid = new Rect(160, 40, 470, 160);
-        } else { //RED_RIGHT or BLUE_RIGHT
-            rectLeftOfCameraMid = new Rect(10, 40, 470, 160);
-            rectRightOfCameraMid = new Rect(480, 40, 150, 240);
-        }
-    }
-
-    /**
-     * Add telemetry about Object Detection recognitions.
-     */
-    private void runOpenCVObjectDetection() {
-        //visionOpenCV.getSelection();
-        telemetry.addLine("Open CV based Vision Processor for Team Element Detection");
-        telemetry.addData("Identified Parking Location", identifiedSpikeMarkLocation);
-      //  telemetry.addData("SatLeftOfCameraMid", visionOpenCV.satRectLeftOfCameraMid);
-
-       // telemetry.addData("SatRightOfCameraMid", visionOpenCV.satRectRightOfCameraMid);
-       // telemetry.addData("SatRectNone", visionOpenCV.satRectNone);
-        telemetry.update();
-    }
-
-    public class VisionOpenCV implements VisionProcessor {
-
-        CameraSelectedAroundMid selectionAroundMid = CameraSelectedAroundMid.NONE;
-
-        public VisionPortal visionPortal;
-
-        Mat submat = new Mat();
-        Mat hsvMat = new Mat();
-
-        public double satRectLeftOfCameraMid, satRectRightOfCameraMid;
-        public double satRectNone = 40.0;
-
-        public VisionOpenCV(HardwareMap hardwareMap){
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    hardwareMap.get(WebcamName.class, "Webcam 1"), this);
-        }
-
-        @Override
-        public void init(int width, int height, CameraCalibration calibration) {
-        }
-
-        @Override
-        public Object processFrame(Mat frame, long captureTimeNanos) {
-            Imgproc.cvtColor(frame, hsvMat, Imgproc.COLOR_RGB2HSV);
-
-            satRectLeftOfCameraMid = getAvgSaturation(hsvMat, rectLeftOfCameraMid);
-            satRectRightOfCameraMid = getAvgSaturation(hsvMat, rectRightOfCameraMid);
-
-            if ((satRectLeftOfCameraMid > satRectRightOfCameraMid) && (satRectLeftOfCameraMid > satRectNone)) {
-                return CameraSelectedAroundMid.LEFT_OF_CAMERA_MID;
-            } else if ((satRectRightOfCameraMid > satRectLeftOfCameraMid) && (satRectRightOfCameraMid > satRectNone)) {
-                return CameraSelectedAroundMid.RIGHT_OF_CAMERA_MID;
-            }
-            return CameraSelectedAroundMid.NONE;
-        }
-
-        protected double getAvgSaturation(Mat input, Rect rect) {
-            submat = input.submat(rect);
-            Scalar color = Core.mean(submat);
-            return color.val[1];
-        }
-
-        private android.graphics.Rect makeGraphicsRect(Rect rect, float scaleBmpPxToCanvasPx) {
-            int left = Math.round(rect.x * scaleBmpPxToCanvasPx);
-            int top = Math.round(rect.y * scaleBmpPxToCanvasPx);
-            int right = left + Math.round(rect.width * scaleBmpPxToCanvasPx);
-            int bottom = top + Math.round(rect.height * scaleBmpPxToCanvasPx);
-
-            return new android.graphics.Rect(left, top, right, bottom);
-        }
-
-        @Override
-        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-            Paint selectedPaint = new Paint();
-            selectedPaint.setColor(Color.RED);
-            selectedPaint.setStyle(Paint.Style.STROKE);
-            selectedPaint.setStrokeWidth(scaleCanvasDensity * 4);
-
-            Paint nonSelectedPaint = new Paint(selectedPaint);
-            nonSelectedPaint.setColor(Color.GREEN);
-
-            android.graphics.Rect drawRectangleLeft = makeGraphicsRect(rectLeftOfCameraMid, scaleBmpPxToCanvasPx);
-            android.graphics.Rect drawRectangleMiddle = makeGraphicsRect(rectRightOfCameraMid, scaleBmpPxToCanvasPx);
-
-            selectionAroundMid = (CameraSelectedAroundMid) userContext;
-            switch (selectionAroundMid) {
-                case LEFT_OF_CAMERA_MID:
-                    canvas.drawRect(drawRectangleLeft, selectedPaint);
-                    canvas.drawRect(drawRectangleMiddle, nonSelectedPaint);
-                    break;
-                case RIGHT_OF_CAMERA_MID:
-                    canvas.drawRect(drawRectangleLeft, nonSelectedPaint);
-                    canvas.drawRect(drawRectangleMiddle, selectedPaint);
-                    break;
-                case NONE:
-                    canvas.drawRect(drawRectangleLeft, nonSelectedPaint);
-                    canvas.drawRect(drawRectangleMiddle, nonSelectedPaint);
-                    break;
-            }
-        }
-
-        public void getSelection() {
-            if (startPosition == START_POSITION.RED_LEFT ||
-                    startPosition == START_POSITION.BLUE_LEFT) {
-                switch (selectionAroundMid) {
-                    case NONE:
-                        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT;
-                        break;
-                    case LEFT_OF_CAMERA_MID:
-                        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
-                        break;
-                    case RIGHT_OF_CAMERA_MID:
-                        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
-                        break;
-                }
-            } else { //RED_RIGHT or BLUE_RIGHT
-                switch (selectionAroundMid) {
-                    case NONE:
-                        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
-                        break;
-                    case LEFT_OF_CAMERA_MID:
-                        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
-                        break;
-                    case RIGHT_OF_CAMERA_MID:
-                        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT;
-                        break;
-                }
-            }
-        }
-    }
-
-    public enum CameraSelectedAroundMid {
-        NONE,
-        LEFT_OF_CAMERA_MID,
-        RIGHT_OF_CAMERA_MID
     }
 }   // end class

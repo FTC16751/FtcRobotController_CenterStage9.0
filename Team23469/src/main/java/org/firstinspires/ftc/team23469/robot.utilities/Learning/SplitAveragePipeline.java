@@ -35,12 +35,6 @@ public class SplitAveragePipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-
-        //Creating duplicate of original frame with no edits
-        //Mat original = input.clone();
-
-        //input = input.submat(new Rect(0));
-
         //Defining Zones
         //Rect(top left x, top left y, bottom right x, bottom right y)
         Mat zone1 = input.submat(new Rect(0, 180, 115, 115));

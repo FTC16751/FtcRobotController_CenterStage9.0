@@ -157,7 +157,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
             armUtil.setCurrentState(ArmUtil.ArmState.HIGH_SCORE);
         }
         if(gamepad2.b){
-            armUtil.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE);
+            armUtil.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_DRIVER);
         }
         if(gamepad2.y) {
             armUtil.setCurrentState(ArmUtil.ArmState.HANG_READY);
