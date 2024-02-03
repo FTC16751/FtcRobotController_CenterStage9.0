@@ -65,7 +65,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil2024;
 /**
  * FTC WIRES Autonomous Example for only vision detection using tensorflow and park
  */
-@Autonomous(name = "Road Runner Auto Test", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
+@Autonomous(name = "Gear Girls RoadRunner Autonomous", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
 public class FTCWiresAutoGAMITCHTEST extends LinearOpMode {
     /* add in our vision stuff */
     public int element_zone = 1;

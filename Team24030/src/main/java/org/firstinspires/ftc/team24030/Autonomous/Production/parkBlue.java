@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 
 //@TeleOp
-@Autonomous(name="Simple Autonomous", group="Autonomous")
+@Autonomous(name="Simple Park Drive Forward", group="BLUE")
 @Disabled
 public class parkBlue extends LinearOpMode
 {

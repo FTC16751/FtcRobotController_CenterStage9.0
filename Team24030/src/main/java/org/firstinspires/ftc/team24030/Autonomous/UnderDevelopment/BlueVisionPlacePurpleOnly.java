@@ -11,9 +11,9 @@ import org.firstinspires.ftc.team24030.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 import org.firstinspires.ftc.team24030.robot.utilities.TeamElementSubsystem;
 
-@Autonomous(name="Blue BackDrop Vision Place Purple,Yellow,Park", group="BLUE")
+@Autonomous(name="Blue Place Purple Pixel ONLY", group="BLUE")
 
-public class BlueBackStageVision extends LinearOpMode {
+public class BlueVisionPlacePurpleOnly extends LinearOpMode {
 
     public int element_zone = 1;
 
@@ -26,7 +26,7 @@ public class BlueBackStageVision extends LinearOpMode {
     private Servo leftClaw;
     private Servo rightClaw;
     // Define servo positions for wrist and claws
-    private double wristPosition = 1.0; // Initial position
+    private double wristPosition = 0.4; // Initial position
     private double leftClawPosition = LEFT_CLAW_CLOSED_POSITION; // Initial position - close
     private double rightClawPosition = RIGHT_CLAW_CLOSED_POSITION; // Initial position - close
 
@@ -115,7 +115,6 @@ public class BlueBackStageVision extends LinearOpMode {
         HardwareStart();
 
 
-
         while (!opModeIsActive() && !isStopRequested()) {
             element_zone = teamElementDetection.elementDetection(telemetry);
             if (togglePreview && gamepad2.a) {
@@ -132,7 +131,7 @@ public class BlueBackStageVision extends LinearOpMode {
         }
       //  while(opModeIsActive()&& !isStopRequested()){
         waitForStart();
-        wristServo.setPosition(0.4);
+
             if(element_zone==1){
                 //drive robot to spike marks
                 driveUtil2023.driveRobotDistanceForward(90,0.5);
@@ -146,39 +145,7 @@ public class BlueBackStageVision extends LinearOpMode {
                 sleep(500);
                 //drive path towards the backdrop
                 driveUtil2023.driveRobotDistanceBackward(20,.5);
-                driveUtil2023.rotateLeft90Degrees();
-                //drive to the backdrop
-                driveUtil2023.driveRobotDistanceForward(60,.5);
 
-                //set the arm to score (raise shoulder, then extend elbow)
-                telemetry.addData("State", "Score");
-                shoulderPosition = 800;
-                ShoulderArm.setTargetPosition(shoulderPosition);
-                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ShoulderArm.setPower(1.0);
-
-                elbowPosition = elbowPosition3;
-                ElbowArm.setTargetPosition(elbowPosition);
-                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ElbowArm.setPower(0.75);
-                wristServo.setPosition(0.46);
-
-                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
-                    //hello
-                }
-
-                //make some fine tuned movements to the backdrop
-                driveUtil2023.driveRobotDistanceStrafeRight(10,.25);
-                driveUtil2023.driveRobotDistanceForward(7,.15);
-                sleep(500);
-
-                //open claw to drop yellow game piece
-                rightClaw.setPosition(RIGHT_CLAW_OPEN_POSITION);
-                sleep(250);
-
-                //move away from backdrop, lower arm and park in corner
-                driveUtil2023.driveRobotDistanceBackward(20,.25);
-                sleep(500);
                 shoulderPosition = shoulderStowPosition;
                 ShoulderArm.setTargetPosition(0);
                 ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -193,10 +160,6 @@ public class BlueBackStageVision extends LinearOpMode {
                     //hello
                 }
 
-                //go park
-                driveUtil2023.driveRobotDistanceStrafeLeft(35,.5);
-                driveUtil2023.driveRobotDistanceForward(30,.5);
-                sleep(2500);
             }
             else if(element_zone==2){
                //copied from red zone 2
@@ -204,33 +167,7 @@ public class BlueBackStageVision extends LinearOpMode {
                 leftClaw.setPosition(LEFT_CLAW_OPEN_POSITION);
                 sleep(500);
                 driveUtil2023.driveRobotDistanceBackward(10,.5);
-                driveUtil2023.rotateLeft90Degrees();
 
-                driveUtil2023.driveRobotDistanceForward(80,.5);
-
-                telemetry.addData("State", "Score");
-                shoulderPosition = 800;
-                ShoulderArm.setTargetPosition(shoulderPosition);
-                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ShoulderArm.setPower(1.0);
-
-                elbowPosition = 2000;
-                ElbowArm.setTargetPosition(elbowPosition);
-                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ElbowArm.setPower(1.0);
-
-                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
-                    //hello
-                }
-
-                wristServo.setPosition(0.46);
-                driveUtil2023.driveRobotDistanceStrafeRight(15,.5);
-                driveUtil2023.driveRobotDistanceForward(15,.15);
-                sleep(500);
-                rightClaw.setPosition(RIGHT_CLAW_OPEN_POSITION);
-                sleep(250);
-                driveUtil2023.driveRobotDistanceBackward(20,.25);
-                sleep(500);
                 shoulderPosition = shoulderStowPosition;
                 ShoulderArm.setTargetPosition(0);
                 ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -244,10 +181,6 @@ public class BlueBackStageVision extends LinearOpMode {
                 while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
                     //hello
                 }
-                driveUtil2023.driveRobotDistanceStrafeLeft(65,.5);
-                driveUtil2023.driveRobotDistanceForward(30,.5);
-                //sleep(2500);
-
 
             }
             else if (element_zone==3){
@@ -257,33 +190,7 @@ public class BlueBackStageVision extends LinearOpMode {
                 leftClaw.setPosition(LEFT_CLAW_OPEN_POSITION);
                 sleep(1000);
                 driveUtil2023.driveRobotDistanceBackward(10,.5);
-                driveUtil2023.rotateLeft180Degrees();
-                //driveUtil2023.driveRobotDistanceStrafeLeft(65,.5);
-                driveUtil2023.driveRobotDistanceForward(70,.5);
 
-
-                telemetry.addData("State", "Score");
-                shoulderPosition = 700;
-                ShoulderArm.setTargetPosition(shoulderPosition);
-                ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ShoulderArm.setPower(1.0);
-
-                elbowPosition = 2000;
-                ElbowArm.setTargetPosition(elbowPosition);
-                ElbowArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                ElbowArm.setPower(1.0);
-                wristServo.setPosition(0.46);
-
-                while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
-                    //hello
-                }
-                //driveUtil2023.driveRobotDistanceStrafeLeft(15,.25);
-                driveUtil2023.driveRobotDistanceForward(7,.15);
-                sleep(500);
-                rightClaw.setPosition(RIGHT_CLAW_OPEN_POSITION);
-                sleep(250);
-                driveUtil2023.driveRobotDistanceBackward(20,.25);
-                sleep(500);
                 shoulderPosition = shoulderPosition3;
                 ShoulderArm.setTargetPosition(shoulderStowPosition);
                 ShoulderArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -297,10 +204,6 @@ public class BlueBackStageVision extends LinearOpMode {
                 while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
                     //hello
                 }
-                driveUtil2023.driveRobotDistanceStrafeLeft(70,.5);
-                driveUtil2023.driveRobotDistanceForward(30,.5);
-                sleep(2500);
-
             }
             else {
         }

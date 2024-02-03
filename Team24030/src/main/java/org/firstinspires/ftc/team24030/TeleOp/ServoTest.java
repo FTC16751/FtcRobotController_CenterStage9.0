@@ -59,7 +59,7 @@ public class ServoTest extends LinearOpMode {
     private Servo wristServo;
     private Servo leftClaw;
     private Servo rightClaw;
-    double leftClawPosition = (1.0);
+    double leftClawPosition = (0.0);
     double rightClawPosition = (0.0);
     double wristPosition = (0.0);
 
@@ -68,8 +68,8 @@ public class ServoTest extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-       // rservo = hardwareMap.get(Servo.class, "launcher");
-       // lservo = hardwareMap.get(Servo.class, "launcherangle");
+       rservo = hardwareMap.get(Servo.class, "launcher");
+        lservo = hardwareMap.get(Servo.class, "launcherangle");
         wristServo = hardwareMap.get(Servo.class, "wristservo");
         //leftClaw = hardwareMap.get(Servo.class, "leftclaw");
         //rightClaw = hardwareMap.get(Servo.class, "rightclaw");
@@ -86,6 +86,7 @@ public class ServoTest extends LinearOpMode {
             // slew the servo, according to the rampUp (direction) variable.
             if (gamepad1.y){
                 leftClawPosition += INCREMENT;
+
             }
             if (gamepad1.a){
                 leftClawPosition -= INCREMENT;
@@ -97,6 +98,7 @@ public class ServoTest extends LinearOpMode {
             if (gamepad1.x){
                 rightClawPosition -= INCREMENT;
             }
+
             if (gamepad1.dpad_up){
                 wristPosition += INCREMENT;
             }
@@ -105,14 +107,14 @@ public class ServoTest extends LinearOpMode {
             }
 
             // Display the current value
-            //telemetry.addData("Left Servo Position", "%5.2f", leftClawPosition);
-            //telemetry.addData("Right Servo Position", "%5.2f", rightClawPosition);
+            telemetry.addData("Left Servo Position (launch angle)", "%5.2f", leftClawPosition);
+            telemetry.addData("Right Servo Position (launcher)", "%5.2f", rightClawPosition);
             telemetry.addData("Wrist Servo Position", "%5.2f", wristPosition);
             telemetry.update();
 
             // Set the servo to the new position and pause;
-           // leftClaw.setPosition(leftClawPosition);
-            //rightClaw.setPosition(rightClawPosition);
+            lservo.setPosition(leftClawPosition);
+            rservo.setPosition(rightClawPosition);
             wristServo.setPosition(wristPosition);
             sleep(CYCLE_MS);
             idle();

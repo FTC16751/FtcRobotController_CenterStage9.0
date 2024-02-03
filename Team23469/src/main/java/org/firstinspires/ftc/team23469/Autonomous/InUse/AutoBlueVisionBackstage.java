@@ -9,7 +9,7 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LinearSlidesUtil;
 
-@Autonomous(name="Blue Vision Backstage", group="Auto")
+@Autonomous(name="Blue Vision Backstage", group="00-BLUE")
 
 public class AutoBlueVisionBackstage extends LinearOpMode {
     public int element_zone = 1;
@@ -78,19 +78,19 @@ public class AutoBlueVisionBackstage extends LinearOpMode {
                 drive.driveRobotDistanceForward(45,.3);
                 drive.rotateLeft45Degrees();
                 drive.driveRobotDistanceForward(10  ,.3); //to spike mark
-                while (drive.motorisBusyLF()) {}
+                //while (drive.motorisBusyLF()) {}
                 claw.openRightClaw();
                 sleep(250);
                 drive.driveRobotDistanceBackward(15, .3);
                 while (drive.motorisBusyLF()) {}
                 claw.closeRightClaw();
                 drive.rotateLeft45Degrees();
-                drive.driveRobotDistanceForward(55,.3); //to board
-                //driveUtil.driveRobotDistanceStrafeLeft(3, .3);
+                drive.driveRobotDistanceForward(60,.3); //to board
+                drive.driveRobotDistanceStrafeLeft(3, .3);
                 slides.moveToPosition(1300);
                 sleep(1000);
                 claw.raiseWrist();
-                drive.driveRobotDistanceForward(5,.15); //to board slowly
+                drive.driveRobotDistanceForward(7,.15); //to board slowly
                 while (drive.motorisBusyLF()){}
                 claw.openClaw(); //score y pixel
                 sleep(1000);
@@ -101,9 +101,9 @@ public class AutoBlueVisionBackstage extends LinearOpMode {
                 sleep(250);
                 slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
                 slides.runStateMachine();
-                sleep(1000);
-                drive.driveRobotDistanceStrafeLeft(37, .3);
-                drive.driveRobotDistanceForward(25,.3); //park
+                //sleep(1000);
+                drive.driveRobotDistanceStrafeLeft(37, .5);
+                drive.driveRobotDistanceForward(15,.3); //park
                 sleep(2000); //please remove me //don't remove me (coach george)
                 //add in code to do things if element is in zone 1
             }
@@ -113,8 +113,8 @@ public class AutoBlueVisionBackstage extends LinearOpMode {
                 slides.moveToPosition(200);
                 drive.driveRobotDistanceForward(60,.3); //score p pixel
                 drive.driveRobotDistanceBackward(5,.3);
-                while (drive.motorisBusyLF()) {
-                }
+                //while (drive.motorisBusyLF()) {
+                //}
                 claw.openRightClaw();
                 sleep(500);
                 drive.driveRobotDistanceBackward(20,.3);
@@ -124,12 +124,12 @@ public class AutoBlueVisionBackstage extends LinearOpMode {
                 drive.driveRobotDistanceForward(58,.3); //to board
                 drive.driveRobotDistanceStrafeRight(20, .3);
                 slides.moveToPosition(1300);
-                sleep(2000);
+                sleep(1000);
                 claw.raiseWrist();
                 drive.driveRobotDistanceForward(5.5,.15); //to board slowly
                 while (drive.motorisBusyLF()){}
                 claw.openClaw(); //score y pixel
-                sleep(1000);
+                sleep(100);
                 drive.driveRobotDistanceBackward(6,.5); //move away from board
                 while (drive.motorisBusyLF()){}
                 claw.closeClaw();
@@ -137,7 +137,7 @@ public class AutoBlueVisionBackstage extends LinearOpMode {
                 sleep(250);
                 slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
                 slides.runStateMachine();
-                drive.driveRobotDistanceStrafeLeft(45,.3);
+                drive.driveRobotDistanceStrafeLeft(45,.5);
                 drive.driveRobotDistanceForward(20,.3); //park
                 sleep(200); //please remove me
                 //add in code to do things if element is in zone 2
@@ -151,30 +151,29 @@ public class AutoBlueVisionBackstage extends LinearOpMode {
                 drive.rotateRight90Degrees();
                 drive.driveRobotDistanceForward(16,.3);
                 drive.driveRobotDistanceBackward(7,.3);
-                while (drive.motorisBusyLF()) {
-                }
+                //while (drive.motorisBusyLF()) {}
                 claw.openRightClaw();
                 sleep(500);
                 drive.driveRobotDistanceBackward(20,.3);
-                drive.rotateLeft90Degrees();
-                drive.rotateLeft90Degrees();
-                drive.driveRobotDistanceForward(40, .3); //to board
+                drive.rotateLeft180Degrees();
+                //drive.rotateLeft90Degrees();
+                drive.driveRobotDistanceForward(50, .3); //to board
                 drive.driveRobotDistanceStrafeRight(15,.3);
                 slides.moveToPosition(1300);
-                sleep(2000);
+                sleep(1000);
                 claw.raiseWrist();
-                drive.driveRobotDistanceForward(6.5,.15); //to board slowly
+                drive.driveRobotDistanceForward(7,.15); //to board slowly
                 while (drive.motorisBusyLF()){}
                 claw.openClaw(); //score y pixel
-                sleep(1000);
+                sleep(200);
                 drive.driveRobotDistanceBackward(6,.5); //move away from board
-                while (drive.motorisBusyLF()){}
+               // while (drive.motorisBusyLF()){}
                 claw.closeClaw();
                 claw.lowerWrist();
                 sleep(250);
                 slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
                 slides.runStateMachine();
-                drive.driveRobotDistanceStrafeLeft(55,.3);
+                drive.driveRobotDistanceStrafeLeft(55,.5);
                 drive.driveRobotDistanceForward(25,.3); //park
                 sleep(2000); //please remove me
                 //add in code to do things if element is in zone 3

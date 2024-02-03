@@ -2,7 +2,6 @@ package org.firstinspires.ftc.team23469.Autonomous.InUse;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team23469.robot.utilities.Learning.TeamElementSubsystem;
@@ -10,9 +9,9 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LinearSlidesUtil;
 
-@Autonomous(name="Red Vision Backstage", group="01-RED")
-@Disabled
-public class AutoRedVisionBackstage extends LinearOpMode {
+@Autonomous(name="Red Vision Backstage Just Purple", group="01-RED")
+
+public class AutoRedVisionBackstageJustPurple extends LinearOpMode {
     public int element_zone = 1;
     private TeamElementSubsystem teamElementDetection = null;
     boolean togglePreview = true;
@@ -81,31 +80,16 @@ public class AutoRedVisionBackstage extends LinearOpMode {
                 drive.rotateLeft90Degrees();
                 drive.driveRobotDistanceForward(16,.3);
                 drive.driveRobotDistanceBackward(7,.3);
-                while (drive.motorisBusyLF()) {
-                }
+                //while (drive.motorisBusyLF()) {}
                 claw.openRightClaw();
                 sleep(500);
                 drive.driveRobotDistanceBackward(20,.3);
-                drive.rotateRight90Degrees();
-                drive.rotateRight90Degrees();
-                drive.driveRobotDistanceForward(50, .3); //to board
-               // driveUtil.driveRobotDistanceStrafeRight(15,.3);
-                slides.moveToPosition(1300);
-                sleep(2000);
-                claw.raiseWrist();
-                drive.driveRobotDistanceForward(6.5,.15); //to board slowly
-                while (drive.motorisBusyLF()){}
-                claw.openClaw(); //score y pixel
-                sleep(1000);
-                drive.driveRobotDistanceBackward(6,.5); //move away from board
-                while (drive.motorisBusyLF()){}
+                claw.closeRightClaw();
                 claw.closeClaw();
                 claw.lowerWrist();
                 sleep(250);
                 slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
                 slides.runStateMachine();
-                drive.driveRobotDistanceStrafeRight(55,.3);
-                drive.driveRobotDistanceForward(25,.3); //park
                 sleep(2000); //reversed for red
                 //add in code to do things if element is in zone 1
             }
@@ -115,32 +99,17 @@ public class AutoRedVisionBackstage extends LinearOpMode {
                 slides.moveToPosition(200);
                 drive.driveRobotDistanceForward(60,.3); //score p pixel
                 drive.driveRobotDistanceBackward(5,.3);
-                while (drive.motorisBusyLF()) {
-                }
+                //while (drive.motorisBusyLF()) {}
                 claw.openRightClaw();
                 sleep(500);
                 drive.driveRobotDistanceBackward(20,.3);
                 while (drive.motorisBusyLF()){}
                 claw.closeRightClaw();
-                drive.rotateRight90Degrees();
-                drive.driveRobotDistanceForward(58,.3); //to board
-                drive.driveRobotDistanceStrafeLeft(10, .3);
-                slides.moveToPosition(1300);
-                sleep(2000);
-                claw.raiseWrist();
-                drive.driveRobotDistanceForward(5.5,.15); //to board slowly
-                while (drive.motorisBusyLF()){}
-                claw.openClaw(); //score y pixel
-                sleep(1000);
-                drive.driveRobotDistanceBackward(6,.5); //move away from board
-                while (drive.motorisBusyLF()){}
                 claw.closeClaw();
                 claw.lowerWrist();
                 sleep(250);
                 slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
                 slides.runStateMachine();
-                drive.driveRobotDistanceStrafeRight(45,.3);
-                drive.driveRobotDistanceForward(20,.3); //park
                 sleep(2000); //Reversed for red
             }
             else if (element_zone==3){
@@ -151,31 +120,17 @@ public class AutoRedVisionBackstage extends LinearOpMode {
                 drive.rotateRight45Degrees();
                 drive.driveRobotDistanceForward(15  ,.3); //to spike mark
                 drive.driveRobotDistanceBackward(5  ,.3); //to spike mark
-                while (drive.motorisBusyLF()) {}
+                //while (drive.motorisBusyLF()) {}
                 claw.openRightClaw();
                 sleep(250);
                 drive.driveRobotDistanceBackward(15, .3);
                 while (drive.motorisBusyLF()) {}
                 claw.closeRightClaw();
-                drive.rotateRight45Degrees();
-                drive.driveRobotDistanceForward(55 ,.3); //to board
-                drive.driveRobotDistanceStrafeRight(6, .3);
-                slides.moveToPosition(1300);
-                sleep(2000);
-                claw.raiseWrist();
-                drive.driveRobotDistanceForward(8,.15); //to board slowly
-                while (drive.motorisBusyLF()){}
-                claw.openClaw(); //score y pixel
-                sleep(1000);
-                drive.driveRobotDistanceBackward(5.5,.5); //move away from board
-                while (drive.motorisBusyLF()){}
                 claw.closeClaw();
                 claw.lowerWrist();
                 sleep(250);
                 slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
                 slides.runStateMachine();
-                drive.driveRobotDistanceStrafeRight(40, .3);
-                drive.driveRobotDistanceForward(10,.3);
                 sleep(2000); //reversed for red
                 //add in code to do things if element is in zone 3
             }

@@ -67,6 +67,7 @@ public class ClawUtil {
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
+
     }
 
     public void setClawOpen() {

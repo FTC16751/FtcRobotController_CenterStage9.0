@@ -32,45 +32,39 @@ package org.firstinspires.ftc.team16751.roadrunner;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
+import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.NewDriveUtil2024;
 import org.firstinspires.ftc.team16751.robot.utilities.TeamElementSubsystem;
-import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
-import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 
-@Autonomous(name = "P3 Road Runner Autonomous", group = "00-Autonomous", preselectTeleOp = "Driver Control Center Stage")
-public class RoadRunnerAutonomous extends LinearOpMode {
+@Autonomous(name = "Road Runner Auto DumbBot", group = "00-Autonomous", preselectTeleOp = "Driver Control Center Stage")
+public class RoadRunnerAutonomousdumbbot extends LinearOpMode {
     /* add in our vision stuff */
     public int element_zone = 1;
 
     private TeamElementSubsystem teamElementDetection = null;
 
     boolean togglePreview = true;
-    private NewDriveUtil2024 P3drive = null;
+    private NewDriveUtil2024 drive = null;
     ArmUtil arm = new ArmUtil(this);
     ClawUtil claw = new ClawUtil(this);
     //Initializing Hardware
     public void HardwareStart() {
         teamElementDetection = new TeamElementSubsystem(hardwareMap);
-        P3drive = new NewDriveUtil2024(this);
-        P3drive.init(hardwareMap,telemetry);
-        P3drive.resetIMUYaw();
-        arm.init(hardwareMap);
-        claw.init(hardwareMap);
-        claw.setClawClosed();
-        arm.setWristPosition(.1);
+        //drive = new NewDriveUtil2024(this);
+        //drive.init(hardwareMap,telemetry);
+        // drive.resetIMUYaw();
+    //    arm.init(hardwareMap);
+    //    claw.init(hardwareMap);
+     //   claw.setClawClosed();
+      //  arm.setWristPosition(.45);
     }
     //Define and declare Robot Starting Locations
     public enum ALLIANCE{
@@ -102,12 +96,19 @@ public class RoadRunnerAutonomous extends LinearOpMode {
     public static PARK_LOCATION selectedParkLocation;
     double waitSecondsBeforeDrop = 0;
     Boolean
-            allianceselected = null, fieldsideselected = null, autopathselected = null,
-            parkingselected = null, initilized = false, previousX = null, previousB = null,
-            waitsecondsselected = false, spikemarklocationselected = false;
-    long startTime;
-    long timeoutMillis =5000;
-    String curAlliance;
+            allianceselected = null,
+            fieldsideselected = null,
+            autopathselected = null,
+            parkingselected = null,
+            initilized = false,
+            previousX = null,
+            previousB = null,
+            waitsecondsselected = false,
+            spikemarklocationselected = false;
+
+
+
+
     //@Override
     public void runOpMode() {//throws InterruptedException {
 
@@ -123,7 +124,7 @@ public class RoadRunnerAutonomous extends LinearOpMode {
 
         //we added this to convert from the alliance selection string of 'BLUE' to 'blue' which is what our
         //existing opencv pipeline code expects (blue or red in lowercase).
-        curAlliance = selectedAlliance.toString().toLowerCase();
+        String curAlliance = selectedAlliance.toString().toLowerCase();
 
         //loop through the following while opmode is NOT active:
         while (!opModeIsActive() && !isStopRequested()) {
@@ -150,8 +151,6 @@ public class RoadRunnerAutonomous extends LinearOpMode {
         }
 
         waitForStart();
-        arm.setWristPosition(.45);
-        long startTime = System.currentTimeMillis();
 
         //Game Play Button  is pressed
         if (opModeIsActive() && !isStopRequested()) {
@@ -182,21 +181,15 @@ public class RoadRunnerAutonomous extends LinearOpMode {
     }
 
     public void runAutonoumousMode() {
-        while ((System.currentTimeMillis() - startTime) < timeoutMillis) {
-            element_zone = teamElementDetection.elementDetection(telemetry);
-            if (togglePreview && gamepad2.a) {
-                togglePreview = false;
-                teamElementDetection.toggleAverageZone(gamepad2);
-            } else if (!gamepad2.a) {
-                togglePreview = true;
-            }
-            teamElementDetection.setAlliance(curAlliance);
-        }
+
         String name = new Object(){}.getClass().getEnclosingMethod().getName();
         StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
         StackTraceElement e = stacktrace[3];//maybe this number needs to be corrected
         RobotLog.dd("ROBOLOG", "current method: "+name+": called from: "+e);
 
+
+        //safeWaitSeconds(30);
+        //identifiedSpikeMarkLocation = selectedSpikeMarkLocation;
         //Initialize all the separate pose paths the robot will take. these are not the path coordinates. just initialization.
         Pose2d startingPose = new Pose2d(0, 0, 0); // Starting Pose
         Pose2d moveBeyondTrussPose = new Pose2d(0,0,0);  //small move to get robot past truss on start
@@ -210,11 +203,15 @@ public class RoadRunnerAutonomous extends LinearOpMode {
         Pose2d parkPose = new Pose2d(0,0, 0); // park position
 
         double slowdropYellowPixelPoseYcoordinate = 0; //positions of dropping yellow pixel
-        double safeMoveFromBackDrop = 0; //positions go after dropping yellow pixel
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, startingPose); //init mecanum drive with starting position
         startingPose = new Pose2d(0, 0, Math.toRadians(0)); //Starting pose
         moveBeyondTrussPose = new Pose2d(15,0,0);
+
+        /************************
+         * //remove this
+         */
+       // identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
 
         switch (selectedAlliance) {
             case BLUE:
@@ -226,30 +223,21 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                         // Set up poses and actions for BLUE/BACKSTAGE scenario
                         switch(identifiedSpikeMarkLocation){
                             case LEFT:
-                                dropPurplePixelPose = new Pose2d(21, 19, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(23, 30, Math.toRadians(-90));
+                                dropPurplePixelPose = new Pose2d(26, 8, Math.toRadians(45));
+                                dropYellowPixelPose = new Pose2d(20, 40, Math.toRadians(-90));
                                 break;
                             case MIDDLE:
                                 dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(30, 30,  Math.toRadians(-90));
+                                dropYellowPixelPose = new Pose2d(23, 35,  Math.toRadians(-90));
                                 break;
                             case RIGHT:
-                                dropPurplePixelPose = new Pose2d(24, -6, Math.toRadians(-45));
-                                dropYellowPixelPose = new Pose2d(37, 25, Math.toRadians(-90));
+                                dropPurplePixelPose = new Pose2d(30, -9, Math.toRadians(-45));
+                                dropYellowPixelPose = new Pose2d(32, 30, Math.toRadians(-90));
                                 break;
                         }
                         moveAwayfromPurplePixelPose = new Pose2d(14, 0, Math.toRadians(0));
-
-                        switch(selectedParkLocation){
-                            case OUTSIDE:
-                                parkPose = new Pose2d(6, 37, Math.toRadians(-90));
-                                break;
-                            case INSIDE:
-                                parkPose = new Pose2d(52, 37, Math.toRadians(-90));
-                                break;
-                        }
-                        slowdropYellowPixelPoseYcoordinate = 42;
-                        safeMoveFromBackDrop = 30;
+                        parkPose = new Pose2d(6, 37, Math.toRadians(-90));
+                        slowdropYellowPixelPoseYcoordinate = 37;
                         break;//break from field side
 
                     case WING:
@@ -269,30 +257,14 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                                 dropYellowPixelPose = new Pose2d(35, 79, Math.toRadians(-90));
                                 break;
                         }
-                      switch(selectedAutoPath){
-                          case GATE:
-                              moveAwayfromPurplePixelPose = new Pose2d(14, -23, Math.toRadians(0));
-                              midwayPose1a = new Pose2d(60, -23, Math.toRadians(0));
-                              midwayPose2 = new Pose2d(53, 60, Math.toRadians(-90));
-                              break;//break from field side
-                          case TRUSS:
-                              moveAwayfromPurplePixelPose = new Pose2d(5.5, -10, Math.toRadians(-90));
-                              midwayPose1a = new Pose2d(5.5, 40, Math.toRadians(-90));
-                              midwayPose2 = new Pose2d(5.5, 65, Math.toRadians(-90));
-                              break;//break from field side
-                      }
-                      switch(selectedParkLocation){
-                          case OUTSIDE:
-                              parkPose = new Pose2d(6, 88, Math.toRadians(-90));
-                              break;
-                          case INSIDE:
-                              parkPose = new Pose2d(52, 88, Math.toRadians(-90));
-                              break;
-
-                      }
-                        slowdropYellowPixelPoseYcoordinate = 88;
-                        safeMoveFromBackDrop = 79;
-                        break;
+                        moveAwayfromPurplePixelPose = new Pose2d(14, -23, Math.toRadians(0));
+                        //define those paths specific to wing
+                        midwayPose1a = new Pose2d(60, -23, Math.toRadians(0));
+                        midwayPose2 = new Pose2d(53, 60, Math.toRadians(-90));
+                        midwayPose2a = new Pose2d(53, 75, Math.toRadians(-90));
+                        parkPose = new Pose2d(52, 82, Math.toRadians(-90));
+                        slowdropYellowPixelPoseYcoordinate = 86;
+                    break;//break from field side
                 }
                 break;//break from alliance selection
             case RED:
@@ -304,33 +276,23 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                         switch (identifiedSpikeMarkLocation) {
                             case LEFT:
                                 dropPurplePixelPose = new Pose2d(28, 9, Math.toRadians(45));
-                                dropYellowPixelPose = new Pose2d(32, -35, Math.toRadians(90));
+                                dropYellowPixelPose = new Pose2d(21, -30, Math.toRadians(90));
                                 break;
                             case MIDDLE:
                                 dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(23, -35, Math.toRadians(90));
+                                dropYellowPixelPose = new Pose2d(29, -30, Math.toRadians(90));
                                 break;
                             case RIGHT:
                                 dropPurplePixelPose = new Pose2d(28, -8, Math.toRadians(-45));
-                                dropYellowPixelPose = new Pose2d(20, -35, Math.toRadians(90));
+                                dropYellowPixelPose = new Pose2d(14, -30, Math.toRadians(90));
                                 break;
-                        }
-                        switch(selectedParkLocation){
-                            case OUTSIDE:
-                                parkPose = new Pose2d(8, -30, Math.toRadians(90));
-                                break;
-                            case INSIDE:
-                                parkPose = new Pose2d(52, -30, Math.toRadians(90));
-
-
                         }
                         moveAwayfromPurplePixelPose = new Pose2d(14, 0, Math.toRadians(45));
+                        parkPose = new Pose2d(8, -30, Math.toRadians(90));
                         slowdropYellowPixelPoseYcoordinate = -32;
-                        safeMoveFromBackDrop = -35;
                      break;
 
                     case WING:
-
                         drive = new MecanumDrive(hardwareMap, startingPose);
                         //driveWingRed(startingPose, dropPurplePixelPose, dropYellowPixelPose, moveAwayfromPurplePixelPose, parkPose, midwayPose1a, midwayPose2, midwayPose2a);
                         // Set up poses and actions for RED/WING scenario
@@ -348,29 +310,12 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                                 dropYellowPixelPose = new Pose2d(22, -77, Math.toRadians(90));
                                 break;
                         }
-                      switch (selectedAutoPath){
-                          case GATE:
-                              moveAwayfromPurplePixelPose = new Pose2d(14, 23, Math.toRadians(0));
-                              //define those paths specific to wing
-                              midwayPose2 = new Pose2d(55, -41, Math.toRadians(90));
-                              break;
-                          case TRUSS:
-                              moveAwayfromPurplePixelPose = new Pose2d(5, 0, Math.toRadians(90));
-                              //define those paths specific to wing
-                              midwayPose2 = new Pose2d(6, -41, Math.toRadians(90));
-                              break;
-                      }
-               switch(selectedParkLocation){
-                   case INSIDE:
-                       parkPose = new Pose2d(8, -77, Math.toRadians(90));
-                               break;
-                   case OUTSIDE:
-                       parkPose = new Pose2d(52, -77, Math.toRadians(90));
-                        break;
-               }
-
+                        moveAwayfromPurplePixelPose = new Pose2d(14, 23, Math.toRadians(0));
+                        //define those paths specific to wing
+                        midwayPose1a = new Pose2d(50, 20, Math.toRadians(90));
+                        midwayPose2 = new Pose2d(55, -41, Math.toRadians(90));
+                        parkPose = new Pose2d(13, -77, Math.toRadians(90));
                         slowdropYellowPixelPoseYcoordinate = -86;
-                        safeMoveFromBackDrop = -77;
                     break; //break from field side
                 }
                 break; //break from alliance selection
@@ -389,10 +334,10 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                         .build());
 
         //drop Purple Pixel on Spike Mark
-        claw.openRightHand();
-        safeWaitSeconds(.75);
-        arm.setWristPosition(0.45);
-        arm.raiseToPositionNoPID(2,.5,false); //low score
+     //   claw.openRightHand();
+        safeWaitSeconds(.5);
+      //  arm.setWristPosition(0.45);
+      //  arm.raiseToPositionNoPID(2,.5,false); //low score
         //safeWaitSeconds(.5);
         //arm.setWristPosition(0.0);
         //claw.closeRightHand();
@@ -410,6 +355,7 @@ public class RoadRunnerAutonomous extends LinearOpMode {
             Actions.runBlocking(
                     drive.actionBuilder(drive.pose)
                             .strafeToLinearHeading(midwayPose1a.position, moveAwayfromPurplePixelPose.heading)
+                            ///.turnTo(-90)
                             .strafeToLinearHeading(midwayPose2.position, midwayPose2.heading)
                             //wait for alliance partner to get out of the way
                             .waitSeconds(waitSecondsBeforeDrop)
@@ -427,30 +373,27 @@ public class RoadRunnerAutonomous extends LinearOpMode {
 
         //TODO : Code to drop Pixel on Backdrop
         //first set arm to back position and position wrist
-        arm.raiseToPositionNoPID(5,.5,false); //low score
-        safeWaitSeconds(1.0);
-        arm.setWristPosition(0.0);
-        safeWaitSeconds(0.25);
+      //  arm.setWristPosition(0.45);
+      //  arm.raiseToPositionNoPID(5,.5,false); //low score
+        safeWaitSeconds(2);
+      //  arm.setWristPosition(0.0);
+
+
             Actions.runBlocking(
                     drive.actionBuilder(drive.pose)
-                            .lineToYConstantHeading(slowdropYellowPixelPoseYcoordinate, new TranslationalVelConstraint(5))
+                            .lineToYConstantHeading(slowdropYellowPixelPoseYcoordinate)
                             .build());
 
-        //P3drive.driveRobotDistanceBackward(10,.20);
-        //safeWaitSeconds(1); //optimize this
-        //drive.updatePoseEstimate();
 
         //open claw and scoooooooore! XD
-        claw.setClawOpen();
+        safeWaitSeconds(1); //optimize this
+   //     claw.setClawOpen();
         safeWaitSeconds(.5); //optimize this
-        Actions.runBlocking(
-                drive.actionBuilder(drive.pose)
-                        .lineToYConstantHeading(safeMoveFromBackDrop, new TranslationalVelConstraint(5))
-                        .build());
+
         //set arm back to init position
-        arm.setWristPosition(0.45);
-        claw.setClawClosed();
-        arm.raiseToPositionNoPID(1,.25,false); //init
+      //  arm.setWristPosition(0.45);
+      //  claw.setClawClosed();
+      //  arm.raiseToPositionNoPID(1,.5,false); //init
 
         //Move robot to park in Backstage
         Actions.runBlocking(
@@ -461,9 +404,9 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                         .build());
 
         //set arm back to init position
-        arm.setWristPosition(0.45);
-        claw.setClawClosed();
-        arm.raiseToPositionNoPID(1,.5,false); //init
+   //     arm.setWristPosition(0.45);
+     //   claw.setClawClosed();
+    //    arm.raiseToPositionNoPID(1,.5,false); //init
 
         //we are done end of auto code
     }
@@ -533,8 +476,23 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                 selectedFieldSide = FIELD_SIDE.WING;
                 fieldsideselected = true;
             }
-        }
-        else if (autopathselected == null && selectedFieldSide == FIELD_SIDE.WING) {
+        } /*else if (spikemarklocationselected == false) {
+            telemetry.addData("TESTING SPIKE MARK LOCATION: ", "X = LEFT, Y = MIDDLE, B = RIGHT");
+            telemetry.update();
+            if (currentX && !previousX){
+                selectedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
+                spikemarklocationselected = true;
+            }
+            if (gamepad1.y) {
+                selectedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
+                spikemarklocationselected = true;
+
+            }
+            if (currentB && !previousB){
+                selectedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT;
+                spikemarklocationselected = true;
+            }
+        } else if (autopathselected == null) {
             telemetry.addData("Path to Backdrop: ", "X = gate, B = truss");
             telemetry.update();
             if (currentX && !previousX) {
@@ -556,8 +514,8 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                 selectedParkLocation = PARK_LOCATION.OUTSIDE;
                 parkingselected = true;
             }
-        }
-        else if (waitsecondsselected == false && selectedFieldSide == FIELD_SIDE.WING) {
+        }*/
+        else if (waitsecondsselected == false) {
             telemetry.addData("---------------------------------------","");
             telemetry.addData("set safe wait using YA on Logitech on gamepad 1:","");
             telemetry.addData("    2 second wait   ", "(x)");
@@ -566,19 +524,19 @@ public class RoadRunnerAutonomous extends LinearOpMode {
             telemetry.addData("    10 second wait  ", "(a)");
             telemetry.update();
             if(currentX && !previousX){
-                waitSecondsBeforeDrop = 0;
-                waitsecondsselected = true;
-            }
-            if(gamepad1.y){
                 waitSecondsBeforeDrop = 2;
                 waitsecondsselected = true;
             }
-            if(currentB && !previousB){
+            if(gamepad1.y){
                 waitSecondsBeforeDrop = 5;
                 waitsecondsselected = true;
             }
-            if(gamepad1.a){
+            if(currentB && !previousB){
                 waitSecondsBeforeDrop = 7;
+                waitsecondsselected = true;
+            }
+            if(gamepad1.a){
+                waitSecondsBeforeDrop = 10;
                 waitsecondsselected = true;
             }
         }

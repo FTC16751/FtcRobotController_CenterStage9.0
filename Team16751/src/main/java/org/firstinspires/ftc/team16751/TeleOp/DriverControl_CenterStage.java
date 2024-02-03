@@ -16,12 +16,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
+import org.firstinspires.ftc.team16751.robot.utilities.LauncherUtil;
+
+import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="Driver Control Center Stage", group="Teleop")
 public class DriverControl_CenterStage extends LinearOpMode {
+    Deadline gamepadRateLimit = new Deadline(250, TimeUnit.MILLISECONDS);
+
     DriveUtil2023 drive = new DriveUtil2023(this);
     ArmUtil armUtil = new ArmUtil(this);
     ClawUtil claw = new ClawUtil(this);
@@ -36,7 +42,7 @@ public class DriverControl_CenterStage extends LinearOpMode {
     int driveMode = 1;
     double handOffset   = 0;
 
-   // LauncherUtil launcherUtil;
+    LauncherUtil launcherUtil;
     boolean aButtonState = false;
 
     @Override
@@ -52,10 +58,11 @@ public class DriverControl_CenterStage extends LinearOpMode {
         armUtil.init(hardwareMap);
         claw.init(hardwareMap);
         armUtil.setCurrentState(ArmUtil.ArmState.INIT);
-       // launcherUtil = new LauncherUtil(hardwareMap);
+        launcherUtil = new LauncherUtil(hardwareMap);
 
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -139,6 +146,11 @@ public class DriverControl_CenterStage extends LinearOpMode {
     }
 
     private void doArmControls() {
+        if (gamepad2.back) {
+            armUtil.stopElbowMotors();
+            armUtil.stopShoulderMotors();
+            armUtil.stopAndResetArmMotors();
+        }
         //Controls for Pre-set arm locations
         //Resting
         if(gamepad2.dpad_down){
@@ -165,7 +177,20 @@ public class DriverControl_CenterStage extends LinearOpMode {
         if(gamepad2.a) {
             armUtil.setCurrentState(ArmUtil.ArmState.HANG);
         }
+        if (Math.abs(gamepad2.left_stick_y) >0.5 ) {
+            armUtil.decreaseShoulderPosition(100);
+        }
 
+
+        if (gamepadRateLimit.hasExpired() && gamepad2.left_trigger > 0.5 ) {
+            armUtil.decrementWristPosition();
+            gamepadRateLimit.reset();
+        }
+
+        if (gamepadRateLimit.hasExpired() && gamepad2.right_trigger > 0.5 ) {
+            armUtil.incrementWristPosition();
+            gamepadRateLimit.reset();
+        }
 
 
     }
@@ -183,25 +208,19 @@ public class DriverControl_CenterStage extends LinearOpMode {
 
     public void dolauncher()
     {
-        /*
-        if(gamepad2.y && !launcherUtil.getToggleState()) {
+
+        // Y button rising edge detection and deadline ratelimit
+        if (gamepadRateLimit.hasExpired() && gamepad2.left_stick_button) {
+            launcherUtil.toggleLaunchAngleServo();
+            gamepadRateLimit.reset();
+        }
+
+        // A button rising edge detection and deadline ratelimit
+        if (gamepadRateLimit.hasExpired() && gamepad2.right_stick_button) {
             launcherUtil.toggleServo();
+            gamepadRateLimit.reset();
         }
 
-        if (gamepad2.a && !aButtonState) {
-            aButtonState = true;
-            if (!launcherUtil.isLauncherMoving()) {
-                if (launcherUtil.getLauncherAngleServoPosition() == launcherUtil.LAUNCHER_ANGLE_DOWN_POSITION) {
-                    launcherUtil.raiseLauncher();
-                } else {
-                    launcherUtil.lowerLauncherDown();
-                }
-            }
-        } else if (!gamepad2.a) {
-            aButtonState = false;
-        }
-
-         */
     }
     public void setLights(){
         if (time < 85) {

@@ -11,9 +11,9 @@ import org.firstinspires.ftc.team24030.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team24030.robot.utilities.DriveUtil2023;
 import org.firstinspires.ftc.team24030.robot.utilities.TeamElementSubsystem;
 
-@Autonomous(name="Red BACKDROP Vision Place Purple,Yellow & Park", group="RED")
+@Autonomous(name="Red Place Purple Pixel ONLY", group="RED")
 
-public class RedBackStageVision extends LinearOpMode {
+public class RedVisionPlacePurplePixelOnly extends LinearOpMode {
 
     public int element_zone = 1;
 
@@ -26,7 +26,7 @@ public class RedBackStageVision extends LinearOpMode {
     private Servo leftClaw;
     private Servo rightClaw;
     // Define servo positions for wrist and claws
-    private double wristPosition = 0.4; // Initial position
+    private double wristPosition = 0.6; // Initial position
     private double leftClawPosition = LEFT_CLAW_CLOSED_POSITION; // Initial position - close
     private double rightClawPosition = RIGHT_CLAW_CLOSED_POSITION; // Initial position - close
 
@@ -98,7 +98,7 @@ public class RedBackStageVision extends LinearOpMode {
 
         int minPosition = 0;
         int maxPosition = 3600;
-        elbowStowPosition = 0;
+        elbowStowPosition = 100;
         elbowPosition1 = 3500;
         elbowPosition2 = 0;
         elbowPosition3 = 1000;
@@ -136,18 +136,14 @@ public class RedBackStageVision extends LinearOpMode {
         waitForStart();
         //wristServo.setPosition(wristPosition);
             if(element_zone==1){
-                driveUtil2023.driveRobotDistanceForward(70,0.5);
-                //driveUtil2023.rotateLeft45Degrees();
+                driveUtil2023.driveRobotDistanceForward(75,0.5);
                 driveUtil2023.rotateLeft90Degrees();
-                driveUtil2023.driveRobotDistanceForward(5,0.5);
                 leftClaw.setPosition(LEFT_CLAW_OPEN_POSITION);
                 sleep(1000);
-                driveUtil2023.driveRobotDistanceBackward(15,.5);
-                //driveUtil2023.rotateRight45Degrees();
-                //driveUtil2023.rotateRight90Degrees();
+                driveUtil2023.driveRobotDistanceBackward(10,.5);
                 driveUtil2023.rotateLeft180Degrees();
                 //driveUtil2023.driveRobotDistanceStrafeLeft(65,.5);
-                driveUtil2023.driveRobotDistanceForward(60,.5);
+                driveUtil2023.driveRobotDistanceForward(70,.5);
 
 
                 telemetry.addData("State", "Score");
@@ -166,15 +162,11 @@ public class RedBackStageVision extends LinearOpMode {
                     //hello
                 }
                 //driveUtil2023.driveRobotDistanceStrafeLeft(15,.25);
-                driveUtil2023.driveRobotDistanceForward(20,.15);
+                driveUtil2023.driveRobotDistanceForward(7,.15);
                 sleep(500);
                 rightClaw.setPosition(RIGHT_CLAW_OPEN_POSITION);
                 sleep(250);
                 driveUtil2023.driveRobotDistanceBackward(20,.25);
-
-                driveUtil2023.driveRobotDistanceStrafeRight(77,.5);
-                driveUtil2023.driveRobotDistanceForward(10,.5);
-
                 sleep(250);
                 shoulderPosition = shoulderPosition3;
                 ShoulderArm.setTargetPosition(shoulderStowPosition);
@@ -189,6 +181,10 @@ public class RedBackStageVision extends LinearOpMode {
                 while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
                     //hello
                 }
+                driveUtil2023.driveRobotDistanceStrafeRight(80,.5);
+                driveUtil2023.driveRobotDistanceForward(30,.5);
+                sleep(2500);
+
 
             }
             else if(element_zone==2){
@@ -213,9 +209,9 @@ public class RedBackStageVision extends LinearOpMode {
                 while (ShoulderArm.isBusy() && ElbowArm.isBusy()){
                     //hello
                 }
-                wristServo.setPosition(0.5);
+                wristServo.setPosition(0.46);
                 driveUtil2023.driveRobotDistanceStrafeLeft(20,.5);
-                driveUtil2023.driveRobotDistanceForward(10,.15);
+                driveUtil2023.driveRobotDistanceForward(7,.15);
                 sleep(500);
                 rightClaw.setPosition(RIGHT_CLAW_OPEN_POSITION);
                 sleep(250);
@@ -241,25 +237,22 @@ public class RedBackStageVision extends LinearOpMode {
             }
             else if (element_zone==3){
                 //drive robot to spike marks
-                //clear the wall
-                driveUtil2023.driveRobotDistanceForward(5,0.5);
-                driveUtil2023.driveRobotDistanceStrafeRight(35,.5);
-                driveUtil2023.driveRobotDistanceForward(41,0.5);
+                driveUtil2023.driveRobotDistanceForward(90,0.5);
                 //move the custom game element out of the way
-                //driveUtil2023.driveRobotDistanceStrafeRight(35,.5);
+                driveUtil2023.driveRobotDistanceStrafeRight(35,.5);
                 //  driveUtil2023.driveRobotDistanceBackward(20,.5);
                 //come back and drop the purple game piece
-               // driveUtil2023.driveRobotDistanceStrafeLeft(5,.5);
-               // driveUtil2023.driveRobotDistanceBackward(30,0.5);
+                driveUtil2023.driveRobotDistanceStrafeLeft(5,.5);
+                driveUtil2023.driveRobotDistanceBackward(30,0.5);
                 //open the left clasw and drop the purple pixel
                 leftClaw.setPosition(LEFT_CLAW_OPEN_POSITION);
                 sleep(500);
 
                 //drive path towards the backdrop
-                driveUtil2023.driveRobotDistanceBackward(15,.5); //get out of the way of hte purple pixel
+                driveUtil2023.driveRobotDistanceBackward(20,.5); //get out of the way of hte purple pixel
                 driveUtil2023.rotateRight90Degrees(); //rotate toward the backdrop
                 //drive to the backdrop
-                driveUtil2023.driveRobotDistanceForward(50,.5);
+                driveUtil2023.driveRobotDistanceForward(60,.5);
 
                 //set the arm to score (raise shoulder, then extend elbow)
                 telemetry.addData("State", "Score");
@@ -281,7 +274,7 @@ public class RedBackStageVision extends LinearOpMode {
 
                 //make some fine tuned movements to the backdrop
                 driveUtil2023.driveRobotDistanceStrafeLeft(20,.25);
-                driveUtil2023.driveRobotDistanceForward(12,.15);
+                driveUtil2023.driveRobotDistanceForward(7,.15);
                 sleep(500);
 
                 //open claw to drop yellow game piece
@@ -306,7 +299,7 @@ public class RedBackStageVision extends LinearOpMode {
                 }
 
                 //go park
-                driveUtil2023.driveRobotDistanceStrafeRight(45,.5);
+                driveUtil2023.driveRobotDistanceStrafeRight(40,.5);
                 driveUtil2023.driveRobotDistanceForward(30,.5);
                 sleep(2500);
             } //strafe over more at the end and go forward more before dropping the claw

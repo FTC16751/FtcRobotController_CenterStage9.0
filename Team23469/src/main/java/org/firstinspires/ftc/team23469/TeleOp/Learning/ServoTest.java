@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.team23469.TeleOp.Learning;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -63,13 +64,57 @@ public class ServoTest extends LinearOpMode {
     double  position = (0.0);
     boolean rampUp = true;
 
+    private Servo rightServoClaw, leftServoClaw;
+    private Servo wristServo;
+    private Servo launcherServo;
+    private Servo launcherAngleServo;
+    private Servo rhangerServo;
+    private Servo lhangerServo;
+    RevBlinkinLedDriver lights, rlights;
+    // Default positions
+    private final double LAUNCHER_UP_POSITION = 0.2;
+    private final double LAUNCHER_DOWN_POSITION = 0.6;
+    private final double LAUNCHER_ANGLE_UP_POSITION = 0.1;
+    private final double LAUNCHER_ANGLE_DOWN_POSITION = 0.0;
+    private double launcherposition = LAUNCHER_ANGLE_DOWN_POSITION;
+    private double triggerposition =LAUNCHER_DOWN_POSITION;
+    private double lhangerposition = 0.5;
+    private double rhangerposition = 0.8;
+    private double wristposition = 0.4;
+    private double rclawposition = 0.40;
+    private double lclawposition = 0.80;
 
     @Override
     public void runOpMode() {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        rservo = hardwareMap.get(Servo.class, "wrist");
+        rightServoClaw = hardwareMap.servo.get("rclaw");
+        leftServoClaw = hardwareMap.servo.get("claw");
+        wristServo = hardwareMap.servo.get("wrist");
+        wristServo.setDirection(Servo.Direction.REVERSE);
+        launcherServo = hardwareMap.servo.get("launcher");
+        launcherAngleServo = hardwareMap.servo.get("launcherangle");
+        rhangerServo = hardwareMap.servo.get("righthangerservo");
+        lhangerServo = hardwareMap.servo.get("lefthangerservo");
+        lhangerServo.setPosition(rhangerposition);
+        lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights"); //initialize lights from hub
+        rlights = hardwareMap.get(RevBlinkinLedDriver.class, "rlights"); //initialize lights from hub
+
+        //set init states
+        leftServoClaw.setPosition(lclawposition);
+        rightServoClaw.setPosition(rclawposition);
+        wristServo.setPosition(wristposition);
+        launcherServo.setPosition(triggerposition);
+        launcherAngleServo.setPosition(launcherposition);
+        rhangerServo.setPosition(lhangerposition);
+        lhangerServo.setPosition(rhangerposition);
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
+        rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
+
+
+
+
         //lservo = hardwareMap.get(Servo.class, "lefthangerservo");
         //servo.setDirection(Servo.Direction.REVERSE);
         // Wait for the start button
@@ -81,27 +126,83 @@ public class ServoTest extends LinearOpMode {
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
-            // slew the servo, according to the rampUp (direction) variable.
+            // claw
+            //left claw
             if (gamepad1.y){
-                position += INCREMENT;
+                lclawposition += INCREMENT;
             }
             if (gamepad1.a){
-                position -= INCREMENT;
+                lclawposition -= INCREMENT;
             }
+            leftServoClaw.setPosition(lclawposition);
+            telemetry.addData("Left Claw", "%5.2f", leftServoClaw.getPosition());
 
+            //right claw
+            if (gamepad1.x){
+                rclawposition += INCREMENT;
+            }
+            if (gamepad1.b){
+                rclawposition -= INCREMENT;
+            }
+            rightServoClaw.setPosition(rclawposition);
+            telemetry.addData("Right Claw", "%5.2f", rightServoClaw.getPosition());
+
+            //wrist
+            if (gamepad1.right_bumper){
+                wristposition += INCREMENT;
+            }
+            if (gamepad1.left_bumper){
+                wristposition -= INCREMENT;
+            }
+            wristServo.setPosition(wristposition);
+            telemetry.addData("Wrist ", "%5.2f", wristServo.getPosition());
+
+            //launcher stuff
+            //launcher angle
+            if (gamepad1.dpad_up){
+                launcherposition += INCREMENT;
+            }
+            if (gamepad1.dpad_down){
+                launcherposition -= INCREMENT;
+            }
+            launcherAngleServo.setPosition(launcherposition);
+            telemetry.addData("Launcher angle ", "%5.2f", launcherAngleServo.getPosition());
+
+            //launcher trigger
+            if (gamepad1.dpad_right) {
+                triggerposition += INCREMENT;
+            }
+            if (gamepad1.dpad_left){
+                triggerposition -= INCREMENT;
+            }
+            launcherServo.setPosition(triggerposition);
+            telemetry.addData("Launch trigger ", "%5.2f", launcherServo.getPosition());
+
+            //hanger
+            if (gamepad1.left_stick_y ==-1.0){
+                lhangerposition += INCREMENT;
+            }
+            if (gamepad1.left_stick_y==1.0){
+                lhangerposition -= INCREMENT;
+            }
+            lhangerServo.setPosition(lhangerposition);
+            telemetry.addData("Left hanger ", "%5.2f", lhangerServo.getPosition());
+
+            if (gamepad1.right_stick_y ==-1.0){
+                rhangerposition += INCREMENT;
+            }
+            if (gamepad1.right_stick_y==1.0){
+                rhangerposition -= INCREMENT;
+            }
+            rhangerServo.setPosition(rhangerposition);
+            telemetry.addData("Left hanger ", "%5.2f", rhangerServo.getPosition());
+
+           // lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights"); //initialize lights from hub
+            //rlights = hardwareMap.get(RevBlinkinLedDriver.class, "rlights"); //initialize lights from hub
 
 
             // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", position);
-            telemetry.addData("Servo Position read from servo", "%5.2f", rservo.getPosition());
-            //telemetry.addData("Servo Position read from servo", "%5.2f", lservo.getPosition());
-
-            telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
-
-            // Set the servo to the new position and pause;
-            rservo.setPosition(position);
-           // lservo.setPosition(position);
             sleep(CYCLE_MS);
             idle();
         }

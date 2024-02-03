@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team23469.Autonomous.InUse;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team23469.robot.utilities.Learning.TeamElementSubsystem;
@@ -9,8 +10,8 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LinearSlidesUtil;
 
-@Autonomous(name="Blue Vision WING", group="Auto")
-
+@Autonomous(name="Blue Vision WING", group="00-BLUE")
+@Disabled
 public class AutoBlueVisionWing extends LinearOpMode {
     public int element_zone = 1;
     private TeamElementSubsystem teamElementDetection = null;
@@ -86,6 +87,11 @@ public class AutoBlueVisionWing extends LinearOpMode {
                 drive.driveRobotDistanceBackward(20,.3);
                 while (drive.motorisBusyLF()){}
                 claw.closeRightClaw();
+                claw.lowerWrist();
+                sleep(250);
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                sleep(2000); //please remove me //don't remove me (coach george)
             }
             else if(element_zone==2){
                 telemetry.addData("Zone 2 chosen", element_zone);
@@ -100,7 +106,11 @@ public class AutoBlueVisionWing extends LinearOpMode {
                 drive.driveRobotDistanceBackward(20,.3);
                 while (drive.motorisBusyLF()){}
                 claw.closeRightClaw();
-
+                claw.lowerWrist();
+                sleep(250);
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                sleep(2000); //please remove me //don't remove me (coach george)
             }
             else if (element_zone==3){
                 telemetry.addData("Zone 3 chosen", element_zone);
@@ -117,7 +127,11 @@ public class AutoBlueVisionWing extends LinearOpMode {
                 while (drive.motorisBusyLF()) {}
                 claw.closeRightClaw();
                 drive.rotateLeft45Degrees();
-
+                claw.lowerWrist();
+                sleep(250);
+                slides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
+                slides.runStateMachine();
+                sleep(2000); //please remove me //don't remove me (coach george)
             }
             else {
                 telemetry.addData("i'm in else", "just chillin");

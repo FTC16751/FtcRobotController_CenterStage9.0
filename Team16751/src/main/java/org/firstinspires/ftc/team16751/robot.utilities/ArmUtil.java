@@ -10,6 +10,8 @@
 
 package org.firstinspires.ftc.team16751.robot.utilities;
 
+import static android.os.SystemClock.sleep;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.PIDFController;
@@ -87,7 +89,7 @@ public class ArmUtil {
 
         wrist = hardwareMap.get(Servo.class, "Wrist");
         wrist.setDirection(Servo.Direction.FORWARD);
-        wristPosition = 0.45;
+        wristPosition = 0.10;
         wrist.setPosition(wristPosition);
 
         currentArmState = ArmState.INIT;
@@ -203,18 +205,23 @@ public class ArmUtil {
                 break;
 
             // Back low score state
-            case BACK_LOW_SCORE:
-                currentArmState = ArmState.BACK_LOW_SCORE_RAISE_ARM;
+            case BACK_LOW_SCORE_AUTO:
+                currentArmState = ArmState.BACK_LOW_SCORE_RAISE_ARM_AUTO;
                 break;
 
             // Raise the arm during back low scoring
-            case BACK_LOW_SCORE_RAISE_ARM:
+            case BACK_LOW_SCORE_RAISE_ARM_AUTO:
                 raiseToPosition(5, ARM_SPEED);
                 if (armAtTargetPosition()) {
                     currentArmState = ArmState.BACK_LOW_SCORE_SET_SERVO;
                 }
                 break;
+
             case BACK_LOW_SCORE_DRIVER:
+                currentArmState = ArmState.BACK_LOW_SCORE_RAISE_ARM_DRIVER;
+                break;
+
+            case BACK_LOW_SCORE_RAISE_ARM_DRIVER:
                 raiseToPosition(8, ARM_SPEED);
                 if(armAtTargetPosition()){
                     currentArmState = ArmState.BACK_LOW_SCORE_SET_SERVO;
@@ -261,13 +268,19 @@ public class ArmUtil {
                     currentArmState = ArmState.IDLE;
                 }
                 break;
-
+            // Increase shoulder position state
+            case DECREASE_SHOULDER_POSITION:
+                currentArmState = ArmState.INCREASE_SHOULDER_POSITION;
+                decreaseShoulderPosition(100);
+                if (armAtTargetPosition()) {
+                    currentArmState = ArmState.IDLE;
+                }
+                break;
             // Idle state
             case IDLE:
                 currentArmState = ArmState.IDLE;
                 moveArmToPositionPID(); // Retains the last place we sent the arm
                 break;
-
             // Default case (if needed)
             default:
                 // Handle default case if needed
@@ -309,18 +322,23 @@ public class ArmUtil {
                 moveArmToPositionPID();
                 break;
             case 7:
-                goalShoulder = 650;
+                goalShoulder = 100;
+                goalElbow = 200;
+                moveArmToHangPosition();
+               /* goalShoulder = 650;
                 moveArmToPositionPID();
+                if (armShoulderAtTargetPosition()) {
+                    goalElbow = 400;
+                    goalShoulder = 200;
+                    moveArmToHangPosition();
+                }
+
+                */
+                break;
             case 8://driver back low score
                 goalShoulder=600;
                 goalElbow = 900;
                 moveArmToPositionPID();
-
-                if (armShoulderAtTargetPosition()) {
-                    goalElbow = 200;
-                    goalShoulder = 400;
-                    moveArmToHangPosition();
-                }
                 break;
             default:
                 // Handle the case for other position levels or set to zero again.
@@ -354,8 +372,8 @@ public class ArmUtil {
                 else moveArmToPositionPID();
                 break;
             case 5:
-                goalShoulder = 600;
-                goalElbow = 900;
+                goalShoulder = 700;
+                goalElbow = 1030;
                 if (!usePID) moveArmToPositionNoPID();
                 else moveArmToPositionPID();
                 break;
@@ -366,15 +384,22 @@ public class ArmUtil {
                 else moveArmToPositionPID();
                 break;
             case 7:
-                goalShoulder = 650;
+                goalShoulder = 300;
                 if (!usePID) moveArmToPositionNoPID();
                 else moveArmToPositionPID();
 
                 if (armShoulderAtTargetPosition()){
-                    goalElbow = 200;
-                    goalShoulder = 400;
+                    goalElbow = 100;
+                    goalShoulder = 200;
                     moveArmToHangPosition();
                 }
+                break;
+            case 8:
+                goalShoulder = 600;
+                goalElbow = 900;
+                if(!usePID) moveArmToPositionNoPID();
+                else moveArmToPositionPID();
+
                 break;
             default:
                 // Handle the case for other position levels or set to zero again.
@@ -417,6 +442,18 @@ public class ArmUtil {
     }
 
     public void moveArmToHangPosition() {
+
+        shoulderLeft.setPower(-1.0);
+        shoulderRight.setPower(-1.0);
+        sleep(3000);
+
+        shoulderLeft.setTargetPosition(200);
+        shoulderRight.setTargetPosition(200);
+        shoulderLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderLeft.setPower(1.0);
+        shoulderRight.setPower(1.0);
+
         elbowLeft.setTargetPosition((int) goalElbow);
         elbowRight.setTargetPosition((int) goalElbow);
         elbowLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -424,12 +461,6 @@ public class ArmUtil {
         elbowLeft.setPower(1.0);
         elbowRight.setPower(1.0);
 
-        shoulderLeft.setTargetPosition((int) goalShoulder);
-        shoulderRight.setTargetPosition((int) goalShoulder);
-        shoulderLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        shoulderRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        shoulderLeft.setPower(1.0);
-        shoulderRight.setPower(1.0);
     }
 
     public void moveArmToPositionNoPID() {
@@ -437,8 +468,8 @@ public class ArmUtil {
         elbowRight.setTargetPosition((int) goalElbow);
         elbowLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elbowRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elbowLeft.setPower(.5);
-        elbowRight.setPower(.5);
+        elbowLeft.setPower(.50);
+        elbowRight.setPower(.50);
 
         shoulderLeft.setTargetPosition((int) goalShoulder);
         shoulderRight.setTargetPosition((int) goalShoulder);
@@ -523,13 +554,28 @@ public class ArmUtil {
         changeShoulderPosition(newPosition);
     }
     public void decreaseShoulderPosition(int decreaseAmount) {
-        int currentPosition;
-        int newPosition;
-        currentPosition = shoulderLeft.getCurrentPosition();
-        newPosition = currentPosition - decreaseAmount;
-        changeShoulderPosition(newPosition);
-    }
+        decreaseAmount = 100;
+        int lcurrentPosition;
+        int rcurrentPosition;
+        int newlPosition;
+        int newrPosition;
+        lcurrentPosition = shoulderLeft.getCurrentPosition();
+        rcurrentPosition = shoulderRight.getCurrentPosition();
+        newlPosition = lcurrentPosition - decreaseAmount;
+        newrPosition = rcurrentPosition - decreaseAmount;
+        changeShoulderPosition(newlPosition,newrPosition);
 
+    }
+    public void changeShoulderPosition(int newlPosition, int newrPosition) {
+        shoulderLeft.setTargetPosition(newlPosition);
+        shoulderLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderLeft.setPower(0.25);
+
+        shoulderRight.setTargetPosition(newrPosition);
+        shoulderRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderRight.setPower(0.25);
+
+    }
     public void changeShoulderPosition(int newPosition) {
         shoulderLeft.setTargetPosition(newPosition);
         shoulderLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -585,19 +631,19 @@ public class ArmUtil {
 
     }
     public void incrementWristPosition () {
-        wristPosition += 0.001;
-        //wristPosition = Math.max(0.0,wristPosition);
-        //double currWristPos = wrist.getPosition();
-        //newWristposition = currWristPos + WRIST_INCREMENT;
-        wrist.setPosition(wristPosition);
+        wristPosition += 0.005;
+        wristPosition = Math.min(1.0,wristPosition);
+        double currWristPos = wrist.getPosition();
+        newWristposition = currWristPos + WRIST_INCREMENT;
+        wrist.setPosition(newWristposition);
     }
     public void decrementWristPosition () {
-        wristPosition += 0.001;
-        //wristPosition = Math.min(0.0,wristPosition);
+        wristPosition += 0.009;
+        wristPosition = Math.max(0.0,wristPosition);
         wrist.setPosition(wristPosition);
-        //double currWristPos = wrist.getPosition();
-        //newWristposition = currWristPos - WRIST_INCREMENT;
-        //wrist.setPosition(newWristposition);
+        double currWristPos = wrist.getPosition();
+        newWristposition = currWristPos - WRIST_INCREMENT;
+        wrist.setPosition(newWristposition);
     }
 
     public double getWristPosition(){ return wrist.getPosition();}
@@ -622,6 +668,25 @@ public class ArmUtil {
         shoulderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
+    public void setArmMotorRunMode() {
+        shoulderLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shoulderRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elbowLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elbowRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void stopAndResetArmMotors() {
+        resetArmEncoders();
+        setArmMotorRunMode();
+    }
+    public void stopShoulderMotors() {
+        shoulderLeft.setPower(0);
+        shoulderRight.setPower(0);
+    }
+    public void stopElbowMotors() {
+        elbowLeft.setPower(0);
+        elbowRight.setPower(0);
+    }
     public enum ArmState {
         INIT,
         INIT_SET_SERVO,
@@ -635,15 +700,17 @@ public class ArmUtil {
         HIGH_SCORE,
         HIGH_SCORE_RAISE_ARM,
         HIGH_SCORE_SET_SERVO,
-        BACK_LOW_SCORE,
-        BACK_LOW_SCORE_RAISE_ARM,
+        BACK_LOW_SCORE_AUTO,
+        BACK_LOW_SCORE_RAISE_ARM_AUTO,
         BACK_LOW_SCORE_DRIVER,
+        BACK_LOW_SCORE_RAISE_ARM_DRIVER,
         BACK_LOW_SCORE_SET_SERVO,
         IDLE,
         HANG_READY_RAISE_ARM,
         HANG_READY,
         HANG_RAISE_ARM,
         INCREASE_SHOULDER_POSITION,
+        DECREASE_SHOULDER_POSITION,
         HANG
     }
     private final int[] armMoveOrder = {1, 2, 3};

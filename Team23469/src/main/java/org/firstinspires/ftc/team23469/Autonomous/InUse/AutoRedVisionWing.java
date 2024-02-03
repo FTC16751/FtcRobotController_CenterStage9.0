@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team23469.Autonomous.InUse;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team23469.robot.utilities.Learning.TeamElementSubsystem;
@@ -9,8 +10,8 @@ import org.firstinspires.ftc.team23469.robot.utilities.Production.ClawUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.DriveUtil;
 import org.firstinspires.ftc.team23469.robot.utilities.Production.LinearSlidesUtil;
 
-@Autonomous(name="Red Vision WING", group="Auto")
-
+@Autonomous(name="Red Vision WING", group="01-RED")
+@Disabled
 public class AutoRedVisionWing extends LinearOpMode {
     public int element_zone = 1;
     private TeamElementSubsystem teamElementDetection = null;

@@ -129,7 +129,7 @@ public class OpenCVAuto extends LinearOpMode {
                 claw.openRightHand();
                 arm.setCurrentState(ArmUtil.ArmState.INIT);
                 drive.driveRobotDistanceBackward(190,0.5);
-                arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE);
+                arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_AUTO);
                 claw.setClawOpen();
                 arm.setCurrentState(ArmUtil.ArmState.INIT);
                 drive.driveRobotDistanceStrafeLeft(80,0.5);
@@ -148,7 +148,7 @@ public class OpenCVAuto extends LinearOpMode {
                 claw.closeRightHand();
                 arm.setCurrentState(ArmUtil.ArmState.INIT);
                 drive.driveRobotDistanceBackward(190,0.5);
-                arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_RAISE_ARM);
+                arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_RAISE_ARM_AUTO);
                 arm.runStateMachine();
                 arm.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_SET_SERVO);
                 arm.runStateMachine();

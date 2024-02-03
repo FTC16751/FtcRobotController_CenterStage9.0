@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public class TeamElementSubsystem {
-    OpenCvCamera camera;
+    public OpenCvCamera camera;
     SplitAveragePipeline splitAveragePipeline;
     int camW = 800;
     int camH = 448;

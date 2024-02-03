@@ -35,7 +35,8 @@ public class DriverControlGGRobot extends LinearOpMode {
         }
         private hangerMode currentHangerMode = hangerMode.STATE_MACHINE;
 
-        RevBlinkinLedDriver lights;
+        RevBlinkinLedDriver lights, rlights;
+        Deadline gamepadRateLimit = new Deadline(250, TimeUnit.MILLISECONDS);
         @Override
         public void runOpMode() throws InterruptedException {
             //update status on driver station
@@ -59,6 +60,8 @@ public class DriverControlGGRobot extends LinearOpMode {
                 doLights();
             }
             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
+            rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
+
         }
 
     private void initializeHardware() throws InterruptedException {
@@ -69,7 +72,9 @@ public class DriverControlGGRobot extends LinearOpMode {
         */
 
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights"); //initialize lights from hub
+        rlights = hardwareMap.get(RevBlinkinLedDriver.class, "rlights"); //initialize lights from hub
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD); //start with a blinking gold while init
+        rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD); //start with a blinking gold while init
         Thread.sleep(250); //give enough time to initialize and set light colors
         drive.init(hardwareMap,telemetry); //initialize the drive subsystem
         clawUtil = new ClawUtil(hardwareMap); //initialize the claw subsystem
@@ -77,8 +82,10 @@ public class DriverControlGGRobot extends LinearOpMode {
         launcherUtil = new LauncherUtil(hardwareMap); //initialize the launcher subsystem
         hangerUtil = new HangerUtil(hardwareMap); //initialize the hanger subsystem
         clawUtil.setWristState(true);  //set the initial claw state
-        launcherUtil.setLauncherDown(); //set the initial launcher state
+        launcherUtil.launchTriggerClose(); //set the initial launcher state
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
+        rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
+
     }
     private void doDrivetrainControls() {
         //Set driver speed as a percentage of full (normally set to full)
@@ -177,7 +184,7 @@ public class DriverControlGGRobot extends LinearOpMode {
 
         if (currentHangerMode == hangerMode.MANUAL) {
             if (Math.abs(gamepad2.left_stick_y) > 0.5) {
-                double hangerMotorPower = -gamepad2.left_stick_y;
+                double hangerMotorPower = gamepad2.left_stick_y;
                 hangerUtil.moveHangerManually(hangerMotorPower);
             } else hangerUtil.moveHangerManually(0);
         }
@@ -188,32 +195,9 @@ public class DriverControlGGRobot extends LinearOpMode {
             } else if (hangerUtil.currentServoState == HangerUtil.HangerServoState.RAISE_HANGER_SERVO) {  //if drive mode is 2 switch to 1
                 hangerUtil.lowerHangerServo();
             }
-
             gamePadRateLimit.reset(); //reset the rate limit timer
         }
 
-       /*
-        boolean currentTriggerState = gamepad2.left_trigger > 0.5;
-
-
-        if (currentTriggerState && !lastTriggerState) {
-            hangerUtil.toggleHanger();
-        }
-
-        lastTriggerState = currentTriggerState;
-
-        // Manual overrides using left joystick of gamepad2
-        double hangerMotorPower = -gamepad2.left_stick_y;
-       // double hangerServoPosition = gamepad2.left_stick_x;
-
-        if (Math.abs(hangerMotorPower) >0.5 ) {
-            hangerUtil.setManualMove();
-            hangerUtil.moveHangerManually(hangerMotorPower);
-        } else {
-            hangerUtil.stopMotor();
-        }
-
-        */
         telemetry.addData("currentHangerMode: ", currentHangerMode);
         telemetry.addData("requested power: ", -gamepad2.left_stick_y);
     }
@@ -221,8 +205,21 @@ public class DriverControlGGRobot extends LinearOpMode {
         if(gamepad2.start) {
             linearSlides.resetEncoder();
         }
-        if(gamepad2.right_stick_y==1.0) linearSlides.decreasePosition(100);
-        if(gamepad2.right_stick_y==-1.0) linearSlides.increasePosition(100);
+
+        if (linearSlides.isTouchSensorPressed()){
+            linearSlides.stopSlides();
+            linearSlides.resetEncoder();
+        }
+
+        if(gamepad2.right_stick_y==1.0) {
+            if(!linearSlides.isTouchSensorPressed()) {
+                linearSlides.decreasePosition(100);
+            } else if (linearSlides.isTouchSensorPressed()) {
+                linearSlides.resetEncoder();
+            }
+        }
+
+        if(gamepad2.right_stick_y==-1.0) linearSlides.increasePosition(50);
 
         if (gamepad2.dpad_down) {
             linearSlides.setCurrentState(LinearSlidesUtil.SlideState.LEVEL_ZERO);
@@ -238,8 +235,10 @@ public class DriverControlGGRobot extends LinearOpMode {
     private void doClawControls() {
         clawUtil.toggleClawWithBumper(gamepad2.left_bumper);
         clawUtil.toggleWristWithBumper(gamepad2.right_bumper);
+
     }
     public void doLauncherControls(){
+          /*
             if (gamepad2.right_trigger > 0.5 && !launcherUtil.isLauncherMoving()) {
                 launcherUtil.raiseLauncher();
                 while (launcherUtil.isLauncherMoving()) {
@@ -247,29 +246,49 @@ public class DriverControlGGRobot extends LinearOpMode {
                 sleep(250);
                 launcherUtil.setLauncherUp();
             }
+
+           */
+        // Y button rising edge detection and deadline ratelimit
+        if (gamepadRateLimit.hasExpired() && gamepad2.left_trigger >0.5) {
+            launcherUtil.raiseLauncher();
+            gamepadRateLimit.reset();
+        }
+
+        // A button rising edge detection and deadline ratelimit
+        if (gamepadRateLimit.hasExpired() && gamepad2.right_trigger > 0.5 ) {
+            launcherUtil.launchTriggerOpen();
+            gamepadRateLimit.reset();
+        }
         }
     private void doLights() {
         if (time < 85) {
             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+            rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
         }
         else if (time >= 85 && time <= 90) {
             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+            rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
         }
         else if (time > 90 && time < 110) {
             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
+            rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
         }
-        else if (time >= 115 && time <= 120) {
+        else if (time >= 110 && time <= 120) {
             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+            rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
         }
-        else
-            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
-
+        else {
+            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE);
+            rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE);
+        }
     }
     private void addTelemetry() {
         // Telemetry to display slide and servo status
         telemetry.addData("Slide State", linearSlides.getCurrentState());
         telemetry.addData("Claw Position", clawUtil.getClawPosition());
         telemetry.addData("Wrist Position", clawUtil.getWristPosition());
+        telemetry.addData("left joystick y", gamepad2.left_stick_y);
+
 
         // Telemetry for debuggin
         telemetry.addLine("Hanger Telemetry");
@@ -280,7 +299,7 @@ public class DriverControlGGRobot extends LinearOpMode {
         telemetry.addData("Requested Hanger Servo Position", gamepad2.left_stick_x);
         telemetry.addData("left lift position", linearSlides.getLeftLiftPosition());
         telemetry.addData("right lift position", linearSlides.getRightLiftPosition());
-
+        telemetry.addData ("Touch sensor is pressed",linearSlides.isTouchSensorPressed());
         telemetry.update();
     }
 }

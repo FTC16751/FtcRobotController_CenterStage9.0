@@ -5,11 +5,12 @@ package org.firstinspires.ftc.team23469.robot.utilities.Production;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class LinearSlidesUtil {
     private DcMotorEx leftSlide;
     private DcMotorEx rightSlide;
-
+    TouchSensor touchSensor;
     private final int liftLevelZero = 0;
     private final int liftLowPosition = 1792;
     private final int liftMidPosition = 2000;
@@ -66,8 +67,13 @@ public class LinearSlidesUtil {
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         currentState = SlideState.IDLE;
+        touchSensor = hardwareMap.get(TouchSensor.class, "lifttouchsensor");
+
     }
 
+    public Boolean isTouchSensorPressed() {
+        return touchSensor.isPressed();
+    }
     public void setCurrentState(SlideState state) {
         currentState = state;
     }
@@ -121,7 +127,7 @@ public class LinearSlidesUtil {
 
     }
 
-    private void stopSlides() {
+    public void stopSlides() {
         leftSlide.setPower(0);
         rightSlide.setPower(0);
         //resetEncoder();
@@ -132,6 +138,9 @@ public class LinearSlidesUtil {
     public void resetEncoder(){
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public int getLeftLiftPosition() {

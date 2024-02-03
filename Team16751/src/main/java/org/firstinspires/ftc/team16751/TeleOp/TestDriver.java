@@ -109,7 +109,7 @@ public class TestDriver extends LinearOpMode {
             armUtil.setCurrentState(ArmUtil.ArmState.HIGH_SCORE);
         }
         if(gamepad1.b){
-            armUtil.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE);
+            armUtil.setCurrentState(ArmUtil.ArmState.BACK_LOW_SCORE_AUTO);
         }
         if(gamepad1.a) {
             armUtil.setCurrentState(ArmUtil.ArmState.HANG_READY);

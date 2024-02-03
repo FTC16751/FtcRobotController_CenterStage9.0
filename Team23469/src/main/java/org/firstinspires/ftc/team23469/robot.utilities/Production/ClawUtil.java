@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ClawUtil {
+    private static final double WRIST_DOWN_POSITION = 0.84;
+    private static final double WRIST_SCORE_POSITION =0.6;
     private Servo rightServoClaw, leftServoClaw;
     private Servo wristServo;
     private boolean clawClosed = true; // Initial state of the claw
@@ -11,11 +13,15 @@ public class ClawUtil {
     private boolean wristState = true;
     private boolean lastLeftBumperState = false;
     private boolean lastRightBumperState = false;
+    static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle
+
     public ClawUtil(HardwareMap hardwareMap) {
-        rightServoClaw = hardwareMap.servo.get("claw");
-        leftServoClaw = hardwareMap.servo.get("rclaw");
+        rightServoClaw = hardwareMap.servo.get("rclaw");
+        leftServoClaw = hardwareMap.servo.get("claw");
         wristServo = hardwareMap.servo.get("wrist");
         wristServo.setDirection(Servo.Direction.REVERSE);
+        lowerWrist();
+        closeClaw();
 
     }
 
@@ -71,51 +77,44 @@ public class ClawUtil {
     }
 
     public void openLeftClaw() {
-        leftServoClaw.setPosition(0.40); // Adjust this value based on your servo's range
+
+        //leftServoClaw.setPosition(0.15); // Adjust this value based on your servo's range
+        leftServoClaw.setPosition(0.95); // Adjust this value based on your servo's range
+
     }
     public void closeLeftClaw() {
-        leftServoClaw.setPosition(0.15); // Adjust this value based on your servo's range
+        //leftServoClaw.setPosition(0.40); // Adjust this value based on your servo's range
+        leftServoClaw.setPosition(0.80); // Adjust this value based on your servo's rangef
     }
     public void openRightClaw() {
-        rightServoClaw.setPosition(0.80); // Adjust this value based on your servo's range
+        //rightServoClaw.setPosition(0.95); // Adjust this value based on your servo's range
+        rightServoClaw.setPosition(0.26); // Adjust this value based on your servo's range
+
     }
     public void closeRightClaw() {
-        rightServoClaw.setPosition(0.95); // Adjust this value based on your servo's range
+        //rightServoClaw.setPosition(0.80); // Adjust this value based on your servo's range
+        rightServoClaw.setPosition(0.40); // Adjust this value based on your servo's range
     }
 
     public void lowerWrist(){
-        wristServo.setPosition(0.65);
+        wristServo.setPosition(WRIST_DOWN_POSITION);
         wristState = true;
     }
     public void raiseWrist(){
-        wristServo.setPosition(0.4);
+        wristServo.setPosition(WRIST_SCORE_POSITION);
         wristState = false;
     }
+    public void incrementWrist(){
+        double wristposition = getWristPosition();
+        wristposition += INCREMENT;
+        wristServo.setPosition(wristposition);
+    }
     public void setWristState(boolean wristState) {
-        double position = wristState ? 0.7 : 0.4;// : 0.2;
+        double position = wristState ? WRIST_DOWN_POSITION : WRIST_SCORE_POSITION;
         // Set the wrist position using the calculated position value
         wristServo.setPosition(position);
     }
-    /*
-    public void setWristState(int state) {
-        switch (state) {
-            case 0: // Down
-                wristServo.setPosition(0.01); // Adjust this value based on your servo's range
-                break;
-            case 1: // Grab
-                wristServo.setPosition(0.1); // Adjust this value based on your servo's range
-                break;
-            case 2: // Carry
-                wristServo.setPosition(0.3); // Adjust this value based on your servo's range
-                break;
-            case 3: // Score
-                wristServo.setPosition(0.2); // Adjust this value based on your servo's range
-                break;
-            default:
-                break;
-        }
-    }
-    */
+
 
     public double getClawPosition() {
         return rightServoClaw.getPosition();
