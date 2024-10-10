@@ -11,6 +11,7 @@
 package org.firstinspires.ftc.team16751.TeleOp;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
 @TeleOp(name="TestDriver", group="Teleop")
+@Disabled
 public class TestDriver extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     ArmUtil armUtil = new ArmUtil(this);

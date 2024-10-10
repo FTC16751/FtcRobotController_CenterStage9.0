@@ -35,6 +35,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -57,6 +58,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Autonomous(name = "Road Runner Auto Test April Tag Drive", group = "00-Autonomous", preselectTeleOp = "Driver Control Center Stage")
+@Disabled
 public class RoadRunnerAutonomousTestAprilTagDrive extends LinearOpMode {
     /* add in our vision stuff */
     public int element_zone = 1;

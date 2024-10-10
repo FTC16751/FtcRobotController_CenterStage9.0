@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Experiments;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.arcrobotics.ftclib.controller.PIDController;
 @TeleOp(name = "ArmTeleOpwPID", group = "Tests")
-
+@Disabled
 public class ArmTeleOpwPID extends LinearOpMode {
 
     private DcMotor shoulderLeft, shoulderRight, elbowLeft, elbowRight;

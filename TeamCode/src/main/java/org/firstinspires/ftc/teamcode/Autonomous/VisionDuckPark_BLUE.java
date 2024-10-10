@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.DriveUtil2023;
 import org.firstinspires.ftc.teamcode.robot_utilities.OpenCVUtil;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
+@Disabled
 /*
  * This is a simple routine to test drive utility class.
  */

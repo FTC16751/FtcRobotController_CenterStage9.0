@@ -4,6 +4,7 @@ package org.firstinspires.ftc.team23469.robot.utilities.Production;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -54,8 +55,8 @@ public class LinearSlidesUtil {
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftlift");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightlift");
 
-        leftSlide.setDirection(DcMotor.Direction.FORWARD);
-        rightSlide.setDirection(DcMotor.Direction.REVERSE);
+        leftSlide.setDirection(DcMotor.Direction.REVERSE);
+        rightSlide.setDirection(DcMotor.Direction.FORWARD);
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -34,6 +34,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -45,6 +46,7 @@ import org.firstinspires.ftc.team16751.robot.utilities.TeamElementSubsystem;
 
 
 @Autonomous(name = "Road Runner Auto DumbBot", group = "00-Autonomous", preselectTeleOp = "Driver Control Center Stage")
+@Disabled
 public class RoadRunnerAutonomousdumbbot extends LinearOpMode {
     /* add in our vision stuff */
     public int element_zone = 1;
@@ -383,7 +385,6 @@ public class RoadRunnerAutonomousdumbbot extends LinearOpMode {
                     drive.actionBuilder(drive.pose)
                             .lineToYConstantHeading(slowdropYellowPixelPoseYcoordinate)
                             .build());
-
 
         //open claw and scoooooooore! XD
         safeWaitSeconds(1); //optimize this

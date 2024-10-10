@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robot_utilities.LiftUtil;
 
 @Disabled
 @TeleOp(name="Lift Motor Test", group="Testing")
+
 public class LiftMotorTest extends LinearOpMode {
 
     //MotorLiftTest lift = new MotorLiftTest(this);

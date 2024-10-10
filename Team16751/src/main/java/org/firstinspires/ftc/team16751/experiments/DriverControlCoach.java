@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
 
-@TeleOp(name="Testing Testing", group="Teleop")
+@TeleOp(name="Testing Testing", group = "Concept")
 @Disabled
 public class DriverControlCoach extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);

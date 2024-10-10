@@ -49,6 +49,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @TeleOp(name = "Servo Test", group = "Coach")
+@Disabled
 public class ServoTest extends LinearOpMode {
 
     static final double INCREMENT   = 0.05;     // amount to slew servo each CYCLE_MS cycle

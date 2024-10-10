@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team16751.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 import org.firstinspires.ftc.team16751.robot.utilities.TeamElementSubsystem;
 import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
 @Autonomous(name="Red Vision Auto", group="Auto")
-
+@Disabled
 public class RedVisionAuto extends LinearOpMode{
 
         public int element_zone = 1;

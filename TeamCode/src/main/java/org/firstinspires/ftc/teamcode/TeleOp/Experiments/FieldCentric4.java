@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Experiments;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
 @TeleOp(name = "FieldCentric4", group = "tutorial")
+@Disabled
 public class FieldCentric4 extends LinearOpMode {
     //HardwareClass robot = new HardwareClass();
 // The IMU sensor object

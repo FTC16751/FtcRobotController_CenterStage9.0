@@ -4,12 +4,14 @@ package org.firstinspires.ftc.teamcode.TeleOp.Experiments;
 
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.NewDriveUtil2024;
 
 @TeleOp(name="Test NewDriveUtil PID TeleOp", group="Main")
+@Disabled
 public class SimpleTeleOp_NewDriveUtil2024 extends LinearOpMode {
 
     private final NewDriveUtil2024 driveUtil = new NewDriveUtil2024(this);

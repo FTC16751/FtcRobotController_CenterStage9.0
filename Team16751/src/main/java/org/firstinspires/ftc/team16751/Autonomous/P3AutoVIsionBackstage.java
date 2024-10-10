@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team16751.Autonomous;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.team16751.robot.utilities.NewDriveUtil2024;
 import org.firstinspires.ftc.team16751.robot.utilities.TeamElementSubsystem;
 
 @Autonomous(name="Auto w Vision Backstage", group="Auto")
-
+@Disabled
 public class P3AutoVIsionBackstage extends LinearOpMode {
 
 

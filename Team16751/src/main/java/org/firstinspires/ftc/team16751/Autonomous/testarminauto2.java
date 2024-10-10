@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team16751.Autonomous;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
 
 @Autonomous(name="Test Arm in AUto2", group="Auto")
-
+@Disabled
 public class testarminauto2 extends LinearOpMode {
     private enum State
     {

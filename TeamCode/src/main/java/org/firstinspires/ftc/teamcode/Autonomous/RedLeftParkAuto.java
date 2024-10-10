@@ -30,11 +30,12 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.NewDriveUtil2024;
-
+@Disabled
 @Autonomous(name="Red Left Park", group="Robot")
 
 public class RedLeftParkAuto extends LinearOpMode {

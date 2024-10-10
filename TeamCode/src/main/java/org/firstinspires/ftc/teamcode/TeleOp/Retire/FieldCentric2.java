@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp.Retire;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name = "FieldCentric2", group = "tutorial")
+@Disabled
 public class FieldCentric2 extends LinearOpMode {
     //HardwareClass robot = new HardwareClass();
 // The IMU sensor object

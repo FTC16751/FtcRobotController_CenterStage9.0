@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.LauncherUtil;
 @TeleOp(name = "Coach DroneLauncherOpMode", group = "coach")
+@Disabled
 public class DroneLauncherOpMode extends LinearOpMode {
 
     private LauncherUtil launcherUtil;

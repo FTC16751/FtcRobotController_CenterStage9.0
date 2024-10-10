@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Experiments;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "ArmTeleOp", group = "Tests")
-
+@Disabled
 public class ArmTeleOp extends LinearOpMode {
 
     private DcMotor shoulderLeft, shoulderRight, elbowLeft, elbowRight;

@@ -11,9 +11,9 @@ public class LauncherUtil {
     private boolean launcherMoving = false;
 
     // Default positions
-    private final double LOAD_DRONE_POSITION = 0.0;
-    private final double LAUNCH_DRONE_POSITION = 1.0;
-    private final double LAUNCHER_ANGLE_UP_POSITION = 0.11;
+    private final double LOAD_DRONE_POSITION = 1.0;
+    private final double LAUNCH_DRONE_POSITION = 0.0;
+    private final double LAUNCHER_ANGLE_UP_POSITION = 0.12;
      private final double LAUNCHER_ANGLE_DOWN_POSITION = 0.0;
     private boolean toggleState,toggleLaunchAngleState;;
     public LauncherUtil(HardwareMap hardwareMap) {

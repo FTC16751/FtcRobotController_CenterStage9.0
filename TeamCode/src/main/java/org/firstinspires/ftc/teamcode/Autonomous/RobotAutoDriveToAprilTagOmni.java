@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import android.graphics.Color;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -92,7 +93,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Modified Drive To AprilTag", group = "Concept")
-
+@Disabled
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 {
     NewDriveUtil2024 robotdrive = new NewDriveUtil2024(this);

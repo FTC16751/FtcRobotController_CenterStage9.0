@@ -30,13 +30,14 @@
 package org.firstinspires.ftc.team16751.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team16751.robot.utilities.DriveUtil2023;
 
 @Autonomous(name="Blue Right Park", group="Robot")
-
+@Disabled
 public class BlueRightPark extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
     private ElapsedTime     runtime = new ElapsedTime();

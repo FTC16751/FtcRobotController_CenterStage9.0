@@ -10,13 +10,14 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp.Retire;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.DriveUtil2023;
 
 @TeleOp(name="One Driver Demo", group="Teleop")
-
+@Disabled
 public class DriverControl_demo_one_driver extends LinearOpMode {
     DriveUtil2023 drive = new DriveUtil2023(this);
 

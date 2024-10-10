@@ -33,21 +33,18 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil_preState;
+import org.firstinspires.ftc.team16751.robot.utilities.LauncherUtil;
 import org.firstinspires.ftc.team16751.robot.utilities.NewDriveUtil2024;
 import org.firstinspires.ftc.team16751.robot.utilities.TeamElementSubsystem;
 import org.firstinspires.ftc.team16751.robot.utilities.ClawUtil;
-import org.firstinspires.ftc.team16751.robot.utilities.ArmUtil;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 
 @Autonomous(name = "P3 Road Runner Autonomous", group = "00-Autonomous", preselectTeleOp = "Driver Control Center Stage")
@@ -59,18 +56,26 @@ public class RoadRunnerAutonomous extends LinearOpMode {
 
     boolean togglePreview = true;
     private NewDriveUtil2024 P3drive = null;
-    ArmUtil arm = new ArmUtil(this);
+    ArmUtil_preState arm = new ArmUtil_preState(this);
     ClawUtil claw = new ClawUtil(this);
+    TouchSensor leftMag;
+    TouchSensor rightMag;
     //Initializing Hardware
     public void HardwareStart() {
         teamElementDetection = new TeamElementSubsystem(hardwareMap);
         P3drive = new NewDriveUtil2024(this);
         P3drive.init(hardwareMap,telemetry);
         P3drive.resetIMUYaw();
+        launcherUtil = new LauncherUtil(hardwareMap);
         arm.init(hardwareMap);
         claw.init(hardwareMap);
+        arm.setWristPosition(.35);
         claw.setClawClosed();
-        arm.setWristPosition(.1);
+        sleep(1000);
+        leftMag = hardwareMap.get(TouchSensor.class, "lmagswitch");
+        rightMag = hardwareMap.get(TouchSensor.class, "rmagswitch");
+        //arm.setCurrentState(ArmUtil_preState.ArmState.AUTOSTART);
+       // arm.runStateMachine();
     }
     //Define and declare Robot Starting Locations
     public enum ALLIANCE{
@@ -108,6 +113,7 @@ public class RoadRunnerAutonomous extends LinearOpMode {
     long startTime;
     long timeoutMillis =5000;
     String curAlliance;
+    LauncherUtil launcherUtil;
     //@Override
     public void runOpMode() {//throws InterruptedException {
 
@@ -150,6 +156,7 @@ public class RoadRunnerAutonomous extends LinearOpMode {
         }
 
         waitForStart();
+        autoHomeArm();
         arm.setWristPosition(.45);
         long startTime = System.currentTimeMillis();
 
@@ -197,6 +204,7 @@ public class RoadRunnerAutonomous extends LinearOpMode {
         StackTraceElement e = stacktrace[3];//maybe this number needs to be corrected
         RobotLog.dd("ROBOLOG", "current method: "+name+": called from: "+e);
 
+        initPaths();
         //Initialize all the separate pose paths the robot will take. these are not the path coordinates. just initialization.
         Pose2d startingPose = new Pose2d(0, 0, 0); // Starting Pose
         Pose2d moveBeyondTrussPose = new Pose2d(0,0,0);  //small move to get robot past truss on start
@@ -204,7 +212,7 @@ public class RoadRunnerAutonomous extends LinearOpMode {
         Pose2d moveAwayfromPurplePixelPose = new Pose2d(0,0,0); //this path can be used to move robot away from purple pixel
         Pose2d midwayPose1a = new Pose2d(0,0,0); //this path can be used as an in-between dropping purple pixel and before driving to other side
         Pose2d intakeStack = new Pose2d(0,0,0); //not used
-        Pose2d midwayPose2 = new Pose2d(0,0,0); //position for driving to backdro side
+        Pose2d midwayPose2 = new Pose2d(0,0,0); //position for driving to backdrop side
         Pose2d midwayPose2a = new Pose2d(0,0,0); //safe spot on backdrop side right before scoring pixel
         Pose2d dropYellowPixelPose = new Pose2d(0, 0, 0); //positions of dropping yellow pixel
         Pose2d parkPose = new Pose2d(0,0, 0); // park position
@@ -221,155 +229,253 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                 RobotLog.dd("ROBOLOG", "Alliance Case: "+selectedAlliance);
                 switch (selectedFieldSide) {
                     case BACKSTAGE:
+                        RobotLog.dd("ROBOLOG", "Field Case: "+selectedFieldSide);
                         drive = new MecanumDrive(hardwareMap, startingPose);
                         //driveBackstageBlue(startingPose,dropPurplePixelPose, dropYellowPixelPose, moveAwayfromPurplePixelPose, parkPose);
                         // Set up poses and actions for BLUE/BACKSTAGE scenario
                         switch(identifiedSpikeMarkLocation){
                             case LEFT:
-                                dropPurplePixelPose = new Pose2d(21, 19, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(23, 30, Math.toRadians(-90));
+                                RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                dropPurplePixelPose = new Pose2d(21, 12, Math.toRadians(0));
+                                dropYellowPixelPose = new Pose2d(25, 30, Math.toRadians(-90));
                                 break;
                             case MIDDLE:
+                                RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
                                 dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(30, 30,  Math.toRadians(-90));
+                                dropYellowPixelPose = new Pose2d(32, 30,  Math.toRadians(-90));
                                 break;
                             case RIGHT:
+                                RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
                                 dropPurplePixelPose = new Pose2d(24, -6, Math.toRadians(-45));
-                                dropYellowPixelPose = new Pose2d(37, 25, Math.toRadians(-90));
+                                dropYellowPixelPose = new Pose2d(37, 30, Math.toRadians(-90));
                                 break;
                         }
                         moveAwayfromPurplePixelPose = new Pose2d(14, 0, Math.toRadians(0));
 
                         switch(selectedParkLocation){
                             case OUTSIDE:
-                                parkPose = new Pose2d(6, 37, Math.toRadians(-90));
+                                parkPose = new Pose2d(1, 45, Math.toRadians(-90));
                                 break;
                             case INSIDE:
-                                parkPose = new Pose2d(52, 37, Math.toRadians(-90));
+                                parkPose = new Pose2d(52, 45, Math.toRadians(-90));
                                 break;
                         }
-                        slowdropYellowPixelPoseYcoordinate = 42;
+                        slowdropYellowPixelPoseYcoordinate = 40;
                         safeMoveFromBackDrop = 30;
                         break;//break from field side
 
                     case WING:
+                        RobotLog.dd("ROBOLOG", "Field Case: "+selectedFieldSide);
                         drive = new MecanumDrive(hardwareMap, startingPose);
                         //driveWingBlue(startingPose, dropPurplePixelPose, dropYellowPixelPose, moveAwayfromPurplePixelPose, parkPose, midwayPose1a, midwayPose2, midwayPose2a);
-                        switch(identifiedSpikeMarkLocation){
-                            case LEFT:
-                                dropPurplePixelPose = new Pose2d(22, 3.5, Math.toRadians(45));
-                                dropYellowPixelPose = new Pose2d(25, 79, Math.toRadians(-90));
-                                break;
-                            case MIDDLE:
-                                dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(28, 79, Math.toRadians(-90));
-                                break;
-                            case RIGHT:
-                                dropPurplePixelPose = new Pose2d(22, -3.5, Math.toRadians(-30));
-                                dropYellowPixelPose = new Pose2d(35, 79, Math.toRadians(-90));
-                                break;
-                        }
+
                       switch(selectedAutoPath){
                           case GATE:
                               moveAwayfromPurplePixelPose = new Pose2d(14, -23, Math.toRadians(0));
-                              midwayPose1a = new Pose2d(60, -23, Math.toRadians(0));
-                              midwayPose2 = new Pose2d(53, 60, Math.toRadians(-90));
+                              midwayPose1a = new Pose2d(60, -20, Math.toRadians(0));
+                              midwayPose2 = new Pose2d(53, 65, Math.toRadians(-90));
+                              slowdropYellowPixelPoseYcoordinate = 86;
+
+                              switch(identifiedSpikeMarkLocation){
+                                  case LEFT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(22, 3.5, Math.toRadians(45));
+                                      dropYellowPixelPose = new Pose2d(25, 79, Math.toRadians(-90));
+                                      break;
+                                  case MIDDLE:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
+                                      dropYellowPixelPose = new Pose2d(30, 79, Math.toRadians(-90));
+                                      break;
+                                  case RIGHT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(22, -3.5, Math.toRadians(-30));
+                                      dropYellowPixelPose = new Pose2d(35, 79, Math.toRadians(-90));
+                                      break;
+                              }
+                              switch(selectedParkLocation){
+                                  case OUTSIDE:
+                                      parkPose = new Pose2d(1, 90, Math.toRadians(-90));
+                                      break;
+                                  case INSIDE:
+                                      parkPose = new Pose2d(52, 90, Math.toRadians(-90));
+                                      break;
+                              }
                               break;//break from field side
                           case TRUSS:
-                              moveAwayfromPurplePixelPose = new Pose2d(5.5, -10, Math.toRadians(-90));
-                              midwayPose1a = new Pose2d(5.5, 40, Math.toRadians(-90));
-                              midwayPose2 = new Pose2d(5.5, 65, Math.toRadians(-90));
+                              switch(identifiedSpikeMarkLocation){
+                                  case LEFT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(25, 3.5, Math.toRadians(45));
+                                      dropYellowPixelPose = new Pose2d(25, 70, Math.toRadians(-90));
+                                      break;
+                                  case MIDDLE:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
+                                      dropYellowPixelPose = new Pose2d(28, 70, Math.toRadians(-90));
+                                      break;
+                                  case RIGHT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(25, -3.5, Math.toRadians(-30));
+                                      dropYellowPixelPose = new Pose2d(35, 70, Math.toRadians(-90));
+                                      break;
+                              }
+                              moveAwayfromPurplePixelPose = new Pose2d(4.0, -10, Math.toRadians(-90));
+                              midwayPose1a = new Pose2d(4.0, 40, Math.toRadians(-90));
+                              midwayPose2 = new Pose2d(4.0, 65, Math.toRadians(-90));
+                              slowdropYellowPixelPoseYcoordinate = 80;
+                              switch(selectedParkLocation){
+                                  case OUTSIDE:
+                                      parkPose = new Pose2d(1, 90, Math.toRadians(-90));
+                                      break;
+                                  case INSIDE:
+                                      parkPose = new Pose2d(52, 90, Math.toRadians(-90));
+                                      break;
+                              }
                               break;//break from field side
                       }
                       switch(selectedParkLocation){
                           case OUTSIDE:
-                              parkPose = new Pose2d(6, 88, Math.toRadians(-90));
+                              parkPose = new Pose2d(1, 90, Math.toRadians(-90));
                               break;
                           case INSIDE:
-                              parkPose = new Pose2d(52, 88, Math.toRadians(-90));
+                              parkPose = new Pose2d(52, 90, Math.toRadians(-90));
                               break;
-
                       }
-                        slowdropYellowPixelPoseYcoordinate = 88;
+                        //slowdropYellowPixelPoseYcoordinate = 88;
                         safeMoveFromBackDrop = 79;
                         break;
                 }
                 break;//break from alliance selection
+
+
             case RED:
                 switch (selectedFieldSide) {
                     case BACKSTAGE:
+                        RobotLog.dd("ROBOLOG", "Field Case: "+selectedFieldSide);
+
                         drive = new MecanumDrive(hardwareMap, startingPose);
                         //driveBackstageRed(startingPose, dropPurplePixelPose, dropYellowPixelPose, moveAwayfromPurplePixelPose, parkPose);
                         // Set up poses and actions for RED/BACKSTAGE scenario
                         switch (identifiedSpikeMarkLocation) {
                             case LEFT:
-                                dropPurplePixelPose = new Pose2d(28, 9, Math.toRadians(45));
-                                dropYellowPixelPose = new Pose2d(32, -35, Math.toRadians(90));
+                                RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                dropPurplePixelPose = new Pose2d(25, 0, Math.toRadians(45));
+                                dropYellowPixelPose = new Pose2d(32, -30, Math.toRadians(90));
                                 break;
                             case MIDDLE:
+                                RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
                                 dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(23, -35, Math.toRadians(90));
+                                dropYellowPixelPose = new Pose2d(28, -30, Math.toRadians(90));
                                 break;
                             case RIGHT:
-                                dropPurplePixelPose = new Pose2d(28, -8, Math.toRadians(-45));
-                                dropYellowPixelPose = new Pose2d(20, -35, Math.toRadians(90));
+                                RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                dropPurplePixelPose = new Pose2d(25, -2, Math.toRadians(-45));
+                                dropYellowPixelPose = new Pose2d(20, -30, Math.toRadians(90));
                                 break;
                         }
                         switch(selectedParkLocation){
                             case OUTSIDE:
-                                parkPose = new Pose2d(8, -30, Math.toRadians(90));
+                                parkPose = new Pose2d(6, -42, Math.toRadians(90));
                                 break;
                             case INSIDE:
-                                parkPose = new Pose2d(52, -30, Math.toRadians(90));
+                                parkPose = new Pose2d(52, -42, Math.toRadians(90));
 
 
                         }
-                        moveAwayfromPurplePixelPose = new Pose2d(14, 0, Math.toRadians(45));
-                        slowdropYellowPixelPoseYcoordinate = -32;
+                        moveAwayfromPurplePixelPose = new Pose2d(14, 0, Math.toRadians(0));
+                        slowdropYellowPixelPoseYcoordinate = -38;
                         safeMoveFromBackDrop = -35;
                      break;
 
                     case WING:
+                        RobotLog.dd("ROBOLOG", "Field Case: "+selectedFieldSide);
 
                         drive = new MecanumDrive(hardwareMap, startingPose);
-                        //driveWingRed(startingPose, dropPurplePixelPose, dropYellowPixelPose, moveAwayfromPurplePixelPose, parkPose, midwayPose1a, midwayPose2, midwayPose2a);
-                        // Set up poses and actions for RED/WING scenario
-                        switch (identifiedSpikeMarkLocation) {
-                            case LEFT:
-                                dropPurplePixelPose = new Pose2d(20, 9, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(32, -77, Math.toRadians(90));
-                                break;
-                            case MIDDLE:
-                                dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
-                                dropYellowPixelPose = new Pose2d(29, -77, Math.toRadians(90));
-                                break;
-                            case RIGHT:
-                                dropPurplePixelPose = new Pose2d(23, 0, Math.toRadians(-45));
-                                dropYellowPixelPose = new Pose2d(22, -77, Math.toRadians(90));
-                                break;
-                        }
                       switch (selectedAutoPath){
                           case GATE:
+                              switch (identifiedSpikeMarkLocation) {
+                                  case LEFT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(20, 9, Math.toRadians(0));
+                                      dropYellowPixelPose = new Pose2d(32, -75, Math.toRadians(90));
+                                      break;
+                                  case MIDDLE:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
+                                      dropYellowPixelPose = new Pose2d(29, -75, Math.toRadians(90));
+                                      break;
+                                  case RIGHT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(23, -5, Math.toRadians(-45));
+                                      dropYellowPixelPose = new Pose2d(22, -75, Math.toRadians(90));
+                                      break;
+                              }
                               moveAwayfromPurplePixelPose = new Pose2d(14, 23, Math.toRadians(0));
                               //define those paths specific to wing
+                              midwayPose1a = new Pose2d(55, 23, Math.toRadians(90));
                               midwayPose2 = new Pose2d(55, -41, Math.toRadians(90));
+                              switch(selectedParkLocation){
+                                  case OUTSIDE:
+                                      parkPose = new Pose2d(8, -85, Math.toRadians(90));
+                                      break;
+                                  case INSIDE:
+                                      parkPose = new Pose2d(52, -85, Math.toRadians(90));
+                                      break;
+                              }
                               break;
                           case TRUSS:
-                              moveAwayfromPurplePixelPose = new Pose2d(5, 0, Math.toRadians(90));
+                              switch (identifiedSpikeMarkLocation) {
+                                  case LEFT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(20, 9, Math.toRadians(0));
+                                      dropYellowPixelPose = new Pose2d(32, -77, Math.toRadians(90));
+                                      break;
+                                  case MIDDLE:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(30, 0, Math.toRadians(0));
+                                      dropYellowPixelPose = new Pose2d(29, -77, Math.toRadians(90));
+                                      break;
+                                  case RIGHT:
+                                      RobotLog.dd("ROBOLOG", "identifiedSpikeMarkLocation: "+identifiedSpikeMarkLocation);
+
+                                      dropPurplePixelPose = new Pose2d(23, -5, Math.toRadians(-45));
+                                      dropYellowPixelPose = new Pose2d(22, -77, Math.toRadians(90));
+                                      break;
+                              }
+                              moveAwayfromPurplePixelPose = new Pose2d(4, 0, Math.toRadians(90));
                               //define those paths specific to wing
-                              midwayPose2 = new Pose2d(6, -41, Math.toRadians(90));
+                              midwayPose1a = new Pose2d(4, -40, Math.toRadians(90));
+                              midwayPose2 = new Pose2d(4, -41, Math.toRadians(90));
+                              switch(selectedParkLocation){
+                                  case OUTSIDE:
+                                      parkPose = new Pose2d(8, -85, Math.toRadians(90));
+                                      break;
+                                  case INSIDE:
+                                      parkPose = new Pose2d(52, -85, Math.toRadians(90));
+                                      break;
+                              }
                               break;
                       }
-               switch(selectedParkLocation){
-                   case INSIDE:
-                       parkPose = new Pose2d(8, -77, Math.toRadians(90));
-                               break;
-                   case OUTSIDE:
-                       parkPose = new Pose2d(52, -77, Math.toRadians(90));
-                        break;
-               }
 
-                        slowdropYellowPixelPoseYcoordinate = -86;
+
+                        slowdropYellowPixelPoseYcoordinate = -84;
                         safeMoveFromBackDrop = -77;
                     break; //break from field side
                 }
@@ -382,6 +488,8 @@ public class RoadRunnerAutonomous extends LinearOpMode {
          *********************************/
 
         // Move robot to dropPurplePixel based on identified Spike Mark Location
+        arm.setCurrentState(ArmUtil_preState.ArmState.INIT);
+        arm.runStateMachine();
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(moveBeyondTrussPose.position, moveBeyondTrussPose.heading)
@@ -389,20 +497,17 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                         .build());
 
         //drop Purple Pixel on Spike Mark
-        claw.openRightHand();
+        claw.openLeftHand();
+        arm.setCurrentState(ArmUtil_preState.ArmState.TRANSPORT);
+        arm.runStateMachine();
         safeWaitSeconds(.75);
-        arm.setWristPosition(0.45);
-        arm.raiseToPositionNoPID(2,.5,false); //low score
-        //safeWaitSeconds(.5);
-        //arm.setWristPosition(0.0);
-        //claw.closeRightHand();
 
         //move robot back to a safe position (all scenarios)
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(moveAwayfromPurplePixelPose.position, moveAwayfromPurplePixelPose.heading)
                         .build());
-
+        claw.closeLeftHand();
         //For Blue wing and Red wing only
         if (selectedFieldSide== FIELD_SIDE.WING) {
             //after moving back from dropping purple pixel to a 'safe' location
@@ -414,45 +519,48 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                             //wait for alliance partner to get out of the way
                             .waitSeconds(waitSecondsBeforeDrop)
                             //.strafeToLinearHeading(midwayPose2a.position, midwayPose2a.heading)
+                            .setReversed(true)
+                            .splineToLinearHeading(dropYellowPixelPose,0)
                             .build());
         } //end of specialized code for wing side
-
-
+        else {
         //Move robot to right in front of the board to begin dropYellowPixelPose
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .setReversed(true)
-                        .splineToLinearHeading(dropYellowPixelPose,0)
+                        .splineToLinearHeading(dropYellowPixelPose, 0)
                         .build());
+        }
 
-        //TODO : Code to drop Pixel on Backdrop
+        //Code to drop Pixel on Backdrop
         //first set arm to back position and position wrist
-        arm.raiseToPositionNoPID(5,.5,false); //low score
+        claw.setClawClosed();
+        arm.setCurrentState(ArmUtil_preState.ArmState.BACK_LOW_SCORE_AUTO);
+        arm.runStateMachine();
         safeWaitSeconds(1.0);
         arm.setWristPosition(0.0);
         safeWaitSeconds(0.25);
-            Actions.runBlocking(
-                    drive.actionBuilder(drive.pose)
-                            .lineToYConstantHeading(slowdropYellowPixelPoseYcoordinate, new TranslationalVelConstraint(5))
-                            .build());
 
-        //P3drive.driveRobotDistanceBackward(10,.20);
-        //safeWaitSeconds(1); //optimize this
-        //drive.updatePoseEstimate();
+        Actions.runBlocking(
+                drive.actionBuilder(drive.pose)
+                        .lineToYConstantHeading(slowdropYellowPixelPoseYcoordinate, new TranslationalVelConstraint(10))
+                        .build());
 
         //open claw and scoooooooore! XD
         claw.setClawOpen();
         safeWaitSeconds(.5); //optimize this
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
-                        .lineToYConstantHeading(safeMoveFromBackDrop, new TranslationalVelConstraint(5))
+                        .lineToYConstantHeading(safeMoveFromBackDrop, new TranslationalVelConstraint(10))
                         .build());
+
+
         //set arm back to init position
         arm.setWristPosition(0.45);
         claw.setClawClosed();
-        arm.raiseToPositionNoPID(1,.25,false); //init
+        arm.raiseToPosition(1,.25); //init
 
-        //Move robot to park in Backstage
+        //Move robot to park
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         //.lineToYConstantHeading(77)
@@ -460,12 +568,16 @@ public class RoadRunnerAutonomous extends LinearOpMode {
                         //.splineToLinearHeading(parkPose,0)
                         .build());
 
-        //set arm back to init position
+        //set arm back to init position (double check)
         arm.setWristPosition(0.45);
         claw.setClawClosed();
-        arm.raiseToPositionNoPID(1,.5,false); //init
+        arm.raiseToPosition(1,.25); //init
 
         //we are done end of auto code
+    }
+
+    private void initPaths() {
+
     }
 
 
@@ -477,36 +589,6 @@ public class RoadRunnerAutonomous extends LinearOpMode {
     private void driveWingBlue(Pose2d initPose, Pose2d dropPurplePixelPose, Pose2d dropYellowPixelPose,Pose2d moveAwayfromPurplePixelPose, Pose2d parkPose, Pose2d midwayPose1a,Pose2d midwayPose2, Pose2d midwayPose2a) {
     }
 
-    private void driveBackstageRed(Pose2d initPose, Pose2d dropPurplePixelPose, Pose2d dropYellowPixelPose,Pose2d moveAwayfromPurplePixelPose, Pose2d parkPose) {
-    }
-
-    private void driveWingRed(Pose2d initPose, Pose2d dropPurplePixelPose, Pose2d dropYellowPixelPose,Pose2d moveAwayfromPurplePixelPose, Pose2d parkPose, Pose2d midwayPose1a,Pose2d midwayPose2, Pose2d midwayPose2a) {
-    }
-
-    //Initializing Hardware
- /*   public void HardwareStart() {
-
-        arm.init(hardwareMap);
-        claw.init(hardwareMap);
-        //initilize the camera utiity and vision pipeline
-        teamElementDetection = new TeamElementSubsystem(hardwareMap);
-        claw.setClawClosed();
-        arm.setWristPosition(.45);
-
-        //initialize the claw/wrist
-        claw = new ClawUtil(hardwareMap);
-
-        //initialize the slides
-        slides = new LinearSlidesUtil(hardwareMap);
-
-        //set things up in initiual state for autonomous (open/closed,set positions, etc)
-        //example
-        claw.closeClaw();
-        claw.lowerWrist();
-
-
-    }
-    */
     public void selectAutoParams() {
         boolean currentX = gamepad1.x;
         boolean currentB = gamepad1.b;
@@ -560,10 +642,10 @@ public class RoadRunnerAutonomous extends LinearOpMode {
         else if (waitsecondsselected == false && selectedFieldSide == FIELD_SIDE.WING) {
             telemetry.addData("---------------------------------------","");
             telemetry.addData("set safe wait using YA on Logitech on gamepad 1:","");
-            telemetry.addData("    2 second wait   ", "(x)");
-            telemetry.addData("    5 second wait ", "(y)");
-            telemetry.addData("    7 second wait    ", "(b)");
-            telemetry.addData("    10 second wait  ", "(a)");
+            telemetry.addData("    0 second wait   ", "(x)");
+            telemetry.addData("    2 second wait ", "(y)");
+            telemetry.addData("    5 second wait    ", "(b)");
+            telemetry.addData("    7 second wait  ", "(a)");
             telemetry.update();
             if(currentX && !previousX){
                 waitSecondsBeforeDrop = 0;
@@ -594,5 +676,18 @@ public class RoadRunnerAutonomous extends LinearOpMode {
         timer.reset();
         while (!isStopRequested() && timer.time() < time) {
         }
+
     }
+    private void autoHomeArm() {
+        if (!leftMag.isPressed()) {
+            while (!leftMag.isPressed()) {
+                arm.setMotorPower(arm.shoulderLeft,-.15);
+                arm.setMotorPower(arm.shoulderRight,-.15);
+            }
+
+            arm.stopShoulderMotors();
+            arm.stopAndResetArmMotors();
+        }
+    }
+
 }   // end class

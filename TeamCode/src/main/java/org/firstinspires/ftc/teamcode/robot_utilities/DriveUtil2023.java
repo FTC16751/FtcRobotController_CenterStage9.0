@@ -95,7 +95,7 @@ public class DriveUtil2023 {
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
 
-        // Save reference to Hardware map
+        // Save reference to Hardware mapx
         hardwareMap = ahwMap;
 
         // Initialize the chassis drive motors.

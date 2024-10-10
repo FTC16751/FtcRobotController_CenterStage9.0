@@ -31,6 +31,7 @@ package org.firstinspires.ftc.team16751.experiments;
 
 import android.view.View;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -39,7 +40,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-@TeleOp(name = "Sensor: Color", group = "Sensor")
+@TeleOp(name = "Sensor: Color", group = "Concept")
 
 public class SensorColorAsDistance extends LinearOpMode {
 

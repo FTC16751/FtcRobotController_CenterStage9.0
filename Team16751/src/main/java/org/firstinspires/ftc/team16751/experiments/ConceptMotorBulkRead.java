@@ -82,7 +82,7 @@ import java.util.List;
  * Once you put all your sensor reads at the beginning of the control cycle, it's very easy to use
  * the bulk-read AUTO mode to streamline your cycle timing.
  */
-@TeleOp (name = "Motor Bulk Reads", group = "Tests")
+@TeleOp (name = "Motor Bulk Reads", group = "Concept")
 
 public class ConceptMotorBulkRead extends LinearOpMode {
     private DcMotorEx m1, m2, m3, m4; // Motor Objects
@@ -100,7 +100,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         //wrist = hardwareMap.get(Servo.class, "Wrist");
 
 
-        m1.setDirection(DcMotor.Direction.FORWARD);
+        m1.setDirection(DcMotor.Direction.REVERSE);
         m1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -108,11 +108,11 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        m3.setDirection(DcMotor.Direction.FORWARD);
+        m3.setDirection(DcMotor.Direction.REVERSE);
         m3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        m4.setDirection(DcMotor.Direction.REVERSE);
+        m4.setDirection(DcMotor.Direction.FORWARD);
         m4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

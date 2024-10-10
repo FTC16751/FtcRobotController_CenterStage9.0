@@ -104,10 +104,10 @@ public class DriveUtil2023 {
         right_rear_motor = hardwareMap.get(DcMotor.class, "Rear_Right");
 
         // Reverse left motors for driving (so it goes counterclockwise to drive forward)
-        left_front_motor.setDirection(DcMotor.Direction.REVERSE);
-        right_front_motor.setDirection(DcMotor.Direction.FORWARD);
-        left_rear_motor.setDirection(DcMotor.Direction.REVERSE);
-        right_rear_motor.setDirection(DcMotor.Direction.FORWARD);
+        left_front_motor.setDirection(DcMotor.Direction.FORWARD);
+        right_front_motor.setDirection(DcMotor.Direction.REVERSE);
+        left_rear_motor.setDirection(DcMotor.Direction.FORWARD);
+        right_rear_motor.setDirection(DcMotor.Direction.REVERSE);
 
         //Set brake condition to full stop (allso can give DcMotor.ZeroPowerBehavior.FLOAT)
         left_front_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

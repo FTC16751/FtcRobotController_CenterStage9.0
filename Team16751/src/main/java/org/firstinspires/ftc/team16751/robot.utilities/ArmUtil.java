@@ -83,7 +83,6 @@ public class ArmUtil {
         elbowLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         elbowRight = hardwareMap.get(DcMotor.class, "elbowRight");
-        elbowRight.setDirection(DcMotor.Direction.REVERSE);
         elbowRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbowRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -311,7 +310,7 @@ public class ArmUtil {
                 moveArmToPositionPID();
                 break;
             case 5:
-                goalShoulder = 600;
+                goalShoulder = 500;
                 goalElbow = 1100;
                 moveArmToPositionPID();
                 break;
@@ -373,7 +372,7 @@ public class ArmUtil {
                 break;
             case 5:
                 goalShoulder = 700;
-                goalElbow = 1030;
+                goalElbow = 1130;
                 if (!usePID) moveArmToPositionNoPID();
                 else moveArmToPositionPID();
                 break;
@@ -634,15 +633,15 @@ public class ArmUtil {
         wristPosition += 0.005;
         wristPosition = Math.min(1.0,wristPosition);
         double currWristPos = wrist.getPosition();
-        newWristposition = currWristPos + WRIST_INCREMENT;
+        newWristposition = currWristPos + wristPosition;
         wrist.setPosition(newWristposition);
     }
     public void decrementWristPosition () {
         wristPosition += 0.009;
         wristPosition = Math.max(0.0,wristPosition);
-        wrist.setPosition(wristPosition);
+        //wrist.setPosition(wristPosition);
         double currWristPos = wrist.getPosition();
-        newWristposition = currWristPos - WRIST_INCREMENT;
+        newWristposition = currWristPos - wristPosition;
         wrist.setPosition(newWristposition);
     }
 

@@ -30,11 +30,12 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.DriveUtil2023;
-
+@Disabled
 @Autonomous(name="Turn to Heading", group="Robot")
 
 public class TurnToHeading extends LinearOpMode {

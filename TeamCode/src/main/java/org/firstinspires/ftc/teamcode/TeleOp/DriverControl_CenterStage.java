@@ -10,6 +10,7 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robot_utilities.NewDriveUtil2024;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="Driver Control Center Stage", group="Teleop")
+@Disabled
 public class DriverControl_CenterStage extends LinearOpMode {
     NewDriveUtil2024 drive = new NewDriveUtil2024(this);
     Deadline gamePadRateLimit = new Deadline(500, TimeUnit.MILLISECONDS);

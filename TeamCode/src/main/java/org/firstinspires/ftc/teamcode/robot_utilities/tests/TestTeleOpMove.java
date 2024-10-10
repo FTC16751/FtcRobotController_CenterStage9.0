@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot_utilities.tests;
 
 // Import necessary libraries
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot_utilities.NewDriveUtil2024;
 
 // Ensure the appropriate annotations and class declaration for the TeleOp mode
 @TeleOp(name = "TestTeleOpMoveLinear", group = "_ATests")
+@Disabled
 public class TestTeleOpMove extends LinearOpMode {
     // Initialize an instance of NewDriveUtil2024
     NewDriveUtil2024 driveUtil = new NewDriveUtil2024(this);

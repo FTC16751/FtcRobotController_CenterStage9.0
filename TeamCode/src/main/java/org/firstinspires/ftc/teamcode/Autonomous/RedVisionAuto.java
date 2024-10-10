@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.TeamElementSubsystem;
-
+@Disabled
 @Autonomous(name="Test 2024 Vision", group="Auto")
 
 public class RedVisionAuto extends LinearOpMode{

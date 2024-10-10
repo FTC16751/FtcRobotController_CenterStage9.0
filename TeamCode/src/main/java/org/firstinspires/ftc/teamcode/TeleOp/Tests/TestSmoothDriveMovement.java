@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot_utilities.experiments.SmoothDriveMovement;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="Test Smooth Drive Movement", group="Main")
+@Disabled
 public class TestSmoothDriveMovement extends LinearOpMode {
         private DcMotorEx frontLeftMotor;
         private DcMotorEx frontRightMotor;

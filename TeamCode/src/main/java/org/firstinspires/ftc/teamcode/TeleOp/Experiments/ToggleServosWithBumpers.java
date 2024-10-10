@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Experiments;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.experiments.RobotServos;
 
 @TeleOp(name = "ToggleServosWithBumpers", group = "coach")
+@Disabled
 public class ToggleServosWithBumpers extends LinearOpMode {
 
     private RobotServos robotServos;

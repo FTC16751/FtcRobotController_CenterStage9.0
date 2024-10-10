@@ -46,6 +46,11 @@ public class ClawUtil {
     private boolean rightClawClosed = false;
     private boolean lastLeftBumperState = false;
     private boolean lastRightBumperState = false;
+    private static final double LEFT_CLAW_OPEN_POSITION = 0.25;
+    private static final double LEFT_CLAW_CLOSED_POSITION = 0.70;
+    private static final double RIGHT_CLAW_OPEN_POSITION = 0.75;
+    private static final double RIGHT_CLAW_CLOSED_POSITION = 0.30;
+
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
@@ -70,31 +75,32 @@ public class ClawUtil {
 
     }
 
+
     public void setClawOpen() {
         openLeftHand();
         openRightHand();
-//        leftHand.setPosition(0.50);
-//        rightHand.setPosition(0.70);
     }
     public void setClawClosed(){
         closeLeftHand();
         closeRightHand();
-        //leftHand.setPosition(0.70);
-       // rightHand.setPosition(0.40);
-    }
-    public void openLeftHand(){
-        leftHand.setPosition(0.30);
-    }
-    public void closeLeftHand() {
-        leftHand.setPosition(0.70);
-    }
-    public void openRightHand(){
-        rightHand.setPosition(0.70);
-    }
-    public void closeRightHand() {
-        rightHand.setPosition(0.30);
     }
 
+    public void openLeftHand(){
+        leftHand.setPosition(LEFT_CLAW_OPEN_POSITION);
+        leftClawClosed = false;
+    }
+    public void closeLeftHand() {
+        leftHand.setPosition(LEFT_CLAW_CLOSED_POSITION);
+        leftClawClosed = true;
+    }
+    public void openRightHand(){
+        rightHand.setPosition(RIGHT_CLAW_OPEN_POSITION);
+        rightClawClosed = false;
+    }
+    public void closeRightHand() {
+        rightHand.setPosition(RIGHT_CLAW_CLOSED_POSITION);
+        rightClawClosed = true;
+    }
     public void toggleLeftClawWithBumper(boolean leftBumper) {
         boolean leftBumperEdge = leftBumper && !lastLeftBumperState;
 
@@ -131,21 +137,6 @@ public class ClawUtil {
     public double getWristPosition(){
         return getWristPosition();
     }
-/*    public void toggleClawWithBumper(boolean leftBumper) {
-        boolean leftBumperEdge = leftBumper && !lastLeftBumperState;
 
-        if (leftBumperEdge) {
-            // Toggle the claw state when the left bumper is pressed
-            if (clawClosed) {
-                leftHand.setPosition(0.25);
-            } else {
-                closeClaw();
-            }
-        }
-
-        lastLeftBumperState = leftBumper;
-    }
-
- */
 }
 

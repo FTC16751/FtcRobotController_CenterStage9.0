@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot_utilities.LinearSlides;
 import org.firstinspires.ftc.teamcode.robot_utilities.experiments.RobotServos;
 import org.firstinspires.ftc.teamcode.robot_utilities.LauncherUtil;
 @TeleOp(name = "Coach Driver Control of GG Robot", group = "coach")
+@Disabled
 public class DriverControlGGRobot extends LinearOpMode {
 
 

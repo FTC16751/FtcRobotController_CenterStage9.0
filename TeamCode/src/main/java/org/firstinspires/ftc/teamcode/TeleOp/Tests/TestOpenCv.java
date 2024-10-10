@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -38,6 +39,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
 @TeleOp(name="Test OpenCV", group="Teleop")
+@Disabled
 public class TestOpenCv extends LinearOpMode
 {
     //instantiate the sub-systems (drive, spinner, etc)

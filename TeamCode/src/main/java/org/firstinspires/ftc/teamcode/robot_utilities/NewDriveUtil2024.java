@@ -1560,7 +1560,34 @@
         public void setAllPower(double p){
             setMotorPowers(p,p,p,p);
         }
+        public void simpleTankDrive(double left_stick_x, double left_stick_y, double right_stick_x, double right_stick_y, double DRIVE_SPEED){
+            double left;
+            double right;
+            double drive;
+            double turn;
+            double max;
 
+            // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
+            // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
+            // This way it's also easy to just drive straight, or just turn.
+            drive = -left_stick_y*DRIVE_SPEED;
+            turn  =  right_stick_x*(DRIVE_SPEED*.8);
+
+            // Combine drive and turn for blended motion.
+            left  = (drive + turn);
+            right = (drive - turn);
+
+            // Normalize the values so neither exceed +/- 1.0
+            max = Math.max(Math.abs(left), Math.abs(right));
+            if (max > 1.0)
+            {
+                left /= max;
+                right /= max;
+            }
+
+            // Send calculated power to wheels
+            setMotorPowers(left,left,right,right);
+        }
         public void tankDrive(double left_stick_x, double left_stick_y, double right_stick_x, double right_stick_y, double DRIVE_SPEED){
       /* This enables a tank drive-like arrangement where the left_stick controls the left
             wheels and the right_stick controls the right wheels uses it x/y values and hypotenuse

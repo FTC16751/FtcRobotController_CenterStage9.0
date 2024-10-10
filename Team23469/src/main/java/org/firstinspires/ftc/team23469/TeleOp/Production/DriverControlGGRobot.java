@@ -35,7 +35,7 @@ public class DriverControlGGRobot extends LinearOpMode {
         }
         private hangerMode currentHangerMode = hangerMode.STATE_MACHINE;
 
-        RevBlinkinLedDriver lights, rlights;
+       // RevBlinkinLedDriver lights, rlights;
         Deadline gamepadRateLimit = new Deadline(250, TimeUnit.MILLISECONDS);
         @Override
         public void runOpMode() throws InterruptedException {
@@ -57,10 +57,10 @@ public class DriverControlGGRobot extends LinearOpMode {
                 doSlideControls();
                 doHangerControls();
                 addTelemetry();
-                doLights();
+               // doLights();
             }
-            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
-            rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
+            //lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
+          //  rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE);
 
         }
 
@@ -71,10 +71,10 @@ public class DriverControlGGRobot extends LinearOpMode {
             the drivetrain usually stays constant year over year.
         */
 
-        lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights"); //initialize lights from hub
-        rlights = hardwareMap.get(RevBlinkinLedDriver.class, "rlights"); //initialize lights from hub
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD); //start with a blinking gold while init
-        rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD); //start with a blinking gold while init
+       // lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights"); //initialize lights from hub
+       // rlights = hardwareMap.get(RevBlinkinLedDriver.class, "rlights"); //initialize lights from hub
+        //lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD); //start with a blinking gold while init
+        //rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD); //start with a blinking gold while init
         Thread.sleep(250); //give enough time to initialize and set light colors
         drive.init(hardwareMap,telemetry); //initialize the drive subsystem
         clawUtil = new ClawUtil(hardwareMap); //initialize the claw subsystem
@@ -83,8 +83,8 @@ public class DriverControlGGRobot extends LinearOpMode {
         hangerUtil = new HangerUtil(hardwareMap); //initialize the hanger subsystem
         clawUtil.setWristState(true);  //set the initial claw state
         launcherUtil.launchTriggerClose(); //set the initial launcher state
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
-        rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
+        //lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
+       // rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN); //once done, set lights to green
 
     }
     private void doDrivetrainControls() {
@@ -260,7 +260,7 @@ public class DriverControlGGRobot extends LinearOpMode {
             gamepadRateLimit.reset();
         }
         }
-    private void doLights() {
+    /*private void doLights() {
         if (time < 85) {
             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
             rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
@@ -282,6 +282,8 @@ public class DriverControlGGRobot extends LinearOpMode {
             rlights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE);
         }
     }
+
+     */
     private void addTelemetry() {
         // Telemetry to display slide and servo status
         telemetry.addData("Slide State", linearSlides.getCurrentState());

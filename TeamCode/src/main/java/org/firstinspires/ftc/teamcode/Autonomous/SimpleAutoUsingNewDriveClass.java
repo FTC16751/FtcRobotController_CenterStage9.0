@@ -34,12 +34,13 @@ import android.graphics.Color;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot_utilities.NewDriveUtil2024;
-
+@Disabled
 @Autonomous(name="Simple Auto New Class", group="Robot")
 
 public class SimpleAutoUsingNewDriveClass extends LinearOpMode {

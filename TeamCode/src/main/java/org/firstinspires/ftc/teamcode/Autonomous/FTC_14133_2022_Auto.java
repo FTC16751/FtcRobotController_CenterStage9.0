@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robot_utilities.TeamElementSubsystem;
-
+@Disabled
 @Autonomous(name="FTC_14133_2022_Auto", group="Auto")
 
 public class  FTC_14133_2022_Auto extends LinearOpMode{

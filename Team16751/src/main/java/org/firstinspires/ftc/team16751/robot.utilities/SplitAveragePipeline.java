@@ -23,7 +23,7 @@ public class SplitAveragePipeline extends OpenCvPipeline {
 
     //Telemetry telemetry;
 
-    static int color_zone = 1;
+    static int color_zone = 2;
 
     int toggleShow = 1;
 
@@ -44,9 +44,9 @@ public class SplitAveragePipeline extends OpenCvPipeline {
 
         //Defining Zones
         //Rect(top left x, top left y, bottom right x, bottom right y)
-        Mat zone1 = input.submat(new Rect(0, 80, 115, 115));
-        Mat zone2 = input.submat(new Rect(330, 80, 115, 115));
-        Mat zone3 = input.submat(new Rect(680, 80, 115, 115));
+        Mat zone1 = input.submat(new Rect(0, 40, 115, 215));
+        Mat zone2 = input.submat(new Rect(330, 40, 115, 215));
+        Mat zone3 = input.submat(new Rect(680, 40, 115, 215));
 
         //Averaging the colors in the zones
         Scalar avgColor1 = Core.mean(zone1);
@@ -71,9 +71,11 @@ public class SplitAveragePipeline extends OpenCvPipeline {
         }else if (max_distance == distance2){
             //telemetry.addData("Zone 2 Has Element", distance2);
             color_zone = 2;
-        }else{
+        }else if (max_distance == distance3){
             //telemetry.addData("Zone 2 Has Element", distance3);
             color_zone = 3;
+        } else {
+            color_zone = 2;
         }
 
         // Allowing for the showing of the averages on the stream
